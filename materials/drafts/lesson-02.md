@@ -509,10 +509,10 @@ Todo アプリで「Todo を保存する」役割にもっとも近い層はど�
 
 ## 参考資料
 
-- Microsoft Learn: Azure アーキテクチャ センター
-- Microsoft Learn: Azure Virtual Machines
-- Microsoft Learn: Azure Container Apps
-- Microsoft Learn: Azure Database for PostgreSQL
-- Microsoft Learn: Azure Static Web Apps
+- [Microsoft Learn: Azure アーキテクチャ センター](https://learn.microsoft.com/ja-jp/azure/architecture/)
+- [Microsoft Learn: Azure Virtual Machines](https://learn.microsoft.com/ja-jp/azure/virtual-machines/)
+- [Microsoft Learn: Azure Container Apps](https://learn.microsoft.com/ja-jp/azure/container-apps/)
+- [Microsoft Learn: Azure Database for PostgreSQL](https://learn.microsoft.com/ja-jp/azure/postgresql/)
+- [Microsoft Learn: Azure Static Web Apps](https://learn.microsoft.com/ja-jp/azure/static-web-apps/)
 
 参考資料は教材本文の主軸にはせず、受講者が復習するときの入口として提示します。

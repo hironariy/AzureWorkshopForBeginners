@@ -875,11 +875,11 @@ ACI を使うと、OS や VM の管理を一切考えなくてよいので、本
 
 ## 参考資料
 
-- Microsoft Learn: Azure Container Instances
-- Microsoft Learn: Azure Container Registry
-- Microsoft Learn: Container image concepts
-- Microsoft Learn: Azure Container Apps
-- Microsoft Learn: Azure Kubernetes Service
-- Microsoft Learn: Azure Container Instances でコンテナーを作成する
+- [Microsoft Learn: Azure Container Instances](https://learn.microsoft.com/ja-jp/azure/container-instances/)
+- [Microsoft Learn: Azure Container Registry](https://learn.microsoft.com/ja-jp/azure/container-registry/)
+- [Microsoft Learn: Container image concepts](https://learn.microsoft.com/ja-jp/azure/container-registry/container-registry-concepts)
+- [Microsoft Learn: Azure Container Apps](https://learn.microsoft.com/ja-jp/azure/container-apps/)
+- [Microsoft Learn: Azure Kubernetes Service](https://learn.microsoft.com/ja-jp/azure/aks/)
+- [Microsoft Learn: Azure Container Instances でコンテナーを作成する](https://learn.microsoft.com/ja-jp/azure/container-instances/container-instances-quickstart-portal)
 
 参考資料は教材本文の主軸にはせず、受講者が復習するときの入口として提示します。

@@ -1,7 +1,7 @@
 ---
 description: "Use when creating, updating, or reviewing Azure Workshop lesson Markdown drafts. Trigger for lesson draft, 第3回ドラフト, 第4回ドラフト, materials/drafts/lesson-XX.md, slide outline, 図表・スクリーンショット素材一覧, ハンズオン教材 draft."
 name: "Azure Workshop Lesson Draft Writer"
-tools: [read, edit, search, todo]
+tools: [read, edit, search, web, todo]
 argument-hint: "Create or update a lesson draft, for example: 第3回の Markdown ドラフトを作成してください"
 ---
 
@@ -17,6 +17,15 @@ Always read the relevant source documents before drafting or editing a lesson:
 4. `materials/drafts/lesson-02.md` as the canonical draft format and quality bar.
 
 If these documents conflict, prefer the newest explicit user instruction, then `InitialRequirement.md`, then `CourseDesign.md`, then `LessonDesign.md`, then existing drafts.
+
+## External Web References
+
+When a lesson references an external guide, GitHub page, Microsoft Learn page, or other URL, use the available web tool before drafting or editing the affected section.
+
+- For GitHub Markdown pages, open the referenced page or raw Markdown URL and inspect the relevant headings, anchors, and step order before writing lesson steps.
+- When the user points to a specific heading or anchor, treat that linked section as the source of truth for the corresponding slide or hands-on step.
+- If the web page cannot be fetched, do not silently guess. Use the local source documents plus explicit user instructions, and report the failed URL as an open question in the final response.
+- When splitting an external hands-on guide across lessons, add a small mapping table or note that shows which source-guide phase or step is covered by the lesson.
 
 ## Scope
 
@@ -113,6 +122,17 @@ When a screenshot may be needed, include a table with:
 - マスク対象
 
 Always mask or avoid subscription IDs, tenant IDs, user names, email addresses, resource IDs, secrets, connection strings, Service Principal credentials, billing information, customer names, and private/internal environment details.
+
+## Reference Material Rules
+
+In `## 参考資料`, always write external references as Markdown links with URLs.
+
+- Do not leave reference items as plain text such as `Microsoft Learn: Azure Virtual Machines`.
+- Use the form `- [表示名](https://...)` for every reference item.
+- Prefer Japanese Microsoft Learn URLs (`https://learn.microsoft.com/ja-jp/...`) when an appropriate Japanese page exists.
+- For Microsoft Learn service landing pages, link to the most relevant service overview or documentation landing page.
+- For quickstarts or hands-on prerequisites, link to the specific quickstart or how-to page that matches the draft content.
+- If the exact URL cannot be confirmed while drafting, include a clearly marked placeholder such as `URL確認要` and list it as an open question in the final response; do not silently omit the URL.
 
 ## Slide Outline Rules
 

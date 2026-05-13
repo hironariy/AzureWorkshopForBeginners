@@ -740,11 +740,11 @@ VM を停止すれば、Managed Disk や Public IP なども必ず削除され�
 
 ## 参考資料
 
-- Microsoft Learn: Azure Virtual Machines
-- Microsoft Learn: Linux 仮想マシンを Azure Portal で作成する
-- Microsoft Learn: Azure Virtual Network
-- Microsoft Learn: Network security groups
-- Microsoft Learn: Azure Managed Disks
-- Microsoft Learn: cloud-init support for virtual machines in Azure
+- [Microsoft Learn: Azure Virtual Machines](https://learn.microsoft.com/ja-jp/azure/virtual-machines/)
+- [Microsoft Learn: Linux 仮想マシンを Azure Portal で作成する](https://learn.microsoft.com/ja-jp/azure/virtual-machines/linux/quick-create-portal)
+- [Microsoft Learn: Azure Virtual Network](https://learn.microsoft.com/ja-jp/azure/virtual-network/virtual-networks-overview)
+- [Microsoft Learn: Network security groups](https://learn.microsoft.com/ja-jp/azure/virtual-network/network-security-groups-overview)
+- [Microsoft Learn: Azure Managed Disks](https://learn.microsoft.com/ja-jp/azure/virtual-machines/managed-disks-overview)
+- [Microsoft Learn: cloud-init support for virtual machines in Azure](https://learn.microsoft.com/ja-jp/azure/virtual-machines/linux/using-cloud-init)
 
 参考資料は教材本文の主軸にはせず、受講者が復習するときの入口として提示します。

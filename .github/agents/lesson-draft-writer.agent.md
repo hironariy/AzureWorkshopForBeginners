@@ -99,6 +99,7 @@ Always include `## 図表・スクリーンショット素材一覧`.
 - Explicitly classify each asset as `図表`, `表`, or `スクリーンショット`.
 - State whether each asset is `必須` or `任意` for the HTML version.
 - State who provides or creates each asset: `AI/draw.io で作成`, `AI で作成`, or `筆者が提供`.
+- When an asset is marked `AI/draw.io で作成`, assume final implementation will use the `azure-workshop-drawio-diagrams` skill with `.drawio` source files, SVG exports, and `img/lib/azure2/` Azure icons when Azure services appear.
 - If a lesson is lecture-only, say whether screenshots are unnecessary or optional reference images.
 - If a lesson is hands-on, list screenshot IDs for key Azure Portal and GitHub screens.
 
@@ -106,7 +107,7 @@ Always include `## 図表・スクリーンショット素材一覧`.
 
 - Prefer diagrams for architecture, relationships, communication paths, responsibility boundaries, network topology, DNS/name-resolution flow, deployment flow, and sequence explanations.
 - Do not include fake diagrams as final assets in Markdown. Write diagram plans that can later be implemented via draw.io.
-- For Azure diagrams, plan to use draw.io built-in Azure SVG icons from `img/lib/azure2/` when diagrams are later created.
+- For Azure diagrams, plan to use draw.io built-in Azure SVG icons from `img/lib/azure2/` when diagrams are later created. This is mandatory for Azure service architecture, configuration, network, deployment, and service relationship diagrams.
 - Do not rely on color alone. Use labels, grouping, and line styles.
 - For Web 3-tier diagrams, show Web 層, AP 層, and DB 層 as logical roles; do not imply Web 3-tier always requires exactly three servers.
 - For DB redundancy, describe DB high availability, replication, or zone redundancy as DB-side features. Do not show DB redundancy as simple load balancing unless specifically explaining a DB-supported pattern.

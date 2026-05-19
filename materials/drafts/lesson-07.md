@@ -483,14 +483,14 @@ Azure Portal の画面例は任意の参考画像として `L07-SSxx` を割り�
 本回は座学のみのため、スクリーンショットは必須ではありません。
 HTML 詳細版で参考画像を入れる場合のみ、以下を取得します。
 
-| スクリーンショットID | 対象画面 | 用途 | 取得時の注意 | マスク対象 |
-| --- | --- | --- | --- | --- |
-| L07-SS01 | Azure Portal の Virtual networks 一覧 | VNet がネットワークの基本単位であることを示す参考画像 | 講座用または検証用の安全なリソースだけを表示する | サブスクリプション ID、テナント ID、ユーザー名、メールアドレス、リソース ID |
-| L07-SS02 | VNet Overview と Subnets | VNet とサブネットの関係を示す参考画像 | アドレス空間はサンプル値にする。実環境の IP 計画を写さない | サブスクリプション ID、リソース ID、実環境のアドレス範囲 |
-| L07-SS03 | Network Security Group の Inbound security rules | NSG ルールの構造を示す参考画像 | 実運用の許可 IP や管理用ポートを写さない | 実 IP アドレス、組織名、サブスクリプション ID、リソース ID |
-| L07-SS04 | Route table の Routes | Route Table と UDR の参考画像 | 実環境の経路やオンプレミス IP を写さない | 実 IP アドレス、オンプレミス範囲、サブスクリプション ID |
-| L07-SS05 | Private Endpoint Overview | Private Endpoint の接続状態を示す参考画像 | Private Link resource の実リソース ID を写さない | リソース ID、サブスクリプション ID、接続先リソース名 |
-| L07-SS06 | Private DNS Zone の Record sets と Virtual network links | Private DNS Zone と VNet link の参考画像 | 実サービス名や内部ドメイン名を避け、講座用サンプルに限定する | 実ドメイン名、リソース ID、サブスクリプション ID、内部ネットワーク名 |
+| スクリーンショットID | 対象画面 | 用途 | 推奨サイズ | 取得時の注意 | マスク対象 |
+| --- | --- | --- | --- | --- | --- |
+| L07-SS01 | Azure Portal の Virtual networks 一覧 | VNet がネットワークの基本単位であることを示す参考画像 | 1600 x 900 (16:9) | 講座用または検証用の安全なリソースだけを表示する | サブスクリプション ID、テナント ID、ユーザー名、メールアドレス、リソース ID |
+| L07-SS02 | VNet Overview と Subnets | VNet とサブネットの関係を示す参考画像 | 1600 x 900 (16:9) | アドレス空間はサンプル値にする。実環境の IP 計画を写さない | サブスクリプション ID、リソース ID、実環境のアドレス範囲 |
+| L07-SS03 | Network Security Group の Inbound security rules | NSG ルールの構造を示す参考画像 | 1600 x 900 (16:9) | 実運用の許可 IP や管理用ポートを写さない | 実 IP アドレス、組織名、サブスクリプション ID、リソース ID |
+| L07-SS04 | Route table の Routes | Route Table と UDR の参考画像 | 1600 x 900 (16:9) | 実環境の経路やオンプレミス IP を写さない | 実 IP アドレス、オンプレミス範囲、サブスクリプション ID |
+| L07-SS05 | Private Endpoint Overview | Private Endpoint の接続状態を示す参考画像 | 1600 x 900 (16:9) | Private Link resource の実リソース ID を写さない | リソース ID、サブスクリプション ID、接続先リソース名 |
+| L07-SS06 | Private DNS Zone の Record sets と Virtual network links | Private DNS Zone と VNet link の参考画像 | 1600 x 900 (16:9) | 実サービス名や内部ドメイン名を避け、講座用サンプルに限定する | 実ドメイン名、リソース ID、サブスクリプション ID、内部ネットワーク名 |
 
 ## ハンズオン手順案
 

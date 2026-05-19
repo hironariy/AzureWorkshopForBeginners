@@ -1,0 +1,19 @@
+<mxfile host="app.diagrams.net" agent="GitHub Copilot" version="24.7.17">
+  <diagram id="l02-d18-lesson4-to-6-connection" name="第4回から第6回の接続図">
+    <mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="cell-2" value="単体コンテナから、複数サービスの Todo アプリへ進む" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=28;fontStyle=1;fontColor=#005A9E" vertex="1" parent="1"><mxGeometry x="60" y="42" width="1160" height="48" as="geometry"/></mxCell>
+        <mxCell id="cell-3" value="第4回&lt;br&gt;Azure Container Instances&lt;br&gt;単体コンテナ" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Instances.svg;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="145" y="240" width="250" height="150" as="geometry"/></mxCell>
+        <mxCell id="cell-4" value="第5回-第6回&lt;br&gt;Azure Container Apps" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Apps.svg;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="515" y="200" width="260" height="115" as="geometry"/></mxCell>
+        <mxCell id="cell-5" value="Azure Container Registry&lt;br&gt;イメージ保管" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Registries.svg;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="515" y="355" width="260" height="105" as="geometry"/></mxCell>
+        <mxCell id="cell-6" value="Azure Database for PostgreSQL&lt;br&gt;Todo データ保存" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/databases/Azure_Database_PostgreSQL_Server.svg;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="895" y="265" width="270" height="135" as="geometry"/></mxCell>
+        <mxCell id="cell-7" value="第2回の Web/AP/DB の地図を使って、各回の位置づけを確認します。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F6F8FB;strokeColor=#D6DDE8;strokeWidth=2;fontSize=16;fontStyle=1;fontColor=#1F2937" vertex="1" parent="1"><mxGeometry x="350" y="535" width="580" height="48" as="geometry"/></mxCell>
+        <mxCell id="cell-8" value="発展" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#0078D4;strokeWidth=3;dashed=0;fontSize=14;fontStyle=1;fontColor=#0078D4" edge="1" parent="1" source="cell-3" target="cell-4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="cell-9" value="pull" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#CA5010;strokeWidth=3;dashed=1;fontSize=14;fontStyle=1;fontColor=#CA5010" edge="1" parent="1" source="cell-5" target="cell-4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="cell-10" value="接続" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#0078D4;strokeWidth=3;dashed=0;fontSize=14;fontStyle=1;fontColor=#0078D4" edge="1" parent="1" source="cell-4" target="cell-6"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

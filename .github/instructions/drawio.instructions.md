@@ -6,6 +6,8 @@ description: "Use when creating or updating draw.io diagrams, Azure architecture
 
 These instructions apply when designing or editing diagrams for Azure Workshop for Beginners, especially when using the `drawio` MCP server configured in `.vscode/mcp.json`.
 
+For the full project workflow, validation script, and detailed quality checklist, use the `azure-workshop-drawio-diagrams` skill under `.github/skills/azure-workshop-drawio-diagrams/`.
+
 ## When To Use draw.io
 
 - Use draw.io diagrams for architecture, service relationships, communication paths, responsibility boundaries, network topology, DNS/name-resolution flow, deployment flow, and sequence-style explanations.
@@ -23,8 +25,9 @@ These instructions apply when designing or editing diagrams for Azure Workshop f
 
 ## Azure Icon Rules
 
-- Use draw.io built-in Azure SVG icons, not inline SVG copied into the document.
+- For Azure service composition, architecture, network, deployment, or service relationship diagrams, use draw.io built-in Azure SVG icons. This is mandatory for final assets.
 - Reference Azure icons from draw.io's Azure icon library paths such as `img/lib/azure2/`.
+- Do not use inline SVG copies, base64-encoded icons, externally downloaded icons, hand-drawn stand-ins, or invented service icons for Azure services.
 - Do not set text background color on Azure icon labels.
 - Use official Azure service names in labels where practical. Use Japanese explanatory labels for learner-facing context.
 - Do not invent Azure service icons. If the exact icon is unavailable, use a neutral labeled box and note the intended service.
@@ -60,8 +63,10 @@ These instructions apply when designing or editing diagrams for Azure Workshop f
 
 - Export final diagrams as SVG for insertion into HTML, presentation HTML, and PowerPoint.
 - Keep the editable `.drawio` file alongside the exported SVG.
+- Prefer readable, uncompressed `.drawio` XML when possible so `img/lib/azure2/` icon references can be reviewed.
 - After export, verify that labels are not clipped, lines do not overlap confusingly, colors are accessible, and the diagram remains readable at slide size.
 - Check that the exported SVG does not embed secrets, internal tenant details, customer names, personal information, or private environment identifiers.
+- Use `.github/skills/azure-workshop-drawio-diagrams/scripts/validate-drawio-diagrams.mjs` when validating existing or newly exported diagram assets.
 
 ## Working Pattern
 

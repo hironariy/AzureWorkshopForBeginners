@@ -1,0 +1,1239 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第2回 Web 3層アプリケーション | Azure Workshop for Beginners</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --azure: #0078d4;
+      --azure-dark: #005a9e;
+      --teal: #008575;
+      --green: #498205;
+      --orange: #ca5010;
+      --magenta: #c239b3;
+      --ink: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d6dde8;
+      --soft: #f6f8fb;
+      --soft-blue: #e8f3ff;
+      --soft-green: #edf7ed;
+      --soft-orange: #fff4e5;
+      --soft-magenta: #fdf0fb;
+      --white: #ffffff;
+      --shadow: 0 18px 44px rgba(31, 41, 55, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-snap-type: y mandatory;
+      background: #eef2f7;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Segoe UI", "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      line-height: 1.6;
+      letter-spacing: 0;
+      background: #eef2f7;
+    }
+
+    .deck {
+      width: 100%;
+    }
+
+    .slide {
+      position: relative;
+      min-height: 100vh;
+      scroll-snap-align: start;
+      display: grid;
+      align-items: start;
+      padding: clamp(42px, 5.2vh, 76px) 5vw clamp(56px, 6vh, 88px);
+      background:
+        linear-gradient(90deg, rgba(0, 120, 212, 0.06), rgba(0, 133, 117, 0.03) 42%, rgba(255, 255, 255, 0) 70%),
+        var(--white);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .slide:nth-child(4n + 2) {
+      background:
+        linear-gradient(90deg, rgba(73, 130, 5, 0.07), rgba(255, 255, 255, 0) 62%),
+        var(--white);
+    }
+
+    .slide:nth-child(4n + 3) {
+      background:
+        linear-gradient(90deg, rgba(202, 80, 16, 0.06), rgba(255, 255, 255, 0) 62%),
+        var(--white);
+    }
+
+    .slide:nth-child(4n) {
+      background:
+        linear-gradient(90deg, rgba(194, 57, 179, 0.055), rgba(255, 255, 255, 0) 62%),
+        var(--white);
+    }
+
+    .slide::after {
+      content: attr(data-slide);
+      position: absolute;
+      right: 3vw;
+      bottom: 2.4vh;
+      color: #667085;
+      font-size: clamp(0.8rem, 1.2vw, 1rem);
+      font-weight: 600;
+    }
+
+    .content {
+      width: min(1500px, 100%);
+      margin: 0 auto;
+      display: grid;
+      align-content: start;
+      gap: clamp(18px, 2.1vh, 28px);
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 18px;
+      font-size: clamp(3rem, 7vw, 6.8rem);
+      line-height: 1.02;
+      font-weight: 750;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      width: 100%;
+      max-width: none;
+      margin-bottom: 0;
+      padding-bottom: clamp(10px, 1.2vh, 16px);
+      border-bottom: 3px solid rgba(0, 120, 212, 0.28);
+      font-size: clamp(1.9rem, 3.6vw, 3.95rem);
+      line-height: 1.08;
+      font-weight: 740;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: clamp(1.25rem, 2.1vw, 1.8rem);
+      line-height: 1.25;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 1320px;
+      margin-bottom: 0;
+      color: #334155;
+      font-size: clamp(1.08rem, 1.72vw, 1.48rem);
+      line-height: 1.52;
+      font-weight: 500;
+    }
+
+    .sublead {
+      color: var(--muted);
+      font-size: clamp(1.02rem, 1.7vw, 1.35rem);
+    }
+
+    .title-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+      color: #334155;
+      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      font-weight: 650;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 4px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.86);
+      color: #344054;
+      font-weight: 700;
+    }
+
+    .layout-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
+      gap: clamp(24px, 4vw, 58px);
+      align-items: center;
+    }
+
+    .content.layout-2 {
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(18px, 2.2vh, 30px);
+      align-items: start;
+    }
+
+    .content.layout-2 > * {
+      grid-column: 1 / -1;
+    }
+
+    .content.layout-2 > :first-child {
+      display: grid;
+      gap: clamp(14px, 1.8vh, 22px);
+    }
+
+    .layout-2.equal {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .layout-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .bullets {
+      display: grid;
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: clamp(1.08rem, 1.8vw, 1.45rem);
+    }
+
+    .bullets li {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .bullets li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.72em;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--azure);
+    }
+
+    .bullets.compact {
+      gap: 9px;
+      font-size: clamp(1rem, 1.55vw, 1.25rem);
+    }
+
+    .statement {
+      display: grid;
+      gap: 14px;
+      max-width: 1080px;
+      padding: clamp(22px, 3vw, 34px);
+      border-left: 8px solid var(--azure);
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+    }
+
+    .statement strong {
+      color: var(--azure-dark);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .topic-card,
+    .mini-card,
+    .compare-card,
+    .quiz-card {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.08);
+    }
+
+    .topic-card {
+      padding: clamp(18px, 2.4vw, 30px);
+    }
+
+    .topic-card .label,
+    .mini-card .label,
+    .compare-card .label {
+      display: inline-flex;
+      margin-bottom: 10px;
+      color: var(--azure-dark);
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .topic-card p,
+    .mini-card p,
+    .compare-card p {
+      margin-bottom: 0;
+      color: #435266;
+      font-size: clamp(1rem, 1.55vw, 1.24rem);
+    }
+
+    .mini-card {
+      padding: 18px;
+    }
+
+    .compare-card {
+      padding: clamp(18px, 2vw, 24px);
+    }
+
+    .accent-green {
+      border-top: 6px solid var(--green);
+    }
+
+    .accent-orange {
+      border-top: 6px solid var(--orange);
+    }
+
+    .accent-teal {
+      border-top: 6px solid var(--teal);
+    }
+
+    .accent-magenta {
+      border-top: 6px solid var(--magenta);
+    }
+
+    .diagram {
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .diagram {
+      padding: clamp(20px, 2.8vw, 34px);
+    }
+
+    .diagram-svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      max-height: 58vh;
+      object-fit: contain;
+    }
+
+    .compact-diagram .diagram-svg {
+      max-height: 34vh;
+    }
+
+    .media-stack {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
+      gap: clamp(16px, 2.2vw, 28px);
+      align-items: start;
+    }
+
+    .media-stack .screenshot-frame img {
+      max-height: 34vh;
+    }
+
+    .flow-row,
+    .layer-row,
+    .timeline-row {
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .flow-row.wrap,
+    .timeline-row {
+      flex-wrap: wrap;
+    }
+
+    .node {
+      flex: 1 1 0;
+      min-width: 0;
+      display: grid;
+      place-items: center;
+      min-height: 86px;
+      padding: 14px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+      text-align: center;
+      font-size: clamp(1rem, 1.6vw, 1.3rem);
+      font-weight: 750;
+    }
+
+    .node small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.78em;
+      font-weight: 650;
+    }
+
+    .node.web {
+      border-color: #9ed0f8;
+      background: var(--soft-blue);
+    }
+
+    .node.ap {
+      border-color: #8fd6ca;
+      background: #e9f7f5;
+    }
+
+    .node.db {
+      border-color: #f2c185;
+      background: var(--soft-orange);
+    }
+
+    .node.ref {
+      border-style: dashed;
+      color: #475467;
+      background: #f8fafc;
+    }
+
+    .arrow {
+      align-self: center;
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: clamp(1.4rem, 2.2vw, 2rem);
+      font-weight: 800;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .server-box {
+      padding: 18px;
+      border: 2px solid #98a2b3;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .server-box > h3 {
+      margin-bottom: 14px;
+      font-size: clamp(1.1rem, 1.8vw, 1.55rem);
+    }
+
+    .inside-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .inside-stack .node {
+      min-height: 64px;
+    }
+
+    .roadmap-item {
+      flex: 1 1 180px;
+      min-height: 160px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .roadmap-item .num {
+      color: var(--azure-dark);
+      font-size: clamp(1.45rem, 2.3vw, 2rem);
+      font-weight: 800;
+    }
+
+    .roadmap-item h3 {
+      margin: 8px 0;
+      font-size: clamp(1.05rem, 1.75vw, 1.35rem);
+    }
+
+    .roadmap-item p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: clamp(0.92rem, 1.35vw, 1.08rem);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      font-size: clamp(0.95rem, 1.35vw, 1.14rem);
+    }
+
+    .table th,
+    .table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .table th {
+      color: #1e3a5f;
+      background: var(--soft-blue);
+      font-weight: 800;
+    }
+
+    .table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .screenshot-frame {
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .screenshot-frame img {
+      display: block;
+      width: 100%;
+      max-height: 58vh;
+      object-fit: contain;
+      border-radius: 6px;
+      background: transparent;
+    }
+
+    .screenshot-frame .caption {
+      width: 100%;
+      text-align: center;
+    }
+
+    .caption {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: clamp(0.86rem, 1.2vw, 1rem);
+      font-weight: 650;
+    }
+
+    .scope-line {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .scope-line .node {
+      min-height: 110px;
+    }
+
+    .scope-line .active {
+      border-width: 3px;
+      box-shadow: inset 0 0 0 3px rgba(0, 120, 212, 0.16);
+    }
+
+    .responsibility {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .responsibility .lane {
+      display: grid;
+      gap: 10px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      color: #344054;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: clamp(0.92rem, 1.35vw, 1.05rem);
+      font-weight: 700;
+    }
+
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .quiz-card {
+      display: grid;
+      gap: 12px;
+      padding: clamp(18px, 2.1vw, 24px);
+    }
+
+    .quiz-card .q {
+      color: var(--azure-dark);
+      font-weight: 800;
+    }
+
+    .quiz-card p {
+      margin: 0;
+      font-size: clamp(1rem, 1.55vw, 1.22rem);
+    }
+
+    .answer {
+      color: #2f6b00;
+      font-weight: 800;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: clamp(0.95rem, 1.35vw, 1.12rem);
+    }
+
+    @media (max-width: 980px) {
+      html {
+        scroll-snap-type: none;
+      }
+
+      .slide {
+        min-height: auto;
+        padding: 48px 22px 66px;
+      }
+
+      .layout-2,
+      .layout-2.equal,
+      .layout-3,
+      .card-grid,
+      .quiz-grid,
+      .media-stack,
+      .responsibility {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-row,
+      .layer-row {
+        flex-direction: column;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+
+      .scope-line {
+        grid-template-columns: 1fr;
+      }
+
+      .screenshot-frame img {
+        max-height: none;
+      }
+    }
+
+    @media print {
+      html {
+        scroll-snap-type: none;
+      }
+
+      .slide {
+        min-height: 100vh;
+        page-break-after: always;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide" data-slide="1 / 32" aria-labelledby="slide-1-title">
+      <div class="content">
+        <h1 id="slide-1-title">Web 3層アプリケーション</h1>
+        <p class="lead">この回では、第3回以降の Azure ハンズオンで登場する VM、コンテナ、DB などを「Web 3層のどの役割か」という共通の見方で整理します。</p>
+        <div class="title-meta" aria-label="講座情報">
+          <span class="pill">オンライン座学</span>
+          <span class="pill">50分レクチャー + 10分 QA</span>
+          <span class="pill">2026年6月25日</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="2 / 32" aria-labelledby="slide-2-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-2-title">役割で Web アプリを見る</h2>
+          <p class="lead">今日は個別サービス名を暗記するより、Web/AP/DB の責務、処理の流れ、以降の演習で作る範囲を説明できる状態を目指します。</p>
+        </div>
+        <div class="card-grid" aria-label="今日の到達目標">
+          <article class="topic-card accent-teal">
+            <span class="label">Goal 1</span>
+            <h3>処理の流れ</h3>
+            <p>ブラウザー、Web サーバ、アプリケーション、データベースの連携を追える。</p>
+          </article>
+          <article class="topic-card accent-green">
+            <span class="label">Goal 2</span>
+            <h3>3つの層</h3>
+            <p>Web 層、AP 層、DB 層がそれぞれ何を担当するか説明できる。</p>
+          </article>
+          <article class="topic-card accent-orange">
+            <span class="label">Goal 3</span>
+            <h3>構成の違い</h3>
+            <p>モノリシック構成と Web 3層構成の違いを説明できる。</p>
+          </article>
+          <article class="topic-card accent-magenta">
+            <span class="label">Goal 4</span>
+            <h3>次回への接続</h3>
+            <p>第3回から第6回で作るものを、3層の観点で見通せる。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="3 / 32" aria-labelledby="slide-3-title">
+      <div class="content">
+        <h2 id="slide-3-title">第3回から第6回で作るもの</h2>
+        <p class="lead">これからのハンズオンは、VM 上の NGINX から始め、コンテナ、Container Apps、PostgreSQL を組み合わせる Todo アプリへ段階的に広げます。</p>
+        <figure class="diagram" role="img" aria-label="第2回から第6回までの学習ロードマップ">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d01-learning-roadmap.drawio.svg" alt="第2回から第6回までの学習ロードマップ" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="4 / 32" aria-labelledby="slide-4-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-4-title">なぜ先に Web 3層を学ぶのか</h2>
+          <p class="lead">Azure Portal の操作手順だけを追うとリソース名が点で残るため、先にアーキテクチャの地図を持ち、作成する対象の意味と接続関係を確認します。</p>
+        </div>
+        <figure class="diagram" role="img" aria-label="手順だけを追う状態とアーキテクチャを見ながら操作する状態の比較">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d02-architecture-map.drawio.svg" alt="手順だけを追う状態とアーキテクチャを見ながら操作する状態の比較" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="5 / 32" aria-labelledby="slide-5-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-5-title">Web アプリケーションの基本</h2>
+          <p class="lead">Web アプリケーションは、ブラウザーからの要求を受け取り、サーバー側の処理を経て、HTML や JSON などの結果を返す一連の仕組みです。</p>
+        </div>
+        <figure class="diagram" role="img" aria-label="ブラウザーから Web アプリケーションに要求が送られ、HTML や JSON が返る流れ">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d03-web-app-basic-flow.drawio.svg" alt="ブラウザーから Web アプリケーションに要求が送られ、HTML や JSON が返る流れ" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="6 / 32" aria-labelledby="slide-6-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-6-title">1台ですべて動かす構成</h2>
+          <p class="lead">小規模な構成では Web、アプリケーション、DB を1台に同居させることもあり、まずはこの単純な形から役割の違いを見ていきます。</p>
+        </div>
+        <figure class="diagram" role="img" aria-label="1台のサーバに Web、AP、DB が同居するモノリシック構成">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d04-monolithic-structure.drawio.svg" alt="1台のサーバに Web、AP、DB が同居するモノリシック構成" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="7 / 32" aria-labelledby="slide-7-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-7-title">モノリシック構成の利点と注意点</h2>
+          <p class="lead">1台にまとめた構成は始めやすい一方で、規模が大きくなると拡張、障害対応、変更範囲の分離が難しくなるため、利点と注意点をセットで確認します。</p>
+        </div>
+        <table class="table" aria-label="モノリシック構成の利点と注意点">
+          <thead>
+            <tr>
+              <th>観点</th>
+              <th>利点</th>
+              <th>注意点</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>構築</td>
+              <td>必要なサーバやネットワーク構成が少ない。</td>
+              <td>役割が同居するため、後から責任範囲を分けにくい。</td>
+            </tr>
+            <tr>
+              <td>通信</td>
+              <td>同じサーバ内で処理できるため、経路が単純。</td>
+              <td>障害が起きたとき、影響範囲が Web/AP/DB 全体へ広がりやすい。</td>
+            </tr>
+            <tr>
+              <td>運用</td>
+              <td>見る対象が少なく、初期学習で全体を追いやすい。</td>
+              <td>規模が大きくなると、一部だけを拡張・変更しにくい。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="8 / 32" aria-labelledby="slide-8-title">
+      <div class="content">
+        <h2 id="slide-8-title">Web 3層アーキテクチャ</h2>
+        <p class="lead">Web 3層では、利用者に近い入口、業務処理、データ管理を分け、どの処理をどの層が担当するかを論理的な役割として整理します。</p>
+        <figure class="diagram" role="img" aria-label="利用者から Web 層、AP 層、DB 層へ処理が進む Web 3層アーキテクチャの全体図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d05-web-3tier-overview.drawio.svg" alt="利用者から Web 層、AP 層、DB 層へ処理が進む Web 3層アーキテクチャの全体図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="9 / 32" aria-labelledby="slide-9-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-9-title">Web 3層は必ず3台ではない</h2>
+          <p class="lead">Web 3層はサーバー台数の指定ではなく役割分担の考え方なので、1台同居、複数台分離、マネージドサービス利用のどれでも表現できます。</p>
+        </div>
+        <figure class="diagram" role="img" aria-label="Web 3層の論理構成と物理構成の違い">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d06-logical-vs-physical.drawio.svg" alt="Web 3層の論理構成と物理構成の違い" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="10 / 32" aria-labelledby="slide-10-title">
+      <div class="content">
+        <h2 id="slide-10-title">処理の流れを追う</h2>
+        <p class="lead">ブラウザーからの要求が Web 層で受け付けられ、AP 層で処理され、必要に応じて DB 層を参照して結果が返る流れを順番に追います。</p>
+        <figure class="diagram" role="img" aria-label="Web 3層でリクエストが処理される6つのステップ">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d07-request-sequence.drawio.svg" alt="Web 3層でリクエストが処理される6つのステップ" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="11 / 32" aria-labelledby="slide-11-title">
+      <div class="content">
+        <h2 id="slide-11-title">Web 3層のメリットと注意点</h2>
+        <p class="lead">層を分けると責任範囲や拡張単位を整理しやすくなりますが、その分だけ通信経路、認証、監視対象が増えることも理解します。</p>
+        <div class="layout-2 equal">
+          <article class="compare-card accent-teal">
+            <span class="label">メリット</span>
+            <ul class="bullets compact">
+              <li>層ごとに役割を説明しやすい。</li>
+              <li>Web、AP、DB を別々に拡張しやすい。</li>
+              <li>担当範囲や変更範囲を分けやすい。</li>
+            </ul>
+          </article>
+          <article class="compare-card accent-orange">
+            <span class="label">注意点</span>
+            <ul class="bullets compact">
+              <li>ネットワークや認証の設計が必要になる。</li>
+              <li>監視する対象が増える。</li>
+              <li>障害時に通信経路を追う力が必要になる。</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="12 / 32" aria-labelledby="slide-12-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-12-title">Web 層の役割</h2>
+          <p class="lead">Web 層は利用者から最初にアクセスされる入口であり、静的ファイルの配信、HTTP/HTTPS の受付、AP 層への転送などを担当します。</p>
+          <ul class="bullets">
+            <li>HTTP / HTTPS の要求を受ける。</li>
+            <li>HTML、CSS、画像などの静的ファイルを返す。</li>
+            <li>必要に応じて AP 層へ処理を渡す。</li>
+          </ul>
+        </div>
+        <figure class="diagram" role="img" aria-label="ブラウザー、Web サーバ、静的ファイル、AP 層への転送を示す Web 層の役割図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d08-web-layer-role.drawio.svg" alt="ブラウザー、Web サーバ、静的ファイル、AP 層への転送を示す Web 層の役割図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="13 / 32" aria-labelledby="slide-13-title">
+      <div class="content">
+        <h2 id="slide-13-title">静的コンテンツと動的コンテンツ</h2>
+        <p class="lead">画面や画像のようにそのまま返せる静的コンテンツと、検索結果や Todo 一覧のように処理後に生成される動的コンテンツを区別します。</p>
+        <div class="layout-2 equal">
+          <article class="topic-card accent-green">
+            <span class="label">静的コンテンツ</span>
+            <h3>ファイルをそのまま返す</h3>
+            <p>HTML、CSS、JavaScript、画像など。内容は事前に用意されている。</p>
+          </article>
+          <article class="topic-card accent-teal">
+            <span class="label">動的コンテンツ</span>
+            <h3>処理結果を返す</h3>
+            <p>ログイン結果、注文結果、Todo 一覧、API レスポンスなど。AP 層や DB 層と連携する。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="14 / 32" aria-labelledby="slide-14-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-14-title">Web サーバの代表例</h2>
+          <p class="lead">Web サーバには NGINX、Apache HTTP Server、IIS などがあり、第3回では Azure VM 上に NGINX を配置して入口の役割を体験します。</p>
+        </div>
+        <table class="table" aria-label="代表的な Web サーバと使われ方">
+          <thead>
+            <tr>
+              <th>名前</th>
+              <th>よくある使われ方</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>NGINX</td>
+              <td>静的配信、リバースプロキシ、軽量な Web サーバ。</td>
+            </tr>
+            <tr>
+              <td>Apache HTTP Server</td>
+              <td>幅広い環境で使われる汎用 Web サーバ。</td>
+            </tr>
+            <tr>
+              <td>IIS</td>
+              <td>Windows Server と組み合わせて使われる Web サーバ。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="15 / 32" aria-labelledby="slide-15-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-15-title">第3回で作る Web 層</h2>
+          <p class="lead">第3回では Public IP、NSG、Azure VM、NGINX をつなげ、インターネットから Web 層に到達できる状態を Azure Portal で確認します。</p>
+          <ul class="bullets compact">
+            <li>Public IP から VM にアクセスする。</li>
+            <li>NSG で HTTP 通信を許可する。</li>
+            <li>NGINX の画面が見えれば入口まで到達できている。</li>
+          </ul>
+        </div>
+        <div class="media-stack">
+        <figure class="diagram compact-diagram" role="img" aria-label="第3回で作る Public IP、NSG、Azure VM、NGINX の Web 層構成">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d09-vm-nginx-web-layer.drawio.svg" alt="第3回で作る Public IP、NSG、Azure VM、NGINX の Web 層構成" />
+        </figure>
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L02-SS01-masked.png" alt="Azure Portal の Virtual Machines 一覧画面。リソース名などはマスク済み。" />
+          <figcaption class="caption">第3回の予告用参考画像: Azure VM 一覧</figcaption>
+        </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="16 / 32" aria-labelledby="slide-16-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-16-title">AP 層の役割</h2>
+          <p class="lead">AP 層は利用者の入力や API リクエストを受け取り、入力チェック、業務ルール、DB への問い合わせなどアプリ固有の処理を担当します。</p>
+          <ul class="bullets">
+            <li>API リクエストを受け取る。</li>
+            <li>入力チェックや業務ロジックを実行する。</li>
+            <li>必要なデータを DB 層に問い合わせる。</li>
+          </ul>
+        </div>
+        <figure class="diagram" role="img" aria-label="Web 層から AP 層へ API リクエストが渡り、AP 層が処理して DB 層へ問い合わせる図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d10-ap-layer-role.drawio.svg" alt="Web 層から AP 層へ API リクエストが渡り、AP 層が処理して DB 層へ問い合わせる図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="17 / 32" aria-labelledby="slide-17-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-17-title">AP サーバの代表例</h2>
+          <p class="lead">AP 層の実装は Node.js、Java/Spring、.NET、Python/FastAPI など多様で、ここでは製品比較ではなく役割の違いに注目します。</p>
+        </div>
+        <table class="table" aria-label="AP 層で使われる言語やフレームワークの例">
+          <thead>
+            <tr>
+              <th>例</th>
+              <th>位置づけ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Node.js</td>
+              <td>JavaScript / TypeScript で API を実装する選択肢。</td>
+            </tr>
+            <tr>
+              <td>Java / Spring</td>
+              <td>業務アプリケーションでよく使われる実装基盤。</td>
+            </tr>
+            <tr>
+              <td>.NET</td>
+              <td>Web API や業務処理を構築できる Microsoft 系の基盤。</td>
+            </tr>
+            <tr>
+              <td>Python / FastAPI</td>
+              <td>軽量な API やデータ処理と組み合わせやすい選択肢。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="18 / 32" aria-labelledby="slide-18-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-18-title">Web 層と AP 層の関係</h2>
+          <p class="lead">Web 層と AP 層を分けることで、利用者の入口、静的配信、API 処理、業務ロジックを別々に変更・拡張しやすくなります。</p>
+        </div>
+        <figure class="diagram" role="img" aria-label="静的ファイルは Web 層から返し、動的処理は AP 層へ渡す分担図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d11-web-ap-responsibility.drawio.svg" alt="静的ファイルは Web 層から返し、動的処理は AP 層へ渡す分担図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="19 / 32" aria-labelledby="slide-19-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-19-title">DB 層の役割</h2>
+          <p class="lead">DB 層はアプリケーションのデータを安全に保存し、検索、更新、同時アクセス、トランザクションなどを扱う信頼できるデータ管理場所です。</p>
+          <ul class="bullets">
+            <li>データの保存、検索、更新を担当する。</li>
+            <li>同時アクセスや整合性を扱う。</li>
+            <li>アプリケーションにとって信頼できるデータ管理場所になる。</li>
+          </ul>
+        </div>
+        <figure class="diagram" role="img" aria-label="AP 層が DB 層に読み取りと書き込みを行う図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d12-db-layer-role.drawio.svg" alt="AP 層が DB 層に読み取りと書き込みを行う図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="20 / 32" aria-labelledby="slide-20-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-20-title">DB サーバの代表例</h2>
+          <p class="lead">代表的な RDBMS には PostgreSQL、MySQL、SQL Server、Oracle Database があり、第5回から第6回では PostgreSQL を使います。</p>
+        </div>
+        <table class="table" aria-label="代表的なデータベース製品と Azure サービスへの接続">
+          <thead>
+            <tr>
+              <th>名前</th>
+              <th>補足</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>PostgreSQL</td>
+              <td>第5回から第6回で Azure Database for PostgreSQL として扱う。</td>
+            </tr>
+            <tr>
+              <td>MySQL</td>
+              <td>Web アプリケーションで広く使われる RDBMS。</td>
+            </tr>
+            <tr>
+              <td>SQL Server</td>
+              <td>Azure SQL Database など Microsoft のマネージド DB とつながる。</td>
+            </tr>
+            <tr>
+              <td>Oracle Database</td>
+              <td>大規模な基幹系システムで見かけることが多い。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="21 / 32" aria-labelledby="slide-21-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-21-title">AP 層と DB 層の関係</h2>
+          <p class="lead">AP 層は自分でデータを保持せず、認証情報、接続設定、ネットワーク到達性を使って DB 層に問い合わせ、必要な結果を受け取ります。</p>
+        </div>
+        <figure class="diagram" role="img" aria-label="AP 層が接続設定、認証、ネットワーク到達性を使って DB 層へ接続する図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d13-ap-db-connection.drawio.svg" alt="AP 層が接続設定、認証、ネットワーク到達性を使って DB 層へ接続する図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="22 / 32" aria-labelledby="slide-22-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-22-title">第5回から第6回で作る DB 層</h2>
+          <p class="lead">第5回から第6回では Azure Database for PostgreSQL を使い、Todo アプリのデータ保存を Azure のマネージド DB として扱います。</p>
+          <ul class="bullets compact">
+            <li>DB サーバを自分で構築する代わりに、Azure のマネージド DB を使う。</li>
+            <li>アプリケーションは DB に接続して Todo を保存する。</li>
+          </ul>
+        </div>
+        <div class="media-stack">
+        <figure class="diagram compact-diagram" role="img" aria-label="Todo Web/API が Azure Database for PostgreSQL にデータを保存する構成">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d14-todo-postgresql-preview.drawio.svg" alt="Todo Web/API が Azure Database for PostgreSQL にデータを保存する構成" />
+        </figure>
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L02-SS03-masked.png" alt="Azure Portal の Azure Database for PostgreSQL flexible servers 一覧画面。サーバー名などはマスク済み。" />
+          <figcaption class="caption">第5回から第6回の予告用参考画像: PostgreSQL 一覧</figcaption>
+        </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="23 / 32" aria-labelledby="slide-23-title">
+      <div class="content">
+        <h2 id="slide-23-title">Azure IaaS で構成する Web 3層</h2>
+        <p class="lead">Azure VM を使った IaaS 構成では、Web/AP/DB の各層を分けて配置し、ネットワーク、負荷分散、DB の高可用性を組み合わせます。</p>
+        <figure class="diagram" role="img" aria-label="Azure IaaS で Web 層、AP 層、DB 層を VNet 内に配置するサンプル構成">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d15-azure-iaas-web-3tier.drawio.svg" alt="Azure IaaS で Web 層、AP 層、DB 層を VNet 内に配置するサンプル構成" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="24 / 32" aria-labelledby="slide-24-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-24-title">VM 構成で自分が管理する範囲</h2>
+          <p class="lead">VM を使う構成では自由度が高い一方、OS、ミドルウェア、パッチ、監視、スケールなど利用者が設計・運用する範囲も広がります。</p>
+        </div>
+        <figure class="diagram" role="img" aria-label="Azure が管理する範囲と利用者が管理する範囲の比較">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-slide24-responsibility-boundary.drawio.svg" alt="Azure が管理する範囲と利用者が管理する範囲の比較" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="25 / 32" aria-labelledby="slide-25-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-25-title">第3回のハンズオンとの接続</h2>
+          <p class="lead">第3回では Web 3層すべてを作るのではなく、まず Web 層に相当する NGINX on Azure VM を作り、入口までの通信を体験します。</p>
+        </div>
+        <figure class="diagram" role="img" aria-label="Web 3層のうち第3回で作る Web 層だけを強調するスコープ図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d16-lesson3-scope.drawio.svg" alt="Web 3層のうち第3回で作る Web 層だけを強調するスコープ図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="26 / 32" aria-labelledby="slide-26-title">
+      <div class="content">
+        <h2 id="slide-26-title">Container Apps で構成する Web 3層</h2>
+        <p class="lead">Container Apps を使うと、コンテナ化した Web/API をマネージドな実行環境で動かしつつ、DB には PostgreSQL などのサービスを組み合わせられます。</p>
+        <figure class="diagram" role="img" aria-label="Azure Container Apps Environment に Web Container App と API Container App を置き、ACR と PostgreSQL を組み合わせる構成図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d17-container-apps-web-3tier.drawio.svg" alt="Azure Container Apps Environment に Web Container App と API Container App を置き、ACR と PostgreSQL を組み合わせる構成図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="27 / 32" aria-labelledby="slide-27-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-27-title">第4回から第6回のつながり</h2>
+          <p class="lead">第4回では ACI で単体コンテナを動かし、第5回から第6回では ACA、ACR、PostgreSQL を組み合わせた複数サービス構成に進みます。</p>
+          <ul class="bullets compact">
+            <li>第4回: ACI で NGINX コンテナを動かす。</li>
+            <li>第5回から第6回: ACA、ACR、PostgreSQL で Todo アプリを作る。</li>
+          </ul>
+        </div>
+        <div class="media-stack">
+        <figure class="diagram compact-diagram" role="img" aria-label="第4回の ACI から第5回・第6回の ACA、ACR、PostgreSQL へ進む接続図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d18-lesson4-to-6-connection.drawio.svg" alt="第4回の ACI から第5回・第6回の ACA、ACR、PostgreSQL へ進む接続図" />
+        </figure>
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L02-SS02-masked.png" alt="Azure Portal の Container Apps 一覧画面。リソース名や環境名などはマスク済み。" />
+          <figcaption class="caption">第5回から第6回の予告用参考画像: Container Apps 一覧</figcaption>
+        </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="28 / 32" aria-labelledby="slide-28-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-28-title">SPA という別の見方</h2>
+          <p class="lead">SPA では画面表示の多くをブラウザー側で行い、静的ホスティング、API、データサービスを組み合わせる構成として Web 3層とは別の見方をします。</p>
+        </div>
+        <figure class="diagram" role="img" aria-label="SPA がブラウザー側で画面を構成し、API と DB に接続する図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d19-spa-introduction.drawio.svg" alt="SPA がブラウザー側で画面を構成し、API と DB に接続する図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="29 / 32" aria-labelledby="slide-29-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-29-title">Static Web Apps で扱うこと</h2>
+          <p class="lead">第9回では Azure Static Web Apps を入口に、静的 Web サイト、SPA、Functions/API、データサービスの関係を改めて整理します。</p>
+        </div>
+        <figure class="diagram" role="img" aria-label="Azure Static Web Apps、Functions、DB、イベント系サービスの予告図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-slide29-static-web-apps-preview.drawio.svg" alt="Azure Static Web Apps、Functions、DB、イベント系サービスの予告図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="30 / 32" aria-labelledby="slide-30-title">
+      <div class="content">
+        <h2 id="slide-30-title">RDBMS と NoSQL</h2>
+        <p class="lead">データベースはすべて同じではなく、表形式で整合性を重視する RDBMS と、柔軟なデータ構造や分散を得意とする NoSQL を使い分けます。</p>
+        <table class="table" aria-label="RDBMS と NoSQL の概要比較">
+          <thead>
+            <tr>
+              <th>観点</th>
+              <th>RDBMS</th>
+              <th>NoSQL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>データの形</td>
+              <td>表、行、列を中心に整理する。</td>
+              <td>ドキュメント、キー値、グラフなど多様。</td>
+            </tr>
+            <tr>
+              <td>得意なこと</td>
+              <td>整合性が重要な業務データを扱いやすい。</td>
+              <td>柔軟なデータ構造や大規模分散に向く。</td>
+            </tr>
+            <tr>
+              <td>Azure の例</td>
+              <td>Azure SQL Database、Azure Database for PostgreSQL</td>
+              <td>Azure Cosmos DB</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="31 / 32" aria-labelledby="slide-31-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-31-title">今日のまとめ</h2>
+          <p class="lead">Web 3層は Azure リソースを理解するための地図であり、次回以降はこの地図の一部を実際の Portal 操作で作って確認します。</p>
+        </div>
+        <figure class="diagram" role="img" aria-label="Web 層は入口、AP 層は業務処理、DB 層はデータ管理というまとめ図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-02/l02-d20-summary.drawio.svg" alt="Web 層は入口、AP 層は業務処理、DB 層はデータ管理というまとめ図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="32 / 32" aria-labelledby="slide-32-title">
+      <div class="content">
+        <h2 id="slide-32-title">自分の言葉で説明する</h2>
+        <p class="lead">クイズでは、入口となる層、3台必須ではないこと、Todo を保存する層を確認し、自分の言葉で第3回へつながる説明にします。</p>
+        <div class="quiz-grid">
+          <article class="quiz-card">
+            <span class="q">問1</span>
+            <p>利用者からのリクエストを最初に受ける入口に相当する層はどれですか。</p>
+            <p class="answer">正解: Web 層</p>
+          </article>
+          <article class="quiz-card">
+            <span class="q">問2</span>
+            <p>Web 3層アーキテクチャは、必ず3台のサーバで構成しなければならない。正しいですか。</p>
+            <p class="answer">正解: 正しくない</p>
+          </article>
+          <article class="quiz-card">
+            <span class="q">問3</span>
+            <p>Todo アプリで「Todo を保存する」役割にもっとも近い層はどれですか。</p>
+            <p class="answer">正解: DB 層</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

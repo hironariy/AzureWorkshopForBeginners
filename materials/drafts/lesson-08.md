@@ -590,19 +590,19 @@ Azure Portal の画面例は任意の参考画像として `L08-SSxx` を割り�
 HTML 詳細版やスライドで画面例を添える場合は、次の任意素材を取得します。
 いずれもサブスクリプション ID、テナント ID、ユーザー名、メールアドレス、リソース ID、課金金額、シークレット、接続文字列、顧客名、組織名が写らないようにマスクします。
 
-| スクリーンショットID | 対象画面 | 用途 | 取得時の注意 | マスク対象 |
-| --- | --- | --- | --- | --- |
-| L08-SS01 | Microsoft Entra 管理センターまたは Azure Portal の Entra ID 概要 | Entra ID が ID 管理の入口であることを示す | テナント名やドメインが見えない画角にする | テナント ID、ドメイン、ユーザー名、メールアドレス |
-| L08-SS02 | Azure Portal の Access control (IAM) | RBAC の画面例を示す | 既存ロール割り当ての個人名を写さない | ユーザー名、グループ名、メールアドレス、サブスクリプション ID |
-| L08-SS03 | Azure Policy の Compliance 画面 | Policy の準拠性確認イメージを示す | 実環境の非準拠内容が特定されないようにする | サブスクリプション名、リソース名、組織ルール名 |
-| L08-SS04 | Defender for Cloud の Overview または Recommendations | セキュリティ推奨事項の入口を示す | セキュリティスコアや具体的な脆弱性が公開されないようにする | スコア、リソース名、推奨事項詳細、サブスクリプション ID |
-| L08-SS05 | Cost Management の Cost analysis | コスト分析の入口を示す | 実金額を公開しない。可能ならデモ環境で取得する | 金額、請求情報、サブスクリプション名、タグ値 |
-| L08-SS06 | Key Vault の Secrets 画面 | シークレット管理の入口を示す | Secret 名や値が写らない画角にする | Secret 名、Secret 値、証明書名、リソース ID |
-| L08-SS07 | Storage account Overview | Storage account がデータサービスの入口であることを示す | アクセスキーや接続文字列画面は撮らない | ストレージアカウント名、リソース ID、エンドポイント |
-| L08-SS08 | Backup center または Recovery Services vault | バックアップ管理の入口を示す | 実バックアップ対象や保持ポリシーが特定されないようにする | VM 名、DB 名、Vault 名、リソース ID |
-| L08-SS09 | Azure Advisor の Recommendations | 推奨事項の画面例を示す | 具体的なリスクやコスト削減額が公開されないようにする | リソース名、金額、推奨事項詳細 |
-| L08-SS10 | Azure Service Health | Azure 側の正常性確認の入口を示す | 実利用中のサブスクリプションや地域影響が特定されないようにする | サブスクリプション名、通知名、リソース名 |
-| L08-SS11 | Recovery Services vault の Site Recovery または Replicated items | DR 管理の入口を示す | 実レプリケーション対象やリージョン構成が特定されないようにする | VM 名、Vault 名、リージョン、リソース ID、サブスクリプション ID |
+| スクリーンショットID | 対象画面 | 用途 | 推奨サイズ | 取得時の注意 | マスク対象 |
+| --- | --- | --- | --- | --- | --- |
+| L08-SS01 | Microsoft Entra 管理センターまたは Azure Portal の Entra ID 概要 | Entra ID が ID 管理の入口であることを示す | 1600 x 900 (16:9) | テナント名やドメインが見えない画角にする | テナント ID、ドメイン、ユーザー名、メールアドレス |
+| L08-SS02 | Azure Portal の Access control (IAM) | RBAC の画面例を示す | 1600 x 900 (16:9) | 既存ロール割り当ての個人名を写さない | ユーザー名、グループ名、メールアドレス、サブスクリプション ID |
+| L08-SS03 | Azure Policy の Compliance 画面 | Policy の準拠性確認イメージを示す | 1600 x 900 (16:9) | 実環境の非準拠内容が特定されないようにする | サブスクリプション名、リソース名、組織ルール名 |
+| L08-SS04 | Defender for Cloud の Overview または Recommendations | セキュリティ推奨事項の入口を示す | 1600 x 900 (16:9) | セキュリティスコアや具体的な脆弱性が公開されないようにする | スコア、リソース名、推奨事項詳細、サブスクリプション ID |
+| L08-SS05 | Cost Management の Cost analysis | コスト分析の入口を示す | 1600 x 900 (16:9) | 実金額を公開しない。可能ならデモ環境で取得する | 金額、請求情報、サブスクリプション名、タグ値 |
+| L08-SS06 | Key Vault の Secrets 画面 | シークレット管理の入口を示す | 1600 x 900 (16:9) | Secret 名や値が写らない画角にする | Secret 名、Secret 値、証明書名、リソース ID |
+| L08-SS07 | Storage account Overview | Storage account がデータサービスの入口であることを示す | 1600 x 900 (16:9) | アクセスキーや接続文字列画面は撮らない | ストレージアカウント名、リソース ID、エンドポイント |
+| L08-SS08 | Backup center または Recovery Services vault | バックアップ管理の入口を示す | 1600 x 900 (16:9) | 実バックアップ対象や保持ポリシーが特定されないようにする | VM 名、DB 名、Vault 名、リソース ID |
+| L08-SS09 | Azure Advisor の Recommendations | 推奨事項の画面例を示す | 1600 x 900 (16:9) | 具体的なリスクやコスト削減額が公開されないようにする | リソース名、金額、推奨事項詳細 |
+| L08-SS10 | Azure Service Health | Azure 側の正常性確認の入口を示す | 1600 x 900 (16:9) | 実利用中のサブスクリプションや地域影響が特定されないようにする | サブスクリプション名、通知名、リソース名 |
+| L08-SS11 | Recovery Services vault の Site Recovery または Replicated items | DR 管理の入口を示す | 1600 x 900 (16:9) | 実レプリケーション対象やリージョン構成が特定されないようにする | VM 名、Vault 名、リージョン、リソース ID、サブスクリプション ID |
 
 ## ハンズオン手順案
 

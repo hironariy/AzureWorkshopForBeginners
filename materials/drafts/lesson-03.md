@@ -416,28 +416,28 @@ VM を作るだけでなく、VM を動かすために VNet、サブネット、
 スクリーンショットは、講座用または検証用のサブスクリプションで取得します。
 公開用に利用する可能性があるため、サブスクリプション ID、テナント ID、ユーザー名、メールアドレス、リソース ID、秘密情報、課金情報は写さないか、公開前にマスクします。
 
-| スクリーンショットID | 対象画面 | 用途 | 取得時の注意 | マスク対象 |
-| --- | --- | --- | --- | --- |
-| L03-SS01 | Azure Portal ホームまたはサブスクリプション確認画面 | Portal サインイン後の確認 | 講師が用意したサブスクリプションを選択できることを示す | ユーザー名、メールアドレス、サブスクリプション ID、テナント ID |
-| L03-SS02 | Resource groups > Create | リソースグループ作成 | `rg-azbeg-l03-s01` のようなサンプル名で取得する | サブスクリプション ID、ユーザー名 |
-| L03-SS03 | Resource group Overview | 作成確認 | 場所が Japan East であることを確認できる状態 | リソース ID、サブスクリプション ID |
-| L03-SS04 | Virtual machine 作成開始画面 | VM 作成導入 | Create > Azure virtual machine の導線が分かるようにする | ユーザー名、サブスクリプション ID |
-| L03-SS05 | VM Basics タブ | 基本情報入力 | VM 名、リージョン、Ubuntu、サイズを示す | サブスクリプション ID、実ユーザー名 |
-| L03-SS06 | VM Basics タブの管理者アカウント欄 | 管理者アカウント設定 | SSH キーの秘密鍵内容は写さない | ユーザー名、秘密鍵、メールアドレス |
-| L03-SS07 | VM Basics タブの inbound ports 欄 | HTTP 許可 | HTTP 80 が選択されていることを示す | なし。ユーザー情報があればマスク |
-| L03-SS08 | VM Disks タブ | OS ディスク確認 | 本回では既定値利用でよいことを示す | サブスクリプション ID |
-| L03-SS09 | VM Networking タブ | ネットワーク確認 | VNet、Subnet、Public IP、NSG が作られることを示す | 実リソース ID、サブスクリプション ID |
-| L03-SS10 | VM Advanced タブの Custom data | NGINX 起動時スクリプト設定 | 貼り付けた cloud-init の先頭と意図が分かるようにする | 秘密情報がないことを確認 |
-| L03-SS11 | VM Tags タブ | タグ設定 | Course、Lesson、StudentId などの例を示す | 実ユーザー名、内部情報 |
-| L03-SS12 | Review + create | 作成前確認 | Validation passed と主要設定が見える状態 | サブスクリプション ID、ユーザー名 |
-| L03-SS13 | Deployment succeeded | デプロイ完了確認 | Go to resource へ進める状態 | サブスクリプション ID、リソース ID |
-| L03-SS14 | VM Overview | Public IP 確認 | VM が Running、Public IP が表示されている状態 | Public IP は講座用なら可。公開時は必要に応じてマスク |
-| L03-SS15 | Resource group 内のリソース一覧 | 関連リソース確認 | VM、Disk、NIC、Public IP、NSG、VNet が見える状態 | リソース ID、サブスクリプション ID |
-| L03-SS16 | ブラウザーで NGINX カスタムページ表示 | 動作確認 | `http://<Public IP>` で表示されたページを取得する | Public IP は必要に応じてマスク |
-| L03-SS17 | NSG inbound security rules | HTTP 80 確認 | `Allow`、`TCP`、`80` が分かるようにする | リソース ID、サブスクリプション ID |
-| L03-SS18 | VM > Run command | 復旧用 | 通常手順では使わず、カスタムデータ失敗時の講師向け参考とする | 実行結果にユーザー名や内部情報があればマスク |
-| L03-SS19 | Delete resource group 確認画面 | クリーンアップ | リソースグループ名入力欄と削除確認を示す | サブスクリプション ID、ユーザー名 |
-| L03-SS20 | Resource groups 一覧 | 削除確認 | 対象リソースグループが消えた状態または削除中であることを示す | サブスクリプション ID、ユーザー名 |
+| スクリーンショットID | 対象画面 | 用途 | 推奨サイズ | 取得時の注意 | マスク対象 |
+| --- | --- | --- | --- | --- | --- |
+| L03-SS01 | Azure Portal ホームまたはサブスクリプション確認画面 | Portal サインイン後の確認 | 1600 x 900 (16:9) | 講師が用意したサブスクリプションを選択できることを示す | ユーザー名、メールアドレス、サブスクリプション ID、テナント ID |
+| L03-SS02 | Resource groups > Create | リソースグループ作成 | 1440 x 900 (16:10) | `rg-azbeg-l03-s01` のようなサンプル名で取得する | サブスクリプション ID、ユーザー名 |
+| L03-SS03 | Resource group Overview | 作成確認 | 1600 x 900 (16:9) | 場所が Japan East であることを確認できる状態 | リソース ID、サブスクリプション ID |
+| L03-SS04 | Virtual machine 作成開始画面 | VM 作成導入 | 1600 x 900 (16:9) | Create > Azure virtual machine の導線が分かるようにする | ユーザー名、サブスクリプション ID |
+| L03-SS05 | VM Basics タブ | 基本情報入力 | 1440 x 900 (16:10) | VM 名、リージョン、Ubuntu、サイズを示す | サブスクリプション ID、実ユーザー名 |
+| L03-SS06 | VM Basics タブの管理者アカウント欄 | 管理者アカウント設定 | 1440 x 900 (16:10) | SSH キーの秘密鍵内容は写さない | ユーザー名、秘密鍵、メールアドレス |
+| L03-SS07 | VM Basics タブの inbound ports 欄 | HTTP 許可 | 1440 x 900 (16:10) | HTTP 80 が選択されていることを示す | なし。ユーザー情報があればマスク |
+| L03-SS08 | VM Disks タブ | OS ディスク確認 | 1440 x 900 (16:10) | 本回では既定値利用でよいことを示す | サブスクリプション ID |
+| L03-SS09 | VM Networking タブ | ネットワーク確認 | 1440 x 900 (16:10) | VNet、Subnet、Public IP、NSG が作られることを示す | 実リソース ID、サブスクリプション ID |
+| L03-SS10 | VM Advanced タブの Custom data | NGINX 起動時スクリプト設定 | 1200 x 1600 (3:4) | 貼り付けた cloud-init の先頭と意図が分かるようにする | 秘密情報がないことを確認 |
+| L03-SS11 | VM Tags タブ | タグ設定 | 1440 x 900 (16:10) | Course、Lesson、StudentId などの例を示す | 実ユーザー名、内部情報 |
+| L03-SS12 | Review + create | 作成前確認 | 1200 x 1600 (3:4) | Validation passed と主要設定が見える状態 | サブスクリプション ID、ユーザー名 |
+| L03-SS13 | Deployment succeeded | デプロイ完了確認 | 1600 x 900 (16:9) | Go to resource へ進める状態 | サブスクリプション ID、リソース ID |
+| L03-SS14 | VM Overview | Public IP 確認 | 1600 x 900 (16:9) | VM が Running、Public IP が表示されている状態 | Public IP は講座用なら可。公開時は必要に応じてマスク |
+| L03-SS15 | Resource group 内のリソース一覧 | 関連リソース確認 | 1600 x 900 (16:9) | VM、Disk、NIC、Public IP、NSG、VNet が見える状態 | リソース ID、サブスクリプション ID |
+| L03-SS16 | ブラウザーで NGINX カスタムページ表示 | 動作確認 | 1600 x 900 (16:9) | `http://<Public IP>` で表示されたページを取得する | Public IP は必要に応じてマスク |
+| L03-SS17 | NSG inbound security rules | HTTP 80 確認 | 1600 x 900 (16:9) | `Allow`、`TCP`、`80` が分かるようにする | リソース ID、サブスクリプション ID |
+| L03-SS18 | VM > Run command | 復旧用 | 1440 x 900 (16:10) | 通常手順では使わず、カスタムデータ失敗時の講師向け参考とする | 実行結果にユーザー名や内部情報があればマスク |
+| L03-SS19 | Delete resource group 確認画面 | クリーンアップ | 1440 x 900 (16:10) | リソースグループ名入力欄と削除確認を示す | サブスクリプション ID、ユーザー名 |
+| L03-SS20 | Resource groups 一覧 | 削除確認 | 1600 x 900 (16:9) | 対象リソースグループが消えた状態または削除中であることを示す | サブスクリプション ID、ユーザー名 |
 
 ## ハンズオン手順案
 

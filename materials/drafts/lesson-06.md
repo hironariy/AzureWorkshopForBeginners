@@ -452,41 +452,41 @@
 スクリーンショットは、講座用または検証用のサブスクリプションと GitHub アカウントで取得します。
 公開用に利用する可能性があるため、サブスクリプション ID、テナント ID、ユーザー名、メールアドレス、リソース ID、Service Principal の JSON、client secret、接続文字列、内部 FQDN、課金情報は写さないか、公開前にマスクします。
 
-| スクリーンショットID | 対象画面 | 用途 | 取得時の注意 | マスク対象 |
-| --- | --- | --- | --- | --- |
-| L06-SS01 | PostgreSQL Flexible Server Overview | DB Start 操作 | Start ボタンと Status が分かる状態 | サブスクリプション ID、サーバー名 |
-| L06-SS02 | PostgreSQL Flexible Server Overview | Running 確認 | Status が Running または Ready になった状態 | サブスクリプション ID、サーバー名 |
-| L06-SS03 | GitHub template repository | テンプレート利用 | Use this template の位置が分かる状態 | GitHub ユーザー名 |
-| L06-SS04 | Create repository from template | repo 作成 | Repository name と Public 選択が分かる状態 | GitHub ユーザー名、メール |
-| L06-SS05 | 作成済み GitHub repository | repo 作成確認 | Actions と Settings に移動できる状態 | GitHub ユーザー名、private 情報 |
-| L06-SS06 | Azure Cloud Shell | Cloud Shell 起動 | PowerShell を選択していることを示す | ユーザー名、サブスクリプション ID |
-| L06-SS07 | Cloud Shell `az account show` | サブスクリプション確認 | 出力は ID をマスクする | Subscription ID、Tenant ID、ユーザー名 |
-| L06-SS08 | Cloud Shell SP 作成コマンド | SP 作成手順 | JSON 出力は写さず、コマンド構造だけを示す | clientSecret、clientId、tenantId、subscriptionId |
-| L06-SS09 | GitHub Settings > Secrets and variables > Actions | 設定画面入口 | Secrets タブと Variables タブが分かる状態 | GitHub ユーザー名 |
-| L06-SS10 | New repository secret | `AZURE_CREDENTIALS` 登録 | Secret value は絶対に写さない | Secret value、JSON、clientSecret |
-| L06-SS11 | Repository variables タブ | variables 登録 | 変数一覧が分かる状態。実 ID はマスク | Tenant ID、Client ID、Resource ID、URL |
-| L06-SS12 | New repository variable | 変数追加 | 変数名と値欄の位置を示す。値はダミー化 | 実 ID、内部 URL、FQDN |
-| L06-SS13 | workflow template files | workflow 有効化前 | `.template` ファイルがある状態 | GitHub ユーザー名 |
-| L06-SS14 | Cloud Shell workflow copy | workflow 有効化コマンド | `cp` コマンドの例を示す | GitHub ユーザー名、repo URL |
-| L06-SS15 | Cloud Shell commit/push | workflow push | commit/push の流れを示す | GitHub ユーザー名、メール |
-| L06-SS16 | GitHub Actions タブ | workflow 表示確認 | API/Web workflow が表示された状態 | GitHub ユーザー名 |
-| L06-SS17 | GitHub Actions 実行中 | デプロイ監視 | 実行中の job が分かる状態 | GitHub ユーザー名、内部ログ |
-| L06-SS18 | GitHub Actions 成功 | デプロイ成功 | 緑色チェックや成功状態を示す | GitHub ユーザー名 |
-| L06-SS19 | GitHub Actions 失敗ログ | トラブル例 | エラー詳細に秘密情報がないことを確認 | Secret、ID、内部 URL |
-| L06-SS20 | ACR Repositories | image 確認 | API/Web の repository または tag が分かる状態 | Registry 名、Subscription ID |
-| L06-SS21 | Container Apps Environment | アプリ一覧確認 | API/Web Container App が並ぶ状態 | リソース ID、Subscription ID |
-| L06-SS22 | API Container App revisions | API revision 確認 | image と Status が分かる状態 | 内部 FQDN、リソース ID |
-| L06-SS23 | Web Container App revisions | Web revision 確認 | image と Status が分かる状態 | FQDN、リソース ID |
-| L06-SS24 | Web Container App Overview | Web URL 確認 | Application URL が分かる状態 | FQDN、リソース ID、Subscription ID |
-| L06-SS25 | Entra ID App registration > Authentication | redirect URI 確認 | SPA redirect URI と token 設定が分かる状態 | Tenant ID、Client ID、ユーザー名 |
-| L06-SS26 | GitHub Repository variables | URL variables 確認 | `AZURE_REDIRECT_URI` と `API_PROXY_TARGET` の存在を示す | URL、GitHub ユーザー名 |
-| L06-SS27 | Web アプリログイン画面 | アプリ表示確認 | Login ボタンとアプリ名が分かる状態 | URL、ユーザー情報 |
-| L06-SS28 | Entra ID サインイン画面 | 認証確認 | ユーザー名やメールは写さない | ユーザー名、メール、テナント名 |
-| L06-SS29 | Todo List 画面 | ログイン後確認 | Todo 一覧が表示された状態 | ユーザー名、メール、Todo 内容 |
-| L06-SS30 | Todo 作成後 | 作成確認 | ダミー Todo を追加した状態 | 個人情報、業務情報 |
-| L06-SS31 | Todo 編集/削除後 | 更新・削除確認 | 編集または削除が反映された状態 | 個人情報、業務情報 |
-| L06-SS32 | PostgreSQL Stop / Stopped | コスト抑制 | Stop 操作と Stopped 状態を示す | サブスクリプション ID、サーバー名 |
-| L06-SS33 | Resource group delete | 最終削除 | 講師指示がある場合のみ取得 | Resource ID、Subscription ID、実リソース名 |
+| スクリーンショットID | 対象画面 | 用途 | 推奨サイズ | 取得時の注意 | マスク対象 |
+| --- | --- | --- | --- | --- | --- |
+| L06-SS01 | PostgreSQL Flexible Server Overview | DB Start 操作 | 1600 x 900 (16:9) | Start ボタンと Status が分かる状態 | サブスクリプション ID、サーバー名 |
+| L06-SS02 | PostgreSQL Flexible Server Overview | Running 確認 | 1600 x 900 (16:9) | Status が Running または Ready になった状態 | サブスクリプション ID、サーバー名 |
+| L06-SS03 | GitHub template repository | テンプレート利用 | 1600 x 900 (16:9) | Use this template の位置が分かる状態 | GitHub ユーザー名 |
+| L06-SS04 | Create repository from template | repo 作成 | 1440 x 900 (16:10) | Repository name と Public 選択が分かる状態 | GitHub ユーザー名、メール |
+| L06-SS05 | 作成済み GitHub repository | repo 作成確認 | 1600 x 900 (16:9) | Actions と Settings に移動できる状態 | GitHub ユーザー名、private 情報 |
+| L06-SS06 | Azure Cloud Shell | Cloud Shell 起動 | 1600 x 900 (16:9) | PowerShell を選択していることを示す | ユーザー名、サブスクリプション ID |
+| L06-SS07 | Cloud Shell `az account show` | サブスクリプション確認 | 1600 x 900 (16:9) | 出力は ID をマスクする | Subscription ID、Tenant ID、ユーザー名 |
+| L06-SS08 | Cloud Shell SP 作成コマンド | SP 作成手順 | 1600 x 900 (16:9) | JSON 出力は写さず、コマンド構造だけを示す | clientSecret、clientId、tenantId、subscriptionId |
+| L06-SS09 | GitHub Settings > Secrets and variables > Actions | 設定画面入口 | 1600 x 900 (16:9) | Secrets タブと Variables タブが分かる状態 | GitHub ユーザー名 |
+| L06-SS10 | New repository secret | `AZURE_CREDENTIALS` 登録 | 1440 x 900 (16:10) | Secret value は絶対に写さない | Secret value、JSON、clientSecret |
+| L06-SS11 | Repository variables タブ | variables 登録 | 1200 x 1600 (3:4) | 変数一覧が分かる状態。実 ID はマスク | Tenant ID、Client ID、Resource ID、URL |
+| L06-SS12 | New repository variable | 変数追加 | 1440 x 900 (16:10) | 変数名と値欄の位置を示す。値はダミー化 | 実 ID、内部 URL、FQDN |
+| L06-SS13 | workflow template files | workflow 有効化前 | 1600 x 900 (16:9) | `.template` ファイルがある状態 | GitHub ユーザー名 |
+| L06-SS14 | Cloud Shell workflow copy | workflow 有効化コマンド | 1600 x 900 (16:9) | `cp` コマンドの例を示す | GitHub ユーザー名、repo URL |
+| L06-SS15 | Cloud Shell commit/push | workflow push | 1600 x 900 (16:9) | commit/push の流れを示す | GitHub ユーザー名、メール |
+| L06-SS16 | GitHub Actions タブ | workflow 表示確認 | 1600 x 900 (16:9) | API/Web workflow が表示された状態 | GitHub ユーザー名 |
+| L06-SS17 | GitHub Actions 実行中 | デプロイ監視 | 1600 x 900 (16:9) | 実行中の job が分かる状態 | GitHub ユーザー名、内部ログ |
+| L06-SS18 | GitHub Actions 成功 | デプロイ成功 | 1600 x 900 (16:9) | 緑色チェックや成功状態を示す | GitHub ユーザー名 |
+| L06-SS19 | GitHub Actions 失敗ログ | トラブル例 | 1200 x 1600 (3:4) | エラー詳細に秘密情報がないことを確認 | Secret、ID、内部 URL |
+| L06-SS20 | ACR Repositories | image 確認 | 1600 x 900 (16:9) | API/Web の repository または tag が分かる状態 | Registry 名、Subscription ID |
+| L06-SS21 | Container Apps Environment | アプリ一覧確認 | 1600 x 900 (16:9) | API/Web Container App が並ぶ状態 | リソース ID、Subscription ID |
+| L06-SS22 | API Container App revisions | API revision 確認 | 1600 x 900 (16:9) | image と Status が分かる状態 | 内部 FQDN、リソース ID |
+| L06-SS23 | Web Container App revisions | Web revision 確認 | 1600 x 900 (16:9) | image と Status が分かる状態 | FQDN、リソース ID |
+| L06-SS24 | Web Container App Overview | Web URL 確認 | 1600 x 900 (16:9) | Application URL が分かる状態 | FQDN、リソース ID、Subscription ID |
+| L06-SS25 | Entra ID App registration > Authentication | redirect URI 確認 | 1200 x 1600 (3:4) | SPA redirect URI と token 設定が分かる状態 | Tenant ID、Client ID、ユーザー名 |
+| L06-SS26 | GitHub Repository variables | URL variables 確認 | 1200 x 1600 (3:4) | `AZURE_REDIRECT_URI` と `API_PROXY_TARGET` の存在を示す | URL、GitHub ユーザー名 |
+| L06-SS27 | Web アプリログイン画面 | アプリ表示確認 | 1600 x 900 (16:9) | Login ボタンとアプリ名が分かる状態 | URL、ユーザー情報 |
+| L06-SS28 | Entra ID サインイン画面 | 認証確認 | 1440 x 900 (16:10) | ユーザー名やメールは写さない | ユーザー名、メール、テナント名 |
+| L06-SS29 | Todo List 画面 | ログイン後確認 | 1600 x 900 (16:9) | Todo 一覧が表示された状態 | ユーザー名、メール、Todo 内容 |
+| L06-SS30 | Todo 作成後 | 作成確認 | 1600 x 900 (16:9) | ダミー Todo を追加した状態 | 個人情報、業務情報 |
+| L06-SS31 | Todo 編集/削除後 | 更新・削除確認 | 1600 x 900 (16:9) | 編集または削除が反映された状態 | 個人情報、業務情報 |
+| L06-SS32 | PostgreSQL Stop / Stopped | コスト抑制 | 1440 x 900 (16:10) | Stop 操作と Stopped 状態を示す | サブスクリプション ID、サーバー名 |
+| L06-SS33 | Resource group delete | 最終削除 | 1440 x 900 (16:10) | 講師指示がある場合のみ取得 | Resource ID、Subscription ID、実リソース名 |
 
 ## ハンズオン手順案
 

@@ -1,0 +1,29 @@
+<mxfile host="app.diagrams.net" agent="GitHub Copilot" version="24.7.17">
+  <diagram id="l02-d02-architecture-map" name="手順の点を構成の地図に変える">
+    <mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="cell-2" value="手順の点を、役割とつながりの地図に変える" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=28;fontStyle=1;fontColor=#005A9E" vertex="1" parent="1"><mxGeometry x="60" y="42" width="1160" height="48" as="geometry"/></mxCell>
+        <mxCell id="cell-3" value="手順だけを追う" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=12;fillColor=#FFF8F2;strokeColor=#CA5010;strokeWidth=2;dashed=0;fontStyle=1;fontSize=18;fontColor=#005A9E" vertex="1" parent="1"><mxGeometry x="70" y="130" width="510" height="410" as="geometry"/></mxCell>
+        <mxCell id="cell-4" value="手順 1
+作成する" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D6DDE8;strokeWidth=2;dashed=0;fontSize=18;fontStyle=1;fontColor=#1F2937" vertex="1" parent="1"><mxGeometry x="140" y="215" width="150" height="78" as="geometry"/></mxCell>
+        <mxCell id="cell-5" value="手順 2
+設定する" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D6DDE8;strokeWidth=2;dashed=0;fontSize=18;fontStyle=1;fontColor=#1F2937" vertex="1" parent="1"><mxGeometry x="320" y="215" width="150" height="78" as="geometry"/></mxCell>
+        <mxCell id="cell-6" value="手順 3
+確認する" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D6DDE8;strokeWidth=2;dashed=0;fontSize=18;fontStyle=1;fontColor=#1F2937" vertex="1" parent="1"><mxGeometry x="230" y="330" width="150" height="78" as="geometry"/></mxCell>
+        <mxCell id="cell-7" value="関係が見えず、名前だけが残りやすい" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4E5;strokeColor=#D6DDE8;strokeWidth=2;fontSize=16;fontStyle=1;fontColor=#CA5010" vertex="1" parent="1"><mxGeometry x="160" y="455" width="330" height="50" as="geometry"/></mxCell>
+        <mxCell id="cell-8" value="構成を見ながら操作する" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;spacingTop=12;fillColor=#F7FCFF;strokeColor=#0078D4;strokeWidth=2;dashed=0;fontStyle=1;fontSize=18;fontColor=#005A9E" vertex="1" parent="1"><mxGeometry x="700" y="130" width="510" height="410" as="geometry"/></mxCell>
+        <mxCell id="cell-9" value="Web
+入口" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F3FF;strokeColor=#D6DDE8;strokeWidth=2;dashed=0;fontSize=18;fontStyle=1;fontColor=#1F2937" vertex="1" parent="1"><mxGeometry x="755" y="225" width="130" height="90" as="geometry"/></mxCell>
+        <mxCell id="cell-10" value="AP
+処理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7F5;strokeColor=#D6DDE8;strokeWidth=2;dashed=0;fontSize=18;fontStyle=1;fontColor=#1F2937" vertex="1" parent="1"><mxGeometry x="925" y="225" width="130" height="90" as="geometry"/></mxCell>
+        <mxCell id="cell-11" value="DB
+保存" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF0FB;strokeColor=#D6DDE8;strokeWidth=2;dashed=0;fontSize=18;fontStyle=1;fontColor=#1F2937" vertex="1" parent="1"><mxGeometry x="1095" y="225" width="130" height="90" as="geometry"/></mxCell>
+        <mxCell id="cell-12" value="役割と接続関係で意味を確認できる" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F3FF;strokeColor=#D6DDE8;strokeWidth=2;fontSize=16;fontStyle=1;fontColor=#005A9E" vertex="1" parent="1"><mxGeometry x="815" y="455" width="300" height="50" as="geometry"/></mxCell>
+        <mxCell id="cell-13" value="渡す" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#0078D4;strokeWidth=3;dashed=0;fontSize=14;fontStyle=1;fontColor=#0078D4" edge="1" parent="1" source="cell-9" target="cell-10"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="cell-14" value="読む/書く" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#0078D4;strokeWidth=3;dashed=0;fontSize=14;fontStyle=1;fontColor=#0078D4" edge="1" parent="1" source="cell-10" target="cell-11"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

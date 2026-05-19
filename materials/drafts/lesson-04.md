@@ -520,28 +520,28 @@ ACI は、コンテナをすばやく単体実行するためのシンプルな�
 スクリーンショットは、講座用または検証用のサブスクリプションで取得します。
 公開用に利用する可能性があるため、サブスクリプション ID、テナント ID、ユーザー名、メールアドレス、リソース ID、秘密情報、ACR の認証情報、課金情報は写さないか、公開前にマスクします。
 
-| スクリーンショットID | 対象画面 | 用途 | 取得時の注意 | マスク対象 |
-| --- | --- | --- | --- | --- |
-| L04-SS01 | Azure Portal ホームまたはサブスクリプション確認画面 | Portal サインイン後の確認 | 講師が用意したサブスクリプションを選択できることを示す | ユーザー名、メールアドレス、サブスクリプション ID、テナント ID |
-| L04-SS02 | Resource groups > Create | リソースグループ作成 | `rg-azbeg-l04-s01` のようなサンプル名で取得する | サブスクリプション ID、ユーザー名 |
-| L04-SS03 | Resource group Overview | 作成確認 | 場所が Japan East であることを確認できる状態 | リソース ID、サブスクリプション ID |
-| L04-SS04 | Container Instances 作成開始画面 | ACI 作成導入 | Portal の検索または Create から Container Instances に進む導線を示す | ユーザー名、サブスクリプション ID |
-| L04-SS05 | ACI Basics タブ | 基本情報入力 | コンテナグループ名、リージョン、OS が分かるようにする | サブスクリプション ID、実ユーザー名 |
-| L04-SS06 | Image source/Container image 設定 | イメージ指定 | 共有 ACR のログインサーバー名、イメージ名、タグが分かる状態。認証情報は写さない | ACR 認証情報、パスワード、実環境の非公開レジストリ名 |
-| L04-SS07 | Size または Resources 設定 | CPU/メモリ確認 | 講師指定の小さな値を示す | サブスクリプション ID |
-| L04-SS08 | Networking 設定 | Public と HTTP 80 の設定 | Public、TCP、80 が分かるようにする | なし。ユーザー情報があればマスク |
-| L04-SS09 | DNS name label 入力箇所 | FQDN 設定 | 一意な DNS ラベル例を示す | 実環境で公開したくない FQDN |
-| L04-SS10 | Tags タブ | タグ設定 | Course、Lesson、StudentId などの例を示す | 実ユーザー名、内部情報 |
-| L04-SS11 | Review + create | 作成前確認 | Validation passed と主要設定が見える状態 | サブスクリプション ID、ユーザー名、ACR 認証情報 |
-| L04-SS12 | Deployment succeeded | デプロイ完了確認 | Go to resource へ進める状態 | サブスクリプション ID、リソース ID |
-| L04-SS13 | ACI Overview | Running 状態と FQDN/IP 確認 | Status が Running、FQDN または IP が表示されている状態 | FQDN/IP は必要に応じてマスク |
-| L04-SS14 | ブラウザーで NGINX ページ表示 | 動作確認 | `http://<FQDN>` で表示されたページを取得する | FQDN/IP は必要に応じてマスク |
-| L04-SS15 | ACI Logs または Events | トラブル確認 | Image pull、Container started、ログ出力が分かる状態 | 実リソース名、内部エラー詳細、ユーザー名 |
-| L04-SS16 | Resource group 内のリソース一覧 | VM との違い確認 | ACI リソースが見える状態。共有 ACR が別リソースグループであることを混同しない | リソース ID、サブスクリプション ID |
-| L04-SS17 | Delete resource group 確認画面 | クリーンアップ | リソースグループ名入力欄と削除確認を示す | サブスクリプション ID、ユーザー名 |
-| L04-SS18 | Resource groups 一覧 | 削除確認 | 対象リソースグループが消えた状態または削除中であることを示す | サブスクリプション ID、ユーザー名 |
-| L04-SS19 | 共有 ACR の Repositories または Overview | 講師向け参考 | 受講者向けには原則表示しない。ログインサーバー名やリポジトリ確認用 | ACR 認証情報、実環境名、サブスクリプション ID |
-| L04-SS20 | ACI デプロイ失敗時のエラー詳細 | 講師向け参考 | エラー確認の例として取得する。公開版では内容を慎重に確認する | リソース ID、サブスクリプション ID、ACR 認証情報、内部情報 |
+| スクリーンショットID | 対象画面 | 用途 | 推奨サイズ | 取得時の注意 | マスク対象 |
+| --- | --- | --- | --- | --- | --- |
+| L04-SS01 | Azure Portal ホームまたはサブスクリプション確認画面 | Portal サインイン後の確認 | 1600 x 900 (16:9) | 講師が用意したサブスクリプションを選択できることを示す | ユーザー名、メールアドレス、サブスクリプション ID、テナント ID |
+| L04-SS02 | Resource groups > Create | リソースグループ作成 | 1440 x 900 (16:10) | `rg-azbeg-l04-s01` のようなサンプル名で取得する | サブスクリプション ID、ユーザー名 |
+| L04-SS03 | Resource group Overview | 作成確認 | 1600 x 900 (16:9) | 場所が Japan East であることを確認できる状態 | リソース ID、サブスクリプション ID |
+| L04-SS04 | Container Instances 作成開始画面 | ACI 作成導入 | 1600 x 900 (16:9) | Portal の検索または Create から Container Instances に進む導線を示す | ユーザー名、サブスクリプション ID |
+| L04-SS05 | ACI Basics タブ | 基本情報入力 | 1440 x 900 (16:10) | コンテナグループ名、リージョン、OS が分かるようにする | サブスクリプション ID、実ユーザー名 |
+| L04-SS06 | Image source/Container image 設定 | イメージ指定 | 1440 x 900 (16:10) | 共有 ACR のログインサーバー名、イメージ名、タグが分かる状態。認証情報は写さない | ACR 認証情報、パスワード、実環境の非公開レジストリ名 |
+| L04-SS07 | Size または Resources 設定 | CPU/メモリ確認 | 1440 x 900 (16:10) | 講師指定の小さな値を示す | サブスクリプション ID |
+| L04-SS08 | Networking 設定 | Public と HTTP 80 の設定 | 1440 x 900 (16:10) | Public、TCP、80 が分かるようにする | なし。ユーザー情報があればマスク |
+| L04-SS09 | DNS name label 入力箇所 | FQDN 設定 | 1440 x 900 (16:10) | 一意な DNS ラベル例を示す | 実環境で公開したくない FQDN |
+| L04-SS10 | Tags タブ | タグ設定 | 1440 x 900 (16:10) | Course、Lesson、StudentId などの例を示す | 実ユーザー名、内部情報 |
+| L04-SS11 | Review + create | 作成前確認 | 1200 x 1600 (3:4) | Validation passed と主要設定が見える状態 | サブスクリプション ID、ユーザー名、ACR 認証情報 |
+| L04-SS12 | Deployment succeeded | デプロイ完了確認 | 1600 x 900 (16:9) | Go to resource へ進める状態 | サブスクリプション ID、リソース ID |
+| L04-SS13 | ACI Overview | Running 状態と FQDN/IP 確認 | 1600 x 900 (16:9) | Status が Running、FQDN または IP が表示されている状態 | FQDN/IP は必要に応じてマスク |
+| L04-SS14 | ブラウザーで NGINX ページ表示 | 動作確認 | 1600 x 900 (16:9) | `http://<FQDN>` で表示されたページを取得する | FQDN/IP は必要に応じてマスク |
+| L04-SS15 | ACI Logs または Events | トラブル確認 | 1600 x 900 (16:9) | Image pull、Container started、ログ出力が分かる状態 | 実リソース名、内部エラー詳細、ユーザー名 |
+| L04-SS16 | Resource group 内のリソース一覧 | VM との違い確認 | 1600 x 900 (16:9) | ACI リソースが見える状態。共有 ACR が別リソースグループであることを混同しない | リソース ID、サブスクリプション ID |
+| L04-SS17 | Delete resource group 確認画面 | クリーンアップ | 1440 x 900 (16:10) | リソースグループ名入力欄と削除確認を示す | サブスクリプション ID、ユーザー名 |
+| L04-SS18 | Resource groups 一覧 | 削除確認 | 1600 x 900 (16:9) | 対象リソースグループが消えた状態または削除中であることを示す | サブスクリプション ID、ユーザー名 |
+| L04-SS19 | 共有 ACR の Repositories または Overview | 講師向け参考 | 1600 x 900 (16:9) | 受講者向けには原則表示しない。ログインサーバー名やリポジトリ確認用 | ACR 認証情報、実環境名、サブスクリプション ID |
+| L04-SS20 | ACI デプロイ失敗時のエラー詳細 | 講師向け参考 | 1200 x 1600 (3:4) | エラー確認の例として取得する。公開版では内容を慎重に確認する | リソース ID、サブスクリプション ID、ACR 認証情報、内部情報 |
 
 ## ハンズオン手順案
 

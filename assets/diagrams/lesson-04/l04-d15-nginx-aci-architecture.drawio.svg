@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" role="img" data-mxgraph="editable">
+  <title>NGINX on ACI の完成アーキテクチャ</title>
+  <desc>受講者リソースグループ内にAzure Container Instancesを作成し、講師共有Azure Container RegistryからNGINXイメージを取得してブラウザーへHTTP公開する完成構成を示す。</desc>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#0078D4"/></marker>
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#008575"/></marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#1F2937" flood-opacity="0.12"/></filter>
+  </defs>
+  <rect width="1280" height="720" fill="#FFFFFF"/>
+  <text x="640" y="72" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="30" font-weight="850" fill="#005A9E">受講者が作る範囲と講師が用意する範囲を分けて見る</text>
+  <g font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif">
+    <rect x="368" y="138" width="475" height="372" rx="22" fill="#F7FCFF" stroke="#B7D9F5" stroke-width="2"/>
+    <text x="606" y="180" text-anchor="middle" font-size="22" font-weight="850" fill="#005A9E">受講者リソースグループ</text>
+    <rect x="468" y="270" width="270" height="160" rx="8" fill="#E9F7F5" stroke="#008575" stroke-width="2" filter="url(#shadow)"/>
+    <text x="603" y="320" text-anchor="middle" font-size="24" font-weight="850" fill="#1F2937">ACI</text>
+    <text x="603" y="356" text-anchor="middle" font-size="20" font-weight="800" fill="#008575">NGINX コンテナ</text>
+    <text x="603" y="386" text-anchor="middle" font-size="16" font-weight="650" fill="#5F6B7A">Public / TCP 80 / FQDN</text>
+    <rect x="918" y="270" width="245" height="160" rx="8" fill="#E8F3FF" stroke="#0078D4" stroke-width="2" filter="url(#shadow)"/>
+    <text x="1041" y="319" text-anchor="middle" font-size="23" font-weight="850" fill="#1F2937">講師共有 ACR</text>
+    <text x="1041" y="356" text-anchor="middle" font-size="19" font-weight="800" fill="#0078D4">NGINX イメージ</text>
+    <text x="1041" y="386" text-anchor="middle" font-size="16" font-weight="650" fill="#5F6B7A">削除対象外</text>
+    <rect x="95" y="292" width="200" height="116" rx="8" fill="#F6F8FB" stroke="#D6DDE8" stroke-width="2" filter="url(#shadow)"/>
+    <text x="195" y="337" text-anchor="middle" font-size="23" font-weight="850" fill="#1F2937">ブラウザー</text>
+    <text x="195" y="370" text-anchor="middle" font-size="17" font-weight="650" fill="#5F6B7A">表示確認</text>
+    <line x1="295" y1="350" x2="468" y2="350" stroke="#0078D4" stroke-width="5" marker-end="url(#arrow-blue)"/>
+    <line x1="918" y1="350" x2="738" y2="350" stroke="#008575" stroke-width="5" marker-end="url(#arrow-teal)"/>
+    <rect x="318" y="315" width="128" height="36" rx="18" fill="#FFFFFF" stroke="#B7D9F5"/>
+    <text x="382" y="340" text-anchor="middle" font-size="16" font-weight="850" fill="#0078D4">HTTP 80</text>
+    <rect x="770" y="315" width="120" height="36" rx="18" fill="#FFFFFF" stroke="#8FD6CA"/>
+    <text x="830" y="340" text-anchor="middle" font-size="16" font-weight="850" fill="#008575">image pull</text>
+    <rect x="255" y="570" width="770" height="58" rx="22" fill="#F6F8FB" stroke="#D6DDE8" stroke-width="2"/>
+    <text x="640" y="606" text-anchor="middle" font-size="21" font-weight="800" fill="#1F2937">削除対象は受講者リソースグループ。共有 ACR は講師管理のため削除しない。</text>
+  </g>
+</svg>

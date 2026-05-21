@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" role="img" data-mxgraph="editable">
+  <title>表示されないときの確認順</title>
+  <desc>NGINX画面が表示されない場合に、VM状態、Public IP、HTTP指定、NSG、起動時スクリプトの順で確認する流れを示す。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#0078D4"/></marker></defs>
+  <rect width="1280" height="720" fill="#FFFFFF"/>
+  <text x="640" y="70" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="30" font-weight="850" fill="#005A9E">表示されないときは、外から内へ順番に見る</text>
+  <g font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif">
+    <rect x="80" y="178" width="230" height="118" rx="8" fill="#E8F3FF" stroke="#0078D4" stroke-width="2"/>
+    <text x="110" y="224" font-size="22" font-weight="850" fill="#005A9E">1. VM</text><text x="110" y="258" font-size="18" font-weight="700" fill="#1F2937">Running か</text>
+    <rect x="382" y="178" width="230" height="118" rx="8" fill="#F6F8FB" stroke="#D6DDE8" stroke-width="2"/>
+    <text x="412" y="224" font-size="22" font-weight="850" fill="#005A9E">2. 宛先</text><text x="412" y="258" font-size="18" font-weight="700" fill="#1F2937">Public IP か</text>
+    <rect x="684" y="178" width="230" height="118" rx="8" fill="#E9F7F5" stroke="#008575" stroke-width="2"/>
+    <text x="714" y="224" font-size="22" font-weight="850" fill="#005A9E">3. アクセス</text><text x="714" y="258" font-size="18" font-weight="700" fill="#1F2937">HTTP で開いたか</text>
+    <rect x="986" y="178" width="230" height="118" rx="8" fill="#FFF4E5" stroke="#CA5010" stroke-width="2"/>
+    <text x="1016" y="224" font-size="22" font-weight="850" fill="#005A9E">4. NSG</text><text x="1016" y="258" font-size="18" font-weight="700" fill="#1F2937">HTTP 80 許可か</text>
+    <line x1="310" y1="237" x2="382" y2="237" stroke="#0078D4" stroke-width="4" marker-end="url(#arrow)"/>
+    <line x1="612" y1="237" x2="684" y2="237" stroke="#0078D4" stroke-width="4" marker-end="url(#arrow)"/>
+    <line x1="914" y1="237" x2="986" y2="237" stroke="#0078D4" stroke-width="4" marker-end="url(#arrow)"/>
+    <rect x="250" y="410" width="360" height="108" rx="8" fill="#FDF0FB" stroke="#C239B3" stroke-width="2"/>
+    <text x="280" y="456" font-size="22" font-weight="850" fill="#005A9E">5. NGINX / cloud-init</text><text x="280" y="490" font-size="18" font-weight="700" fill="#1F2937">起動時スクリプトが成功したか</text>
+    <rect x="700" y="410" width="330" height="108" rx="8" fill="#F6F8FB" stroke="#D6DDE8" stroke-width="2"/>
+    <text x="730" y="456" font-size="22" font-weight="850" fill="#005A9E">6. 講師デモへ切替</text><text x="730" y="490" font-size="18" font-weight="700" fill="#1F2937">構成理解に戻る</text>
+    <line x1="610" y1="464" x2="700" y2="464" stroke="#0078D4" stroke-width="4" marker-end="url(#arrow)"/>
+  </g>
+</svg>

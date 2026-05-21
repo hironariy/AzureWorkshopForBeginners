@@ -1,0 +1,16 @@
+<mxfile host="app.diagrams.net" agent="GitHub Copilot" version="24.7.17">
+  <diagram id="l03-d05-vm-resource-map" name="Azure VM と周辺リソースの関係">
+    <mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="vm" value="Azure VM" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/compute/Virtual_Machine.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="535" y="275" width="210" height="130" as="geometry"/></mxCell>
+        <mxCell id="disk" value="Managed Disk" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/compute/Disks.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="120" y="280" width="180" height="110" as="geometry"/></mxCell>
+        <mxCell id="nic" value="NIC" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/networking/Network_Interfaces.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="890" y="280" width="170" height="110" as="geometry"/></mxCell>
+        <mxCell id="vnet" value="Virtual Network / Subnet" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/networking/Virtual_Networks.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="825" y="470" width="260" height="110" as="geometry"/></mxCell>
+        <mxCell id="pip" value="Public IP" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/networking/Public_IP_Addresses.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="825" y="110" width="180" height="100" as="geometry"/></mxCell>
+        <mxCell id="nsg" value="Network Security Group" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/networking/Network_Security_Groups.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="1050" y="280" width="190" height="110" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

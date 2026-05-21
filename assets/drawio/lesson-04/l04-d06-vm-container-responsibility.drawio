@@ -1,0 +1,12 @@
+<mxfile host="app.diagrams.net" agent="GitHub Copilot" version="24.7.17">
+  <diagram id="l04-d06-vm-container-responsibility" name="VM とコンテナの責任分界">
+    <mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="vm" value="Azure Virtual Machine" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/compute/Virtual_Machine.svg;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="235" y="140" width="230" height="120" as="geometry"/></mxCell>
+        <mxCell id="aci" value="Azure Container Instances" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Instances.svg;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="805" y="140" width="230" height="120" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

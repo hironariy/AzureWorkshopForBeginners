@@ -1,0 +1,17 @@
+<mxfile host="app.diagrams.net" agent="GitHub Copilot" version="24.7.17">
+  <diagram id="l03-d01-goal-architecture" name="今日のゴールと完成状態">
+    <mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="browser" value="受講者のブラウザー" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F6F8FB;strokeColor=#D6DDE8;fontSize=18;fontStyle=1" vertex="1" parent="1"><mxGeometry x="70" y="275" width="190" height="120" as="geometry"/></mxCell>
+        <mxCell id="publicip" value="Public IP" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/networking/Public_IP_Addresses.svg;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="375" y="265" width="160" height="110" as="geometry"/></mxCell>
+        <mxCell id="nsg" value="NSG\nHTTP 80 を許可" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/networking/Network_Security_Groups.svg;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="610" y="265" width="170" height="110" as="geometry"/></mxCell>
+        <mxCell id="vm" value="Azure VM\nNGINX" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/compute/Virtual_Machine.svg;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="860" y="250" width="210" height="130" as="geometry"/></mxCell>
+        <mxCell id="edge1" value="HTTP" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#0078D4;strokeWidth=3;fontSize=14;fontStyle=1;fontColor=#0078D4" edge="1" parent="1" source="browser" target="publicip"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="edge2" value="許可された通信" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#0078D4;strokeWidth=3;fontSize=14;fontStyle=1;fontColor=#0078D4" edge="1" parent="1" source="publicip" target="nsg"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="edge3" value="NGINX へ到達" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#0078D4;strokeWidth=3;fontSize=14;fontStyle=1;fontColor=#0078D4" edge="1" parent="1" source="nsg" target="vm"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

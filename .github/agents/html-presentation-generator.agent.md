@@ -46,6 +46,8 @@ Required deck structure:
 - The title slide uses `<h1 id="slide-1-title">`; ordinary slides use `<h2 id="slide-N-title">`.
 - Every slide has a learner-facing title, a `p.lead` immediately under the title, and content below the lead.
 - Slide titles span the top of the slide; lead text sits below; diagrams, screenshots, tables, cards, or quiz content sit below the lead.
+- This title/lead/content order is mandatory for every slide: do not put the title or lead in a side column, do not place screenshots or diagrams before the title, and do not make the title/lead share a row with slide content.
+- The immediate children of the top-level `.content` container should read as full-width vertical blocks. Multi-column layouts are allowed only inside the content area below the lead, such as nested card grids, comparison pairs, tables, or media groups.
 - Do not use visible `eyebrow` labels, diagram IDs, production IDs, or asset IDs in the final learner-facing slide body.
 - The right-bottom slide number may be generated from `data-slide` with CSS.
 
@@ -55,6 +57,7 @@ Visual and CSS standards:
 - Use the Lesson 02 color system: Azure blue, teal, green, orange, magenta, neutral ink, muted text, soft backgrounds, and restrained shadows.
 - Use `clamp()` for responsive typography and spacing.
 - Use title/lead/content flow rather than splitting the title and lead into a side column.
+- When `.layout-2`, `.media-stack`, or `.media-stack.reverse` is applied directly to `.content`, override it to a single top-level column so the title, lead, and following content all span the slide width. Keep side-by-side presentation only in nested containers below the lead.
 - Keep cards at 8px radius or less and avoid cards inside cards.
 - Use full-width slide sections, not floating page sections.
 - Keep text readable on common presentation sizes and mobile-width preview.
@@ -128,7 +131,7 @@ Mandatory screenshot rules:
 - Never overwrite or modify source screenshots in `materials/images/screenshots-not-masked/` unless the user explicitly requests it.
 - Every screenshot must have meaningful `alt` text.
 - Screenshot captions should be learner-facing, centered when inside `.screenshot-frame`, and should not expose production IDs.
-- For screenshot slides that also need conceptual explanation, use the Lesson 02 `media-stack` pattern: a compact SVG/diagram beside the screenshot.
+- For screenshot slides that also need conceptual explanation, keep the slide title and `p.lead` full-width at the top. Put any side-by-side screenshot/diagram explanation inside a nested content block below the lead, or use a top-level `.content.media-stack` only with the single-column guardrails described in the layout rules.
 
 Before using a masked screenshot:
 
@@ -164,8 +167,34 @@ Use these patterns from the Lesson 02 HTML deck:
 - `h1`/`h2` large top title with full-width bottom rule.
 - `.lead` for the core slide message below the title.
 - `.layout-2`, `.layout-3`, `.layout-2.equal`, `.card-grid`, `.quiz-grid`, `.topic-card`, `.compare-card`, `.table`, `.diagram`, `.diagram-svg`, `.media-stack`, `.screenshot-frame`, `.caption`, `.pill`, and `.tag` where appropriate.
+- Top-level `.content.layout-2`, `.content.media-stack`, and `.content.media-stack.reverse` must be normalized to one column. Use nested `.layout-2`, `.layout-2.equal`, `.card-grid`, or `.media-stack` below the lead when a slide needs side-by-side content.
 - Transparent screenshot frames with centered screenshot captions.
 - SVG diagrams in bordered `.diagram` frames, not visible placeholder text.
+
+Include or preserve CSS guardrails like these whenever a deck uses top-level layout helper classes:
+
+```css
+.content.layout-2,
+.content.media-stack,
+.content.media-stack.reverse {
+	grid-template-columns: minmax(0, 1fr);
+	gap: clamp(18px, 2.2vh, 30px);
+	align-items: start;
+}
+
+.content.layout-2 > *,
+.content.media-stack > *,
+.content.media-stack.reverse > * {
+	grid-column: 1 / -1;
+}
+
+.content.layout-2 > :first-child,
+.content.media-stack > div,
+.content.media-stack.reverse > div {
+	display: grid;
+	gap: clamp(14px, 1.8vh, 22px);
+}
+```
 
 Do not bring back `eyebrow` badges or visible diagram placeholder labels in final slides.
 
@@ -187,7 +216,8 @@ Required checks:
 10. Every generated SVG parses as XML and contains `<title>` and `<desc>`.
 11. Azure service architecture diagrams have matching `.drawio` sources and `img/lib/azure2/` icon references where Azure service icons are required.
 12. No temporary validator, masking, export, or scratch script remains unless it is an intentional reusable generator.
-13. If browser or screenshot validation is available, inspect at least the title slide, several diagram slides, and screenshot-heavy slides for blank assets, clipping, or overlap.
+13. Confirm that slides using top-level `.content.layout-2`, `.content.media-stack`, or `.content.media-stack.reverse` render as a single full-width title/lead/content flow rather than a two-column title/content split.
+14. If browser or screenshot validation is available, inspect at least the title slide, several diagram slides, and screenshot-heavy slides for blank assets, clipping, overlap, and title/lead/content width regressions.
 
 If a validation tool is unavailable, report that clearly and use the strongest static validation available.
 

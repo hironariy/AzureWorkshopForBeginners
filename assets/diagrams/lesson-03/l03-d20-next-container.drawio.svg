@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" role="img" data-mxgraph="editable">
+  <title>第4回 ACI への接続</title>
+  <desc>第3回ではAzure VM上にNGINXを構築し、第4回ではAzure Container InstancesでNGINXコンテナを動かす流れを示す。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#0078D4"/></marker></defs>
+  <rect width="1280" height="720" fill="#FFFFFF"/>
+  <text x="640" y="72" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="30" font-weight="850" fill="#005A9E">次回は VM からコンテナへ視点を移す</text>
+  <g font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif">
+    <rect x="150" y="176" width="380" height="250" rx="8" fill="#FFF4E5" stroke="#CA5010" stroke-width="2"/>
+    <text x="340" y="235" text-anchor="middle" font-size="26" font-weight="850" fill="#1F2937">第3回</text>
+    <text x="340" y="290" text-anchor="middle" font-size="24" font-weight="850" fill="#CA5010">Azure VM + NGINX</text>
+    <text x="340" y="338" text-anchor="middle" font-size="18" font-weight="650" fill="#5F6B7A">OS、ディスク、NIC、VNet、NSG を確認</text>
+    <rect x="750" y="176" width="380" height="250" rx="8" fill="#E9F7F5" stroke="#008575" stroke-width="2"/>
+    <text x="940" y="235" text-anchor="middle" font-size="26" font-weight="850" fill="#1F2937">第4回</text>
+    <text x="940" y="290" text-anchor="middle" font-size="24" font-weight="850" fill="#008575">ACI + NGINX コンテナ</text>
+    <text x="940" y="338" text-anchor="middle" font-size="18" font-weight="650" fill="#5F6B7A">OS 管理を減らし、コンテナ実行に集中</text>
+    <line x1="530" y1="301" x2="750" y2="301" stroke="#0078D4" stroke-width="5" marker-end="url(#arrow)"/>
+    <rect x="300" y="520" width="680" height="62" rx="22" fill="#F6F8FB" stroke="#D6DDE8" stroke-width="2"/>
+    <text x="640" y="558" text-anchor="middle" font-size="21" font-weight="800" fill="#1F2937">同じ NGINX でも、管理する範囲がどう変わるかを比較する</text>
+  </g>
+</svg>

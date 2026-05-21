@@ -1,0 +1,1025 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第3回 Azure VM をつかった Web サーバ構築 | Azure Workshop for Beginners</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --azure: #0078d4;
+      --azure-dark: #005a9e;
+      --teal: #008575;
+      --green: #498205;
+      --orange: #ca5010;
+      --magenta: #c239b3;
+      --ink: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d6dde8;
+      --soft: #f6f8fb;
+      --soft-blue: #e8f3ff;
+      --soft-green: #edf7ed;
+      --soft-orange: #fff4e5;
+      --soft-magenta: #fdf0fb;
+      --white: #ffffff;
+      --shadow: 0 18px 44px rgba(31, 41, 55, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-snap-type: y mandatory;
+      background: #eef2f7;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Segoe UI", "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      line-height: 1.6;
+      letter-spacing: 0;
+      background: #eef2f7;
+    }
+
+    .deck { width: 100%; }
+
+    .slide {
+      position: relative;
+      min-height: 100vh;
+      scroll-snap-align: start;
+      display: grid;
+      align-items: start;
+      padding: clamp(42px, 5.2vh, 76px) 5vw clamp(56px, 6vh, 88px);
+      background:
+        linear-gradient(90deg, rgba(0, 120, 212, 0.06), rgba(0, 133, 117, 0.03) 42%, rgba(255, 255, 255, 0) 70%),
+        var(--white);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .slide:nth-child(4n + 2) { background: linear-gradient(90deg, rgba(73, 130, 5, 0.07), rgba(255, 255, 255, 0) 62%), var(--white); }
+    .slide:nth-child(4n + 3) { background: linear-gradient(90deg, rgba(202, 80, 16, 0.06), rgba(255, 255, 255, 0) 62%), var(--white); }
+    .slide:nth-child(4n) { background: linear-gradient(90deg, rgba(194, 57, 179, 0.055), rgba(255, 255, 255, 0) 62%), var(--white); }
+
+    .slide::after {
+      content: attr(data-slide);
+      position: absolute;
+      right: 3vw;
+      bottom: 2.4vh;
+      color: #667085;
+      font-size: clamp(0.8rem, 1.2vw, 1rem);
+      font-weight: 600;
+    }
+
+    .content {
+      width: min(1500px, 100%);
+      margin: 0 auto;
+      display: grid;
+      align-content: start;
+      gap: clamp(18px, 2.1vh, 28px);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 18px;
+      font-size: clamp(2.9rem, 6.5vw, 6.4rem);
+      line-height: 1.02;
+      font-weight: 750;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      width: 100%;
+      max-width: none;
+      margin-bottom: 0;
+      padding-bottom: clamp(10px, 1.2vh, 16px);
+      border-bottom: 3px solid rgba(0, 120, 212, 0.28);
+      font-size: clamp(1.85rem, 3.35vw, 3.7rem);
+      line-height: 1.08;
+      font-weight: 740;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: clamp(1.18rem, 1.9vw, 1.65rem);
+      line-height: 1.25;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 1320px;
+      margin-bottom: 0;
+      color: #334155;
+      font-size: clamp(1.05rem, 1.62vw, 1.42rem);
+      line-height: 1.52;
+      font-weight: 500;
+    }
+
+    .title-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+      color: #334155;
+      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      font-weight: 650;
+    }
+
+    .pill, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 4px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.86);
+      color: #344054;
+      font-weight: 700;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .layout-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
+      gap: clamp(22px, 3.6vw, 54px);
+      align-items: start;
+    }
+
+    .content.layout-2 {
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(18px, 2.2vh, 30px);
+      align-items: start;
+    }
+
+    .content.layout-2 > * {
+      grid-column: 1 / -1;
+    }
+
+    .content.layout-2 > :first-child {
+      display: grid;
+      gap: clamp(14px, 1.8vh, 22px);
+    }
+
+    .layout-2.equal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .layout-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
+    .layout-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+
+    .card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+
+    .topic-card, .compare-card, .quiz-card, .step-card, .mini-card {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.08);
+    }
+
+    .topic-card, .compare-card, .quiz-card, .step-card { padding: clamp(18px, 2.1vw, 26px); }
+    .mini-card { padding: 16px; }
+
+    .topic-card .label, .compare-card .label, .mini-card .label, .step-card .label {
+      display: inline-flex;
+      margin-bottom: 10px;
+      color: var(--azure-dark);
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .topic-card p, .compare-card p, .mini-card p, .step-card p, .quiz-card p {
+      margin-bottom: 0;
+      color: #435266;
+      font-size: clamp(0.98rem, 1.42vw, 1.18rem);
+    }
+
+    .accent-green { border-top: 6px solid var(--green); }
+    .accent-orange { border-top: 6px solid var(--orange); }
+    .accent-teal { border-top: 6px solid var(--teal); }
+    .accent-magenta { border-top: 6px solid var(--magenta); }
+    .accent-blue { border-top: 6px solid var(--azure); }
+
+    .bullets {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: clamp(1.04rem, 1.62vw, 1.34rem);
+    }
+
+    .bullets li { position: relative; padding-left: 28px; }
+    .bullets li::before { content: ""; position: absolute; left: 0; top: 0.72em; width: 10px; height: 10px; border-radius: 999px; background: var(--azure); }
+    .bullets.compact { gap: 9px; font-size: clamp(0.96rem, 1.35vw, 1.13rem); }
+
+    .diagram {
+      margin: 0;
+      padding: clamp(18px, 2.4vw, 30px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .diagram-svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      max-height: 56vh;
+      object-fit: contain;
+    }
+
+    .compact-diagram .diagram-svg { max-height: 38vh; }
+
+    .screenshot-frame {
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .screenshot-frame img {
+      display: block;
+      width: 100%;
+      max-height: 58vh;
+      object-fit: contain;
+      border-radius: 6px;
+      background: transparent;
+      box-shadow: 0 16px 36px rgba(31, 41, 55, 0.14);
+    }
+
+    .media-stack {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.72fr);
+      gap: clamp(16px, 2.2vw, 28px);
+      align-items: start;
+    }
+
+    .media-stack.reverse { grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.08fr); }
+    .content.media-stack, .content.media-stack.reverse {
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(18px, 2.2vh, 30px);
+    }
+
+    .content.media-stack > *, .content.media-stack.reverse > * {
+      grid-column: 1 / -1;
+    }
+
+    .content.media-stack > div, .content.media-stack.reverse > div {
+      order: -1;
+      display: grid;
+      gap: clamp(14px, 1.8vh, 22px);
+    }
+
+    .media-stack .screenshot-frame img { max-height: 52vh; }
+
+    .caption {
+      margin-top: 8px;
+      color: var(--muted);
+      text-align: center;
+      font-size: clamp(0.84rem, 1.08vw, 0.96rem);
+      font-weight: 650;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      font-size: clamp(0.9rem, 1.24vw, 1.06rem);
+    }
+
+    .table th, .table td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .table th { color: #1e3a5f; background: var(--soft-blue); font-weight: 800; }
+    .table tr:last-child td { border-bottom: 0; }
+
+    .flow-row, .layer-row, .timeline-row { display: flex; align-items: stretch; gap: 12px; }
+    .timeline-row { flex-wrap: wrap; }
+
+    .node {
+      flex: 1 1 0;
+      min-width: 0;
+      display: grid;
+      place-items: center;
+      min-height: 86px;
+      padding: 14px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+      text-align: center;
+      font-size: clamp(1rem, 1.48vw, 1.22rem);
+      font-weight: 750;
+    }
+
+    .node small { display: block; margin-top: 6px; color: var(--muted); font-size: 0.78em; font-weight: 650; }
+    .node.web { border-color: #9ed0f8; background: var(--soft-blue); }
+    .node.ap { border-color: #8fd6ca; background: #e9f7f5; }
+    .node.db { border-color: #f2c185; background: var(--soft-orange); }
+    .node.ref { border-style: dashed; color: #475467; background: #f8fafc; }
+    .node.active { border-width: 3px; box-shadow: inset 0 0 0 3px rgba(0, 120, 212, 0.16); }
+
+    .arrow { align-self: center; flex: 0 0 auto; color: var(--muted); font-size: clamp(1.3rem, 2vw, 1.8rem); font-weight: 800; }
+
+    .callout {
+      padding: clamp(18px, 2vw, 24px);
+      border-left: 7px solid var(--azure);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.08);
+      font-size: clamp(1rem, 1.45vw, 1.2rem);
+      font-weight: 650;
+    }
+
+    .code-block {
+      margin: 0;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #0f172a;
+      color: #e5edf7;
+      overflow: auto;
+      font-size: clamp(0.78rem, 1.02vw, 0.92rem);
+      line-height: 1.45;
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.12);
+    }
+
+    .quiz-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .quiz-card { display: grid; gap: 10px; }
+    .quiz-card .q { color: var(--azure-dark); font-weight: 800; }
+    .answer { color: #2f6b00; font-weight: 800; }
+    .note { color: var(--muted); font-size: clamp(0.92rem, 1.25vw, 1.04rem); }
+
+    @media (max-width: 980px) {
+      html { scroll-snap-type: none; }
+      .slide { min-height: auto; padding: 48px 22px 66px; }
+      .layout-2, .layout-2.equal, .layout-3, .layout-4, .card-grid, .quiz-grid, .media-stack, .media-stack.reverse { grid-template-columns: 1fr; }
+      .flow-row, .layer-row { flex-direction: column; }
+      .arrow { transform: rotate(90deg); }
+      .screenshot-frame img { max-height: none; }
+    }
+
+    @media print {
+      html { scroll-snap-type: none; }
+      .slide { min-height: 100vh; page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide" data-slide="1 / 46" aria-labelledby="slide-1-title">
+      <div class="content">
+        <h1 id="slide-1-title">Azure VM をつかった Web サーバ構築</h1>
+        <p class="lead">この回では、Azure Portal で Linux VM を作成し、起動時スクリプトで NGINX をインストールして、インターネットから Web サーバへアクセスできることを確認します。</p>
+        <div class="title-meta" aria-label="講座情報">
+          <span class="pill">第3回</span>
+          <span class="pill">オンライン座学 + ハンズオン</span>
+          <span class="pill">50分レクチャー/ハンズオン + 10分 QA</span>
+          <span class="pill">2026年7月2日</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="2 / 46" aria-labelledby="slide-2-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-2-title">今日のゴール</h2>
+          <p class="lead">Azure VM を作って NGINX を動かし、ブラウザーから Public IP へアクセスして Web サーバの表示を確認します。</p>
+        </div>
+        <div class="card-grid" aria-label="今日の到達目標">
+          <article class="topic-card accent-blue"><span class="label">Goal 1</span><h3>Web サーバを構築</h3><p>Azure VM 上に NGINX を用意し、ブラウザーから表示できる状態にします。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Goal 2</span><h3>周辺リソースを理解</h3><p>Managed Disk、NIC、VNet、Public IP、NSG の役割を確認します。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Goal 3</span><h3>HTTP の入口を見る</h3><p>Public IP と NSG が Web サーバ公開にどう関係するかを追います。</p></article>
+          <article class="topic-card accent-green"><span class="label">Goal 4</span><h3>課金を残さない</h3><p>最後にリソースグループを削除し、作成したリソースを残さない状態にします。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="3 / 46" aria-labelledby="slide-3-title">
+      <div class="content">
+        <h2 id="slide-3-title">前回の振り返り</h2>
+        <p class="lead">第2回では、Web 層、AP 層、DB 層という役割の分け方を学びました。第3回では、そのうち利用者に近い Web 層を小さく作ります。</p>
+        <div class="layer-row" aria-label="Web 3層のうち今回扱う範囲">
+          <div class="node web active">Web 層<small>今回作る: NGINX on Azure VM</small></div>
+          <div class="arrow">→</div>
+          <div class="node ap ref">AP 層<small>今回は未作成</small></div>
+          <div class="arrow">→</div>
+          <div class="node db ref">DB 層<small>今回は未作成</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="4 / 46" aria-labelledby="slide-4-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-4-title">いきなり3層すべてを作らない理由</h2>
+          <p class="lead">第3回では Web 層に絞って、Azure のリソース作成、ネットワーク公開、画面表示確認までの流れを確実にします。</p>
+        </div>
+        <div class="layout-2 equal">
+          <article class="compare-card accent-orange"><span class="label">一度に広げすぎると</span><h3>作業対象が多い</h3><p>Web、AP、DB、接続情報、認証、ネットワークを同時に扱うと、どこで詰まったか切り分けにくくなります。</p></article>
+          <article class="compare-card accent-teal"><span class="label">今回の進め方</span><h3>入口を確実に作る</h3><p>ブラウザーから VM 上の NGINX まで到達する流れを、Azure Portal の画面と構成図で確認します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="5 / 46" aria-labelledby="slide-5-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-5-title">Azure IaaS とは何か</h2>
+          <p class="lead">IaaS では、クラウド上に仮想的なサーバ、ネットワーク、ストレージを用意し、OS やミドルウェアの設定は利用者が管理します。</p>
+        </div>
+        <div class="card-grid" aria-label="IaaS の責任分界">
+          <article class="topic-card accent-blue"><span class="label">Azure が提供</span><h3>物理基盤</h3><p>データセンター、物理サーバ、物理ネットワーク、基盤の可用性。</p></article>
+          <article class="topic-card accent-teal"><span class="label">利用者が設定</span><h3>仮想リソース</h3><p>VM、OS、ミドルウェア、公開ポート、アプリケーションの構成。</p></article>
+          <article class="topic-card accent-orange"><span class="label">本回の中心</span><h3>VM と NGINX</h3><p>Linux VM を作り、起動時に NGINX を入れて Web サーバとして動かします。</p></article>
+          <article class="topic-card accent-magenta"><span class="label">本番では追加</span><h3>運用設計</h3><p>パッチ、監視、バックアップ、冗長化、HTTPS などを別途検討します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="6 / 46" aria-labelledby="slide-6-title">
+      <div class="content">
+        <h2 id="slide-6-title">Azure VM の全体像</h2>
+        <p class="lead">Azure VM は単体で浮かんでいるサーバではありません。ディスク、NIC、VNet、Public IP、NSG と組み合わさってはじめてアクセス可能な Web サーバになります。</p>
+        <figure class="diagram" role="img" aria-label="Azure VM と周辺リソースの関係">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-03/l03-d05-vm-resource-map.drawio.svg" alt="Azure VM と Managed Disk、NIC、Public IP、NSG、VNet、サブネットの関係" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="7 / 46" aria-labelledby="slide-7-title">
+      <div class="content">
+        <h2 id="slide-7-title">OS イメージとサイズ</h2>
+        <p class="lead">VM 作成時には、どの OS を入れるか、どのくらいの CPU とメモリを使うか、どのリージョンに置くかを選びます。</p>
+        <table class="table" aria-label="VM 作成時に選ぶ主な項目">
+          <thead><tr><th>項目</th><th>意味</th><th>本回の想定</th><th>注意点</th></tr></thead>
+          <tbody>
+            <tr><td>OS イメージ</td><td>VM に入れる OS</td><td>Ubuntu Server 24.04 LTS</td><td>Portal 表示名は講座前に確認します。</td></tr>
+            <tr><td>サイズ/SKU</td><td>CPU、メモリ、価格の大きさ</td><td>低コスト SKU を講師が指定</td><td>高価なサイズを自己判断で選びません。</td></tr>
+            <tr><td>リージョン</td><td>リソースを配置する地域</td><td>Japan East</td><td>利用できない場合は講師が代替を案内します。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="8 / 46" aria-labelledby="slide-8-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-8-title">Managed Disk</h2>
+          <p class="lead">VM の OS や追加データは Managed Disk に保存されます。VM 本体と同じく課金対象なので、作成後に関連リソースとして確認します。</p>
+        </div>
+        <div class="card-grid">
+          <article class="topic-card accent-blue"><span class="label">OS Disk</span><h3>起動に必要</h3><p>Linux の OS、設定、インストールした NGINX などが保存されます。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Data Disk</span><h3>追加保存領域</h3><p>本回では追加しませんが、実務ではデータ用ディスクを分けることがあります。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Cost</span><h3>残すと課金対象</h3><p>VM を消したつもりでもディスクだけ残ると課金が続く可能性があります。</p></article>
+          <article class="topic-card accent-green"><span class="label">Cleanup</span><h3>まとめて削除</h3><p>本回ではリソースグループごと削除して、関連リソースを残さないようにします。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="9 / 46" aria-labelledby="slide-9-title">
+      <div class="content">
+        <h2 id="slide-9-title">NIC と IP アドレス</h2>
+        <p class="lead">VM がネットワークに参加するには NIC が必要です。Private IP は VNet 内の住所、Public IP はインターネット側からアクセスするための宛先です。</p>
+        <div class="flow-row" aria-label="ブラウザーから VM までのアドレスの流れ">
+          <div class="node">ブラウザー<small>利用者の端末</small></div>
+          <div class="arrow">→</div>
+          <div class="node web">Public IP<small>外から見える宛先</small></div>
+          <div class="arrow">→</div>
+          <div class="node ap">NIC<small>VM のネットワーク口</small></div>
+          <div class="arrow">→</div>
+          <div class="node db">Private IP<small>VNet 内の住所</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="10 / 46" aria-labelledby="slide-10-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-10-title">VNet とサブネット</h2>
+          <p class="lead">VNet は Azure 上の仮想ネットワーク空間で、サブネットはその中の区画です。VM はサブネットに所属し、そこから通信します。</p>
+        </div>
+        <div class="diagram" role="img" aria-label="VNet とサブネットの関係">
+          <div class="node web" style="min-height: 300px; display: grid; align-content: start; gap: 18px; padding: 24px;">
+            <div>Virtual Network</div>
+            <div class="layout-2 equal" style="width: 100%; gap: 14px;">
+              <div class="node ap active">サブネット<small>今回の VM が所属</small></div>
+              <div class="node ref">別サブネット<small>AP/DB などで利用</small></div>
+            </div>
+            <small>ネットワーク回では、この区画と経路をさらに深く扱います。</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="11 / 46" aria-labelledby="slide-11-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-11-title">NSG</h2>
+          <p class="lead">NSG は、どの通信を通すかを制御するルールです。本回ではブラウザーから NGINX を表示するため、HTTP の受信を許可します。</p>
+        </div>
+        <div class="layout-3">
+          <article class="topic-card accent-teal"><span class="label">Allow</span><h3>HTTP</h3><p>Web ページを表示するための受信通信を許可します。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Review</span><h3>SSH</h3><p>管理用ポートは講座の主目的ではないため、必要性を確認して扱います。</p></article>
+          <article class="topic-card accent-magenta"><span class="label">Production</span><h3>最小許可</h3><p>本番環境では公開範囲、管理経路、監視をより厳密に設計します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="12 / 46" aria-labelledby="slide-12-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-12-title">Route Table/UDR</h2>
+          <p class="lead">Route Table は通信の通り道を明示的に制御したい場合に使います。本回では作成せず、後続のネットワーク回への入口として存在だけ押さえます。</p>
+        </div>
+        <div class="card-grid">
+          <article class="topic-card accent-blue"><span class="label">Default</span><h3>既定の経路</h3><p>今回の単純な Web サーバ公開では、Portal の既定値で通信を確認します。</p></article>
+          <article class="topic-card accent-teal"><span class="label">UDR</span><h3>経路を指定</h3><p>Firewall や Gateway を通すなど、明示的な経路制御が必要な場合に利用します。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Later</span><h3>第7回へ接続</h3><p>ネットワーク設計の回で、VNet、サブネット、経路、DNS を整理します。</p></article>
+          <article class="topic-card accent-green"><span class="label">Today</span><h3>作成しない</h3><p>まず VM と HTTP 到達の基本に集中します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="13 / 46" aria-labelledby="slide-13-title">
+      <div class="content">
+        <h2 id="slide-13-title">今日作るアーキテクチャ</h2>
+        <p class="lead">ブラウザーから Public IP へアクセスし、NSG で許可された HTTP 通信が Azure VM 上の NGINX に届く構成を作ります。</p>
+        <figure class="diagram" role="img" aria-label="ブラウザーから NGINX on Azure VM へ到達する完成構成">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-03/l03-d01-goal-architecture.drawio.svg" alt="ブラウザーから Public IP、NSG、Azure VM 上の NGINX へ HTTP 通信が届く完成構成" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="14 / 46" aria-labelledby="slide-14-title">
+      <div class="content">
+        <h2 id="slide-14-title">ハンズオンで使う値</h2>
+        <p class="lead">入力値をそろえると、講師が状況を確認しやすく、最後に削除対象も迷いにくくなります。受講者番号は自分の番号に置き換えます。</p>
+        <table class="table" aria-label="ハンズオン入力値一覧">
+          <thead><tr><th>項目</th><th>値の例</th><th>補足</th></tr></thead>
+          <tbody>
+            <tr><td>リージョン</td><td>Japan East</td><td>利用できない場合は講師が代替を指定します。</td></tr>
+            <tr><td>受講者番号</td><td>s01</td><td>講師から案内された番号を使います。</td></tr>
+            <tr><td>リソースグループ名</td><td>rg-azbeg-l03-s01</td><td>s01 は自分の番号に置き換えます。</td></tr>
+            <tr><td>VM 名</td><td>vm-azbeg-l03-s01</td><td>後から見分けられる名前にします。</td></tr>
+            <tr><td>管理者ユーザー</td><td>azureuser</td><td>秘密鍵は公開資料に残しません。</td></tr>
+            <tr><td>受信ポート</td><td>HTTP</td><td>NGINX 表示確認に使います。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="15 / 46" aria-labelledby="slide-15-title">
+      <div class="content">
+        <h2 id="slide-15-title">ハンズオンの流れ</h2>
+        <p class="lead">まずリソースをまとめる外枠を作り、その中に VM と関連リソースを作成します。最後は作成したリソースグループを削除します。</p>
+        <figure class="diagram" role="img" aria-label="ハンズオンの進行図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-03/l03-d13-handson-progress.drawio.svg" alt="リソースグループ作成、VM 基本設定、ネットワーク確認、NGINX 表示確認、リソースグループ削除の流れ" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="16 / 46" aria-labelledby="slide-16-title">
+      <div class="content media-stack reverse">
+        <div>
+          <h2 id="slide-16-title">Azure Portal にサインイン</h2>
+          <p class="lead">講師が案内したアカウントで Azure Portal に入り、対象サブスクリプションが見えることを確認します。</p>
+          <article class="step-card accent-blue"><span class="label">確認</span><h3>作業するサブスクリプション</h3><p>個人の別アカウントで入っていないか、対象サブスクリプションが表示されているかを先に確認します。</p></article>
+        </div>
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS01-masked.png" alt="Azure Portal のサブスクリプション確認画面。アカウントやサブスクリプション情報はマスク済み。" />
+          <figcaption class="caption">Azure Portal で対象サブスクリプションを確認する</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="17 / 46" aria-labelledby="slide-17-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS02-masked.png" alt="Azure Portal のリソースグループ作成画面。サブスクリプション情報はマスク済み。" />
+          <figcaption class="caption">リソースグループを作成する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-17-title">リソースグループを作成する</h2>
+          <p class="lead">本回で作る VM、ネットワーク、ディスクをまとめる入れ物として、受講者ごとのリソースグループを作成します。</p>
+          <ul class="bullets compact"><li>名前は自分の受講者番号を含めます。</li><li>リージョンは講師指定の値を選びます。</li><li>最後にこの単位で削除します。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="18 / 46" aria-labelledby="slide-18-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS03-masked.png" alt="Azure Portal のリソースグループ Overview 画面。リソース ID などはマスク済み。" />
+          <figcaption class="caption">作成したリソースグループを確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-18-title">リソースグループ作成を確認する</h2>
+          <p class="lead">作成したリソースグループの Overview を開き、場所と名前が講師指定の値になっていることを確認します。</p>
+          <article class="step-card accent-teal"><span class="label">完了条件</span><h3>空の入れ物ができている</h3><p>この時点ではまだ VM はありません。ここから VM と関連リソースを追加していきます。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="19 / 46" aria-labelledby="slide-19-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS04-masked.png" alt="Azure Portal の仮想マシン作成開始画面。アカウント情報はマスク済み。" />
+          <figcaption class="caption">作成したリソースグループから VM 作成を開始する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-19-title">VM 作成を開始する</h2>
+          <p class="lead">リソースグループ内で Linux VM の作成を開始します。作成先のリソースグループを選び間違えないことが大切です。</p>
+          <ul class="bullets compact"><li>Create から Virtual machine を選びます。</li><li>Basics タブから入力を進めます。</li><li>高価な構成を選ばないように講師指定の値を使います。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="20 / 46" aria-labelledby="slide-20-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS05-masked.png" alt="Azure Portal の VM Basics タブ。サブスクリプション値はマスク済み。" />
+          <figcaption class="caption">VM 名、リージョン、イメージ、サイズを入力する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-20-title">VM の基本情報を入力する</h2>
+          <p class="lead">VM 名、リージョン、OS イメージ、サイズを指定します。ここで選ぶ内容は、作成されるサーバの場所、OS、性能、コストに関係します。</p>
+          <table class="table"><tbody><tr><th>確認</th><td>講師指定のリージョンと低コスト SKU を選んでいること。</td></tr><tr><th>注意</th><td>表示名や推奨サイズは Portal 更新で変わるため、講師の案内を優先します。</td></tr></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="21 / 46" aria-labelledby="slide-21-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS06-masked.png" alt="Azure Portal の VM 管理者アカウント設定画面。ユーザー名や秘密情報はマスク済み。" />
+          <figcaption class="caption">管理者アカウントと認証方式を指定する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-21-title">管理者アカウントを指定する</h2>
+          <p class="lead">VM には管理者ユーザーが必要です。本回では SSH 操作を主目的にしないため、秘密鍵を公開資料に残さないことを確認しながら進めます。</p>
+          <article class="step-card accent-orange"><span class="label">Privacy</span><h3>秘密鍵は画面共有や資料に残さない</h3><p>認証情報は復旧や管理に使う重要な情報です。講座中も公開場所へ貼り付けません。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="22 / 46" aria-labelledby="slide-22-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS07-masked.png" alt="Azure Portal の受信ポート設定欄。アカウント情報はマスク済み。" />
+          <figcaption class="caption">受信ポートの設定欄を確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-22-title">HTTP アクセスを許可する</h2>
+          <p class="lead">NGINX のページをブラウザーで表示するため、VM への HTTP 受信を許可します。この設定が NSG の受信ルールにつながります。</p>
+          <ul class="bullets compact"><li>本回の確認対象は Web ページ表示です。</li><li>不要なポートは開けない考え方もあわせて押さえます。</li><li>本番では HTTPS や管理経路の制限を設計します。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="23 / 46" aria-labelledby="slide-23-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS08-masked.png" alt="Azure Portal の VM Disks タブ。サブスクリプション情報はマスク済み。" />
+          <figcaption class="caption">OS ディスク設定を確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-23-title">ディスク設定を確認する</h2>
+          <p class="lead">本回では既定の OS ディスクを利用し、詳細なディスク設計には入りません。ただし、ディスクが課金対象であることは意識します。</p>
+          <article class="step-card accent-blue"><span class="label">見るポイント</span><h3>VM の中身はディスクに保存される</h3><p>VM を作ると OS ディスクも作られます。後で関連リソース一覧でも確認します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="24 / 46" aria-labelledby="slide-24-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS09-masked.png" alt="Azure Portal の VM Networking タブ。VNet、Public IP、NSG などの設定欄が表示されている。" />
+          <figcaption class="caption">ネットワーク設定を確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-24-title">ネットワーク設定を確認する</h2>
+          <p class="lead">Portal は VM に必要な VNet、サブネット、NIC、Public IP、NSG をあわせて作成します。ここで Web サーバ公開の入口が決まります。</p>
+          <ul class="bullets compact"><li>Public IP が作成されることを確認します。</li><li>NSG の受信ルールが HTTP とつながることを意識します。</li><li>VNet とサブネットは VM の配置先です。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="25 / 46" aria-labelledby="slide-25-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS10-masked.png" alt="Azure Portal の VM Advanced タブ。Custom data 入力欄が表示されている。" />
+          <figcaption class="caption">Custom data に cloud-init を貼り付ける</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-25-title">カスタムデータを設定する</h2>
+          <p class="lead">VM 起動時の cloud-init で NGINX をインストールし、確認用のページを配置します。貼り付け時は先頭行とインデントを崩さないようにします。</p>
+          <pre class="code-block"><code>#cloud-config
+package_update: true
+packages:
+  - nginx
+runcmd:
+  - systemctl enable nginx
+  - systemctl restart nginx</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="26 / 46" aria-labelledby="slide-26-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS11-masked.png" alt="Azure Portal の VM Tags タブ。タグ入力欄が表示されている。" />
+          <figcaption class="caption">タグを設定する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-26-title">タグを設定する</h2>
+          <p class="lead">タグを付けると、講師が講座用リソースを識別しやすくなり、削除対象の確認もしやすくなります。</p>
+          <div class="tag-list" aria-label="タグ例">
+            <span class="tag">Course</span><span class="tag">Lesson</span><span class="tag">StudentId</span><span class="tag">Environment</span><span class="tag">DeleteAfter</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="27 / 46" aria-labelledby="slide-27-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS12-masked.png" alt="Azure Portal の Review + create 画面。サブスクリプションや識別情報はマスク済み。" />
+          <figcaption class="caption">内容を確認して作成する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-27-title">内容を確認して作成する</h2>
+          <p class="lead">作成前に、リソースグループ、VM 名、リージョン、サイズ、HTTP 許可、タグを確認します。Validation が通ったら作成します。</p>
+          <article class="step-card accent-green"><span class="label">作成前チェック</span><h3>名前、場所、サイズ、公開設定</h3><p>後から直せるものもありますが、初心者ハンズオンでは作成前の確認を習慣にします。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="28 / 46" aria-labelledby="slide-28-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS13-masked.png" alt="Azure Portal のデプロイ完了画面。リソース ID などはマスク済み。" />
+          <figcaption class="caption">デプロイ完了を待つ</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-28-title">デプロイ完了を待つ</h2>
+          <p class="lead">VM と関連リソースの作成には数分かかります。完了後は、作成された VM の Overview へ進みます。</p>
+          <ul class="bullets compact"><li>作成中に画面を閉じても、Portal の Deployments から確認できます。</li><li>失敗した場合はエラーメッセージの先頭を講師と確認します。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="29 / 46" aria-labelledby="slide-29-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS14-masked.png" alt="Azure Portal の VM Overview 画面。Public IP やリソース名はマスク済み。" />
+          <figcaption class="caption">VM の状態と Public IP を確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-29-title">VM の Overview を確認する</h2>
+          <p class="lead">VM が Running になっていることと、Public IP が表示されていることを確認します。ブラウザーからアクセスする宛先は Public IP です。</p>
+          <article class="step-card accent-blue"><span class="label">よくある間違い</span><h3>Private IP と Public IP を取り違える</h3><p>インターネット側からアクセスするときは、Overview に表示される Public IP を使います。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="30 / 46" aria-labelledby="slide-30-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS15-masked.png" alt="Azure Portal のリソースグループ内リソース一覧。リソース名やサブスクリプション値はマスク済み。" />
+          <figcaption class="caption">VM 作成で増えた関連リソースを見る</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-30-title">作成された関連リソースを見る</h2>
+          <p class="lead">リソースグループ内には VM だけでなく、ディスク、NIC、Public IP、NSG、VNet などが作成されています。</p>
+          <ul class="bullets compact"><li>VM だけを見て終わらないことが重要です。</li><li>作成されたものは、あとで削除対象になります。</li><li>構成図と照らして役割を確認します。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="31 / 46" aria-labelledby="slide-31-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS16-masked.png" alt="ブラウザーで NGINX の初期ページが表示されている画面。アクセス先情報はマスク済み。" />
+          <figcaption class="caption">ブラウザーで NGINX のページを確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-31-title">ブラウザーでアクセスする</h2>
+          <p class="lead">Public IP に HTTP でアクセスし、NGINX のページが表示されることを確認します。表示できれば、入口から VM 上の Web サーバまで到達しています。</p>
+          <article class="step-card accent-green"><span class="label">完了条件</span><h3>NGINX のページが表示される</h3><p>カスタムページではなく既定ページでも、VM とネットワークの到達確認としては大きな前進です。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="32 / 46" aria-labelledby="slide-32-title">
+      <div class="content">
+        <h2 id="slide-32-title">表示されないときの見方</h2>
+        <p class="lead">画面が出ないときは、焦って設定を増やすのではなく、VM の状態、Public IP、アクセス方法、NSG、起動時スクリプトを順番に確認します。</p>
+        <figure class="diagram" role="img" aria-label="NGINX が表示されないときの確認順">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-03/l03-d14-troubleshooting-order.drawio.svg" alt="VM が Running か、Public IP か、HTTP で開いているか、NSG で HTTP が許可されているか、cloud-init が成功したかの確認順" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="33 / 46" aria-labelledby="slide-33-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS17-masked.png" alt="Azure Portal の NSG inbound security rules 画面。リソース名やサブスクリプション値はマスク済み。" />
+          <figcaption class="caption">NSG の受信ルールを確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-33-title">NSG の受信ルールを確認する</h2>
+          <p class="lead">HTTP でアクセスできない場合は、NSG の受信ルールで Web 通信が許可されているかを確認します。</p>
+          <article class="step-card accent-teal"><span class="label">見るポイント</span><h3>許可、プロトコル、ポート</h3><p>Web サーバへ届く通信の入口が開いているかを、ルールとして確認します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="34 / 46" aria-labelledby="slide-34-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS18-masked.png" alt="Azure Portal の VM Run command 画面。実行結果や識別情報はマスク済み。" />
+          <figcaption class="caption">復旧用に Run command を使う場合がある</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-34-title">カスタムデータが失敗した場合</h2>
+          <p class="lead">NGINX が入っていない場合、講師の判断で Portal の Run command を使って補助できます。ただし通常手順の主役ではありません。</p>
+          <ul class="bullets compact"><li>本回の主目的は VM と通信経路の理解です。</li><li>復旧に時間がかかる場合は講師デモへ切り替えます。</li><li>作成途中のリソースの削除だけは忘れずに行います。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="35 / 46" aria-labelledby="slide-35-title">
+      <div class="content">
+        <h2 id="slide-35-title">構築した構成を振り返る</h2>
+        <p class="lead">作成したリソースをアーキテクチャ図に戻して、VM、ディスク、NIC、Public IP、NSG、VNet がそれぞれ何を担当したかを確認します。</p>
+        <figure class="diagram" role="img" aria-label="構築後のリソース関係振り返り">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-03/l03-d05-vm-resource-map.drawio.svg" alt="Azure VM を中心に Managed Disk、NIC、Public IP、NSG、VNet、サブネットが関係する構成図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="36 / 46" aria-labelledby="slide-36-title">
+      <div class="content">
+        <h2 id="slide-36-title">第2回の Web 層との関係</h2>
+        <p class="lead">今日作った NGINX on VM は、Web 3層の Web 層を単純化して体験したものです。AP 層と DB 層は、後続回で段階的に扱います。</p>
+        <div class="layer-row" aria-label="今回作成した範囲と後続回で扱う範囲">
+          <div class="node web active">Web 層<small>NGINX on Azure VM</small></div>
+          <div class="arrow">→</div>
+          <div class="node ap ref">AP 層<small>第5回から第6回で接続</small></div>
+          <div class="arrow">→</div>
+          <div class="node db ref">DB 層<small>PostgreSQL で扱う</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="37 / 46" aria-labelledby="slide-37-title">
+      <div class="content">
+        <h2 id="slide-37-title">コストが発生する場所</h2>
+        <p class="lead">クラウドでは作ったリソースが課金対象になります。VM を停止するだけでなく、関連リソースが残らないように削除方法を確認します。</p>
+        <table class="table" aria-label="コストが発生する主なリソース">
+          <thead><tr><th>リソース</th><th>課金注意</th><th>本回の扱い</th></tr></thead>
+          <tbody>
+            <tr><td>Azure VM</td><td>実行中はコンピュート課金が発生します。</td><td>最後に削除します。</td></tr>
+            <tr><td>Managed Disk</td><td>VM 停止後も残ると課金が続く可能性があります。</td><td>リソースグループ削除でまとめて消します。</td></tr>
+            <tr><td>Public IP</td><td>SKU や状態により課金対象になります。</td><td>リソースグループ削除でまとめて消します。</td></tr>
+            <tr><td>診断/ログ関連</td><td>有効化した場合に課金が発生することがあります。</td><td>本回では詳細に扱いません。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="38 / 46" aria-labelledby="slide-38-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS19-masked.png" alt="Azure Portal の Delete resource group 確認画面。識別情報はマスク済み。" />
+          <figcaption class="caption">リソースグループを削除する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-38-title">リソースグループを削除する</h2>
+          <p class="lead">本回のリソースは、受講者ごとのリソースグループごと削除します。削除対象が本回のリソースだけであることを確認してから実行します。</p>
+          <article class="step-card accent-orange"><span class="label">重要</span><h3>VM 停止ではなく削除まで行う</h3><p>停止だけでは Managed Disk や Public IP などが残る可能性があります。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="39 / 46" aria-labelledby="slide-39-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L03-SS20-masked.png" alt="Azure Portal の Resource groups 一覧画面。サブスクリプションやリソース名はマスク済み。" />
+          <figcaption class="caption">削除完了または削除中であることを確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-39-title">削除完了を確認する</h2>
+          <p class="lead">対象リソースグループが一覧から消えたこと、または削除中になっていることを確認します。ここまでが本回のハンズオン完了です。</p>
+          <ul class="bullets compact"><li>削除には反映待ちが発生する場合があります。</li><li>別のリソースグループを削除しないよう名前を確認します。</li><li>講師は最後に全員の削除状況を確認します。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="40 / 46" aria-labelledby="slide-40-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-40-title">早く終えた人向け</h2>
+          <p class="lead">時間に余裕がある人は、追加で別の Web サーバを試すか、カスタムデータの内容を読み、何が自動実行されたかを確認します。</p>
+        </div>
+        <div class="layout-2 equal">
+          <article class="topic-card accent-teal"><span class="label">Option</span><h3>Apache 版を考える</h3><p>NGINX の代わりに Apache HTTP Server を使うと、インストールするパッケージや表示ページが変わります。</p></article>
+          <article class="topic-card accent-blue"><span class="label">Read</span><h3>cloud-init を読む</h3><p>package_update、packages、write_files、runcmd がどの順に動いたかを確認します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="41 / 46" aria-labelledby="slide-41-title">
+      <div class="content">
+        <h2 id="slide-41-title">よくある失敗</h2>
+        <p class="lead">ハンズオンでは、リージョン、名前、クォータ、NSG、Public IP、削除漏れがつまずきやすいポイントです。原因候補を短く切り分けます。</p>
+        <table class="table" aria-label="よくある失敗と確認箇所">
+          <thead><tr><th>症状</th><th>原因候補</th><th>確認箇所</th></tr></thead>
+          <tbody>
+            <tr><td>サイズが選べない</td><td>リージョン制約またはクォータ不足</td><td>講師指定の SKU と代替リージョン</td></tr>
+            <tr><td>VM 作成で失敗</td><td>名前、権限、必須項目の不足</td><td>Validation エラーの先頭</td></tr>
+            <tr><td>NGINX が表示されない</td><td>Public IP 誤り、NSG、起動待ち、cloud-init 失敗</td><td>VM Overview、NSG、ブラウザーのアドレス</td></tr>
+            <tr><td>課金が残る</td><td>VM 停止だけで削除していない</td><td>リソースグループ一覧</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="42 / 46" aria-labelledby="slide-42-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-42-title">復旧できない場合</h2>
+          <p class="lead">時間内に直せない場合は、手順の完了よりも構成理解を優先します。講師デモで完成状態を見ながら、どのリソースが関係するかを確認します。</p>
+        </div>
+        <div class="layout-3">
+          <article class="topic-card accent-orange"><span class="label">VM 作成失敗</span><h3>原因を切り分ける</h3><p>名前、リージョン、サイズ、権限を講師と確認します。</p></article>
+          <article class="topic-card accent-teal"><span class="label">HTTP 表示失敗</span><h3>構成図に戻る</h3><p>Public IP、NSG、VM、NGINX の順に確認します。</p></article>
+          <article class="topic-card accent-green"><span class="label">最後に必ず</span><h3>削除を完了</h3><p>作成途中のリソースがある場合も削除だけは完了させます。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="43 / 46" aria-labelledby="slide-43-title">
+      <div class="content">
+        <h2 id="slide-43-title">今日のまとめ</h2>
+        <p class="lead">Azure VM はサーバの実行場所であり、ネットワークとストレージと組み合わせて初めて Web サーバとして動きます。作ったものは最後に削除します。</p>
+        <div class="layout-3">
+          <article class="topic-card accent-blue"><span class="label">1</span><h3>VM は実行場所</h3><p>OS と NGINX が動くサーバとして Azure VM を作りました。</p></article>
+          <article class="topic-card accent-teal"><span class="label">2</span><h3>周辺リソースが必要</h3><p>Disk、NIC、VNet、Public IP、NSG が通信と保存を支えます。</p></article>
+          <article class="topic-card accent-orange"><span class="label">3</span><h3>削除までが完了</h3><p>リソースグループ削除で不要な課金対象を残さないようにします。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="44 / 46" aria-labelledby="slide-44-title">
+      <div class="content">
+        <h2 id="slide-44-title">確認クイズ</h2>
+        <p class="lead">自分の言葉で、VM と周辺リソースの関係、HTTP アクセス、削除方法を説明できるか確認します。</p>
+        <div class="quiz-grid">
+          <article class="quiz-card"><span class="q">問1</span><p>VM がネットワークに接続するために必要な代表的リソースはどれですか。</p><p class="answer">正解: NIC</p></article>
+          <article class="quiz-card"><span class="q">問2</span><p>ブラウザーから NGINX にアクセスするため、本回で許可した通信はどれですか。</p><p class="answer">正解: HTTP</p></article>
+          <article class="quiz-card"><span class="q">問3</span><p>VM を停止すれば、Managed Disk や Public IP も必ず削除されますか。</p><p class="answer">正解: いいえ</p></article>
+          <article class="quiz-card"><span class="q">問4</span><p>本回の最後に推奨するクリーンアップ方法はどれですか。</p><p class="answer">正解: リソースグループ削除</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="45 / 46" aria-labelledby="slide-45-title">
+      <div class="content">
+        <h2 id="slide-45-title">次回予告</h2>
+        <p class="lead">次回はコンテナを使い、同じ NGINX を VM ではなく Azure Container Instances で動かすと、管理する範囲がどう変わるかを体験します。</p>
+        <figure class="diagram" role="img" aria-label="第3回の VM 構成から第4回の ACI 構成へ進む図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-03/l03-d20-next-container.drawio.svg" alt="第3回の Azure VM と NGINX から、第4回の Azure Container Instances と NGINX コンテナへ進む流れ" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="46 / 46" aria-labelledby="slide-46-title">
+      <div class="content">
+        <h2 id="slide-46-title">QA</h2>
+        <p class="lead">操作で詰まった点、構成図で分かりにくかった点、VM とネットワークやディスクの関係について確認します。</p>
+        <div class="layout-3">
+          <article class="topic-card accent-blue"><span class="label">Operation</span><h3>Portal 操作</h3><p>どの画面で迷ったか、どの入力値が分かりにくかったかを確認します。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Architecture</span><h3>構成理解</h3><p>Public IP、NSG、NIC、VNet、Disk の関係をもう一度整理します。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Cleanup</span><h3>削除確認</h3><p>作成したリソースグループが削除済み、または削除中であることを確認します。</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

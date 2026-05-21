@@ -1,0 +1,12 @@
+<mxfile host="app.diagrams.net" agent="GitHub Copilot" version="24.7.17">
+  <diagram id="l03-d20-next-container" name="第4回 ACI への接続">
+    <mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="vm" value="第3回 Azure VM + NGINX" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/compute/Virtual_Machine.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="250" y="245" width="260" height="130" as="geometry"/></mxCell>
+        <mxCell id="aci" value="第4回 Azure Container Instances + NGINX コンテナ" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Instances.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="770" y="245" width="260" height="130" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

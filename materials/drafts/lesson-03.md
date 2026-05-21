@@ -133,6 +133,8 @@ VM を作るだけでなく、VM を動かすために VNet、サブネット、
 
 本回はハンズオン回のため、Azure Portal のスクリーンショットが必須です。
 `L03-Dxx` は AI または draw.io で作成する図表、`L03-Txx` は表、`L03-SSxx` は筆者が取得するスクリーンショットとして管理します。
+HTML プレゼンテーションで使用する生成済み図表は `.drawio.svg` として `assets/diagrams/lesson-03/` に配置し、補助的な draw.io ソースは `assets/drawio/lesson-03/` に配置します。Portal 画面は `materials/images/screenshots/L03-SSxx-masked.png` のマスク済み画像のみを参照します。
+現行の `L03-SS07` と `L03-SS09` は受信ポートや Public IP の選択状態が講座手順の最終指定値と一致しないため、講座本番前に HTTP 80 と Public IP 作成が確認できる画面として再取得することが望ましいです。HTML プレゼンテーションでは画面位置の説明に留め、手順本文はドラフトの指定値を正とします。
 
 | 素材ID | 種別 | HTML版での扱い | 提供/作成者 | 備考 |
 | --- | --- | --- | --- | --- |

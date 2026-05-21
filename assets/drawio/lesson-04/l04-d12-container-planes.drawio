@@ -1,0 +1,14 @@
+<mxfile host="app.diagrams.net" agent="GitHub Copilot" version="24.7.17">
+  <diagram id="l04-d12-container-planes" name="レジストリ、コントロールプレーン、データプレーン">
+    <mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="acr" value="Azure Container Registry" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Registries.svg;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="120" y="260" width="220" height="120" as="geometry"/></mxCell>
+        <mxCell id="aci" value="Azure Container Instances" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Instances.svg;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="535" y="270" width="210" height="110" as="geometry"/></mxCell>
+        <mxCell id="aca" value="Azure Container Apps" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Apps.svg;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="810" y="225" width="210" height="105" as="geometry"/></mxCell>
+        <mxCell id="aks" value="Azure Kubernetes Service" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Kubernetes_Services.svg;verticalLabelPosition=bottom;verticalAlign=top;align=center;whiteSpace=wrap;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="810" y="380" width="210" height="105" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

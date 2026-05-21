@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" role="img" data-mxgraph="editable">
+  <title>Azure VM と周辺リソースの関係</title>
+  <desc>Azure VM が Managed Disk、NIC、Public IP、NSG、VNet、サブネットと組み合わさって動くことを示す。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#0078D4"/></marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#1F2937" flood-opacity="0.12"/></filter>
+  </defs>
+  <rect width="1280" height="720" fill="#FFFFFF"/>
+  <text x="640" y="66" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="30" font-weight="850" fill="#005A9E">VM は周辺リソースと組み合わせて動く</text>
+  <rect x="70" y="112" width="1140" height="500" rx="22" fill="#F7FCFF" stroke="#B7D9F5" stroke-width="2"/>
+  <rect x="506" y="270" width="268" height="150" rx="8" fill="#FFF4E5" stroke="#CA5010" stroke-width="3" filter="url(#shadow)"/>
+  <text x="640" y="330" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="28" font-weight="850" fill="#1F2937">Azure VM</text>
+  <text x="640" y="366" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="18" font-weight="650" fill="#5F6B7A">OS と NGINX が動く場所</text>
+  <rect x="132" y="284" width="210" height="122" rx="8" fill="#FFFFFF" stroke="#D6DDE8" stroke-width="2" filter="url(#shadow)"/>
+  <text x="237" y="333" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="23" font-weight="800" fill="#1F2937">Managed Disk</text>
+  <text x="237" y="363" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="16" font-weight="650" fill="#5F6B7A">OS とデータを保存</text>
+  <rect x="476" y="120" width="328" height="100" rx="8" fill="#E8F3FF" stroke="#0078D4" stroke-width="2" filter="url(#shadow)"/>
+  <text x="640" y="162" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="23" font-weight="800" fill="#1F2937">OS イメージ / サイズ</text>
+  <text x="640" y="192" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="16" font-weight="650" fill="#5F6B7A">Ubuntu と CPU/メモリの大きさ</text>
+  <rect x="884" y="150" width="232" height="104" rx="8" fill="#FFFFFF" stroke="#D6DDE8" stroke-width="2" filter="url(#shadow)"/>
+  <text x="1000" y="192" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="23" font-weight="800" fill="#1F2937">Public IP</text>
+  <text x="1000" y="222" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="16" font-weight="650" fill="#5F6B7A">外部からの宛先</text>
+  <rect x="864" y="302" width="202" height="100" rx="8" fill="#E9F7F5" stroke="#008575" stroke-width="2" filter="url(#shadow)"/>
+  <text x="965" y="343" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="23" font-weight="800" fill="#1F2937">NIC</text>
+  <text x="965" y="373" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="16" font-weight="650" fill="#5F6B7A">VM のネットワーク口</text>
+  <rect x="1012" y="450" width="168" height="92" rx="8" fill="#FDF0FB" stroke="#C239B3" stroke-width="2" filter="url(#shadow)"/>
+  <text x="1096" y="489" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="23" font-weight="800" fill="#1F2937">NSG</text>
+  <text x="1096" y="518" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="15" font-weight="650" fill="#5F6B7A">受信ルール</text>
+  <rect x="664" y="482" width="250" height="96" rx="8" fill="#FFFFFF" stroke="#B7D9F5" stroke-width="2" filter="url(#shadow)"/>
+  <text x="789" y="520" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="23" font-weight="800" fill="#1F2937">VNet / サブネット</text>
+  <text x="789" y="549" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="15" font-weight="650" fill="#5F6B7A">クラウド上のネットワーク区画</text>
+  <line x1="342" y1="345" x2="506" y2="345" stroke="#0078D4" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <line x1="640" y1="220" x2="640" y2="270" stroke="#0078D4" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <line x1="774" y1="345" x2="864" y2="352" stroke="#0078D4" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <line x1="965" y1="302" x2="1000" y2="254" stroke="#0078D4" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <line x1="965" y1="402" x2="1096" y2="450" stroke="#0078D4" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <line x1="914" y1="495" x2="1012" y2="495" stroke="#0078D4" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <text x="640" y="656" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="20" font-weight="750" fill="#1F2937">Portal で VM を作ると、これらのリソースも一緒に確認することになる</text>
+</svg>

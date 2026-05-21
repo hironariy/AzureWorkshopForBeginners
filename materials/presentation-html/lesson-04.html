@@ -1,0 +1,1037 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第4回 Azure Container Instances をつかった Web サーバ構築 | Azure Workshop for Beginners</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --azure: #0078d4;
+      --azure-dark: #005a9e;
+      --teal: #008575;
+      --green: #498205;
+      --orange: #ca5010;
+      --magenta: #c239b3;
+      --ink: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d6dde8;
+      --soft: #f6f8fb;
+      --soft-blue: #e8f3ff;
+      --soft-green: #edf7ed;
+      --soft-orange: #fff4e5;
+      --soft-magenta: #fdf0fb;
+      --white: #ffffff;
+      --shadow: 0 18px 44px rgba(31, 41, 55, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-snap-type: y mandatory;
+      background: #eef2f7;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Segoe UI", "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      line-height: 1.6;
+      letter-spacing: 0;
+      background: #eef2f7;
+    }
+
+    .deck { width: 100%; }
+
+    .slide {
+      position: relative;
+      min-height: 100vh;
+      scroll-snap-align: start;
+      display: grid;
+      align-items: start;
+      padding: clamp(42px, 5.2vh, 76px) 5vw clamp(56px, 6vh, 88px);
+      background:
+        linear-gradient(90deg, rgba(0, 120, 212, 0.06), rgba(0, 133, 117, 0.03) 42%, rgba(255, 255, 255, 0) 70%),
+        var(--white);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .slide:nth-child(4n + 2) { background: linear-gradient(90deg, rgba(73, 130, 5, 0.07), rgba(255, 255, 255, 0) 62%), var(--white); }
+    .slide:nth-child(4n + 3) { background: linear-gradient(90deg, rgba(202, 80, 16, 0.06), rgba(255, 255, 255, 0) 62%), var(--white); }
+    .slide:nth-child(4n) { background: linear-gradient(90deg, rgba(194, 57, 179, 0.055), rgba(255, 255, 255, 0) 62%), var(--white); }
+
+    .slide::after {
+      content: attr(data-slide);
+      position: absolute;
+      right: 3vw;
+      bottom: 2.4vh;
+      color: #667085;
+      font-size: clamp(0.8rem, 1.2vw, 1rem);
+      font-weight: 600;
+    }
+
+    .content {
+      width: min(1500px, 100%);
+      margin: 0 auto;
+      display: grid;
+      align-content: start;
+      gap: clamp(18px, 2.1vh, 28px);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 18px;
+      font-size: clamp(2.75rem, 6.2vw, 6.1rem);
+      line-height: 1.02;
+      font-weight: 750;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      width: 100%;
+      max-width: none;
+      margin-bottom: 0;
+      padding-bottom: clamp(10px, 1.2vh, 16px);
+      border-bottom: 3px solid rgba(0, 120, 212, 0.28);
+      font-size: clamp(1.82rem, 3.25vw, 3.55rem);
+      line-height: 1.08;
+      font-weight: 740;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: clamp(1.16rem, 1.8vw, 1.55rem);
+      line-height: 1.25;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 1320px;
+      margin-bottom: 0;
+      color: #334155;
+      font-size: clamp(1.04rem, 1.56vw, 1.36rem);
+      line-height: 1.52;
+      font-weight: 500;
+    }
+
+    .title-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+      color: #334155;
+      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      font-weight: 650;
+    }
+
+    .pill, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 4px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.86);
+      color: #344054;
+      font-weight: 700;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .layout-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
+      gap: clamp(22px, 3.6vw, 54px);
+      align-items: start;
+    }
+
+    .content.layout-2,
+    .content.media-stack,
+    .content.media-stack.reverse {
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(18px, 2.2vh, 30px);
+      align-items: start;
+    }
+
+    .content.layout-2 > *,
+    .content.media-stack > *,
+    .content.media-stack.reverse > * {
+      grid-column: 1 / -1;
+    }
+
+    .content.layout-2 > :first-child,
+    .content.media-stack > div,
+    .content.media-stack.reverse > div {
+      display: grid;
+      gap: clamp(14px, 1.8vh, 22px);
+    }
+
+    .content.media-stack > div,
+    .content.media-stack.reverse > div { order: -1; }
+
+    .layout-2.equal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .layout-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
+    .layout-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+    .card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+
+    .topic-card, .compare-card, .quiz-card, .step-card, .mini-card {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.08);
+    }
+
+    .topic-card, .compare-card, .quiz-card, .step-card { padding: clamp(18px, 2.1vw, 26px); }
+    .mini-card { padding: 16px; }
+
+    .topic-card .label, .compare-card .label, .mini-card .label, .step-card .label {
+      display: inline-flex;
+      margin-bottom: 10px;
+      color: var(--azure-dark);
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .topic-card p, .compare-card p, .mini-card p, .step-card p, .quiz-card p {
+      margin-bottom: 0;
+      color: #435266;
+      font-size: clamp(0.96rem, 1.34vw, 1.14rem);
+    }
+
+    .accent-green { border-top: 6px solid var(--green); }
+    .accent-orange { border-top: 6px solid var(--orange); }
+    .accent-teal { border-top: 6px solid var(--teal); }
+    .accent-magenta { border-top: 6px solid var(--magenta); }
+    .accent-blue { border-top: 6px solid var(--azure); }
+
+    .bullets {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: clamp(1.02rem, 1.55vw, 1.28rem);
+    }
+
+    .bullets li { position: relative; padding-left: 28px; }
+    .bullets li::before { content: ""; position: absolute; left: 0; top: 0.72em; width: 10px; height: 10px; border-radius: 999px; background: var(--azure); }
+    .bullets.compact { gap: 9px; font-size: clamp(0.95rem, 1.3vw, 1.1rem); }
+
+    .diagram {
+      margin: 0;
+      padding: clamp(18px, 2.4vw, 30px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .diagram-svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      max-height: 56vh;
+      object-fit: contain;
+    }
+
+    .compact-diagram .diagram-svg { max-height: 40vh; }
+
+    .screenshot-frame {
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .screenshot-frame img {
+      display: block;
+      width: 100%;
+      max-height: 58vh;
+      object-fit: contain;
+      border-radius: 6px;
+      background: transparent;
+      box-shadow: 0 16px 36px rgba(31, 41, 55, 0.14);
+    }
+
+    .media-stack {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.72fr);
+      gap: clamp(16px, 2.2vw, 28px);
+      align-items: start;
+    }
+
+    .media-stack.reverse { grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.08fr); }
+    .media-stack .screenshot-frame img { max-height: 52vh; }
+
+    .caption {
+      margin-top: 8px;
+      color: var(--muted);
+      text-align: center;
+      font-size: clamp(0.84rem, 1.08vw, 0.96rem);
+      font-weight: 650;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      font-size: clamp(0.88rem, 1.18vw, 1.02rem);
+    }
+
+    .table th, .table td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .table th { color: #1e3a5f; background: var(--soft-blue); font-weight: 800; }
+    .table tr:last-child td { border-bottom: 0; }
+
+    .flow-row, .layer-row, .timeline-row { display: flex; align-items: stretch; gap: 12px; }
+    .timeline-row { flex-wrap: wrap; }
+
+    .node {
+      flex: 1 1 0;
+      min-width: 0;
+      display: grid;
+      place-items: center;
+      min-height: 86px;
+      padding: 14px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+      text-align: center;
+      font-size: clamp(1rem, 1.42vw, 1.18rem);
+      font-weight: 750;
+    }
+
+    .node small { display: block; margin-top: 6px; color: var(--muted); font-size: 0.78em; font-weight: 650; }
+    .node.web { border-color: #9ed0f8; background: var(--soft-blue); }
+    .node.ap { border-color: #8fd6ca; background: #e9f7f5; }
+    .node.db { border-color: #f2c185; background: var(--soft-orange); }
+    .node.ref { border-style: dashed; color: #475467; background: #f8fafc; }
+    .node.active { border-width: 3px; box-shadow: inset 0 0 0 3px rgba(0, 120, 212, 0.16); }
+
+    .arrow { align-self: center; flex: 0 0 auto; color: var(--muted); font-size: clamp(1.3rem, 2vw, 1.8rem); font-weight: 800; }
+
+    .callout {
+      padding: clamp(18px, 2vw, 24px);
+      border-left: 7px solid var(--azure);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.08);
+      font-size: clamp(1rem, 1.38vw, 1.16rem);
+      font-weight: 650;
+    }
+
+    .code-block {
+      margin: 0;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #0f172a;
+      color: #e5edf7;
+      overflow: auto;
+      font-size: clamp(0.78rem, 1.02vw, 0.92rem);
+      line-height: 1.45;
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.12);
+    }
+
+    .quiz-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .quiz-card { display: grid; gap: 10px; }
+    .quiz-card .q { color: var(--azure-dark); font-weight: 800; }
+    .answer { color: #2f6b00; font-weight: 800; }
+    .note { color: var(--muted); font-size: clamp(0.92rem, 1.2vw, 1rem); }
+
+    @media (max-width: 980px) {
+      html { scroll-snap-type: none; }
+      .slide { min-height: auto; padding: 48px 22px 66px; }
+      .layout-2, .layout-2.equal, .layout-3, .layout-4, .card-grid, .quiz-grid, .media-stack, .media-stack.reverse { grid-template-columns: 1fr; }
+      .flow-row, .layer-row { flex-direction: column; }
+      .arrow { transform: rotate(90deg); }
+      .screenshot-frame img { max-height: none; }
+    }
+
+    @media print {
+      html { scroll-snap-type: none; }
+      .slide { min-height: 100vh; page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide" data-slide="1 / 47" aria-labelledby="slide-1-title">
+      <div class="content">
+        <h1 id="slide-1-title">Azure Container Instances をつかった Web サーバ構築</h1>
+        <p class="lead">この回では、コンテナ化された NGINX を Azure Container Instances で実行し、インターネットからアクセスできることを確認します。</p>
+        <div class="title-meta" aria-label="講座情報">
+          <span class="pill">第4回</span>
+          <span class="pill">オンライン座学 + ハンズオン</span>
+          <span class="pill">50分レクチャー/ハンズオン + 10分 QA</span>
+          <span class="pill">2026年7月9日</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="2 / 47" aria-labelledby="slide-2-title">
+      <div class="content">
+        <h2 id="slide-2-title">今日のゴール</h2>
+        <p class="lead">VM で作った Web サーバと同じ到達確認を、コンテナ実行環境で行います。ブラウザーで NGINX が表示できれば、本回の構成は完成です。</p>
+        <figure class="diagram" role="img" aria-label="今日のゴールと完成状態">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-04/l04-d01-goal-architecture.drawio.svg" alt="ブラウザーから Azure Container Instances 上の NGINX コンテナへ HTTP でアクセスし、ACI が講師共有 ACR からイメージを取得する完成状態" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="3 / 47" aria-labelledby="slide-3-title">
+      <div class="content">
+        <h2 id="slide-3-title">前回の振り返り</h2>
+        <p class="lead">第3回では、VM、ディスク、NIC、Public IP、NSG を組み合わせて、Linux VM 上の NGINX を公開しました。</p>
+        <div class="flow-row" aria-label="第3回で作成した通信経路">
+          <div class="node">ブラウザー<small>HTTP でアクセス</small></div>
+          <div class="arrow">→</div>
+          <div class="node web">Public IP<small>外から見える宛先</small></div>
+          <div class="arrow">→</div>
+          <div class="node ap">NSG / NIC<small>通信と接続口</small></div>
+          <div class="arrow">→</div>
+          <div class="node db">Azure VM<small>NGINX を実行</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="4 / 47" aria-labelledby="slide-4-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-4-title">VM で管理したもの</h2>
+          <p class="lead">VM は自由度が高い一方で、OS、ミドルウェア、ネットワーク、ディスクなど、利用者が意識する管理対象も広くなります。</p>
+        </div>
+        <div class="card-grid" aria-label="VM で意識した管理対象">
+          <article class="topic-card accent-blue"><span class="label">Compute</span><h3>VM と OS</h3><p>OS イメージ、VM サイズ、起動状態、パッチや管理方法を意識します。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Network</span><h3>NIC と公開入口</h3><p>VNet、サブネット、NIC、Public IP、NSG がアクセス可否に関係します。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Storage</span><h3>Managed Disk</h3><p>OS ディスクが作られ、VM 停止後も残ると課金対象になる場合があります。</p></article>
+          <article class="topic-card accent-green"><span class="label">Software</span><h3>NGINX の導入</h3><p>カスタムデータや手動操作で、Web サーバソフトウェアを用意しました。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="5 / 47" aria-labelledby="slide-5-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-5-title">コンテナで考え方を変える</h2>
+          <p class="lead">コンテナでは、アプリケーションと実行に必要な内容をコンテナイメージとしてまとめ、実行環境はそのイメージからコンテナを起動します。</p>
+        </div>
+        <div class="layout-3" aria-label="コンテナの基本要素">
+          <article class="topic-card accent-blue"><span class="label">Image</span><h3>配布単位</h3><p>アプリケーション、ライブラリ、設定をまとめた起動元です。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Container</span><h3>実行単位</h3><p>イメージから起動した、実行中のプロセスに近い単位です。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Registry</span><h3>保管場所</h3><p>イメージを置き、実行環境が取得できるようにします。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="6 / 47" aria-labelledby="slide-6-title">
+      <div class="content">
+        <h2 id="slide-6-title">コンテナとは何か</h2>
+        <p class="lead">コンテナは、同じイメージから同じように起動できる実行単位です。イメージはテンプレート、コンテナはその実行中の姿として分けて考えます。</p>
+        <div class="flow-row" aria-label="イメージとコンテナの関係">
+          <div class="node web">コンテナイメージ<small>起動元のテンプレート</small></div>
+          <div class="arrow">→</div>
+          <div class="node ap active">コンテナ<small>実行中のインスタンス</small></div>
+          <div class="arrow">→</div>
+          <div class="node db">ログ / 状態確認<small>起動後に確認する情報</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="7 / 47" aria-labelledby="slide-7-title">
+      <div class="content">
+        <h2 id="slide-7-title">VM とコンテナの違い</h2>
+        <p class="lead">VM は OS ごと仮想化し、コンテナはホスト OS を共有する前提でアプリケーションを分離して実行します。管理対象の広さが変わります。</p>
+        <figure class="diagram" role="img" aria-label="VM とコンテナの責任分界">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-04/l04-d06-vm-container-responsibility.drawio.svg" alt="Azure VM と Azure Container Instances の責任分界を、OS、ミドルウェア、コンテナイメージ、実行設定の観点で比較した図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="8 / 47" aria-labelledby="slide-8-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-8-title">コンテナのメリット</h2>
+          <p class="lead">コンテナは、環境差分を小さくし、配布と起動を簡単にしやすい技術です。実行環境をまたいでも、同じイメージを使う考え方が中心です。</p>
+        </div>
+        <div class="card-grid" aria-label="コンテナのメリット">
+          <article class="topic-card accent-blue"><span class="label">Reproducible</span><h3>同じ構成で起動</h3><p>同じイメージから起動するため、環境差分を小さくしやすくなります。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Portable</span><h3>運びやすい</h3><p>イメージをレジストリへ置き、実行環境から取得できます。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Fast</span><h3>起動が速い</h3><p>OS 起動全体を待つ VM より、プロセス起動に近い感覚で扱えます。</p></article>
+          <article class="topic-card accent-green"><span class="label">Focused</span><h3>アプリに集中</h3><p>OS や VM の細かな管理より、イメージと実行設定を中心に考えます。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="9 / 47" aria-labelledby="slide-9-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-9-title">コンテナだけで解決しないこと</h2>
+          <p class="lead">コンテナを使っても、公開範囲、認証、ログ、監視、データ永続化、コスト管理は設計が必要です。魔法ではなく、配布と実行の単位を変える技術です。</p>
+        </div>
+        <div class="layout-3" aria-label="コンテナでも残る設計対象">
+          <article class="topic-card accent-orange"><span class="label">Exposure</span><h3>公開範囲</h3><p>Public にするか、どのポートを開けるかを判断します。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Operation</span><h3>ログと監視</h3><p>起動失敗やアプリの状態をどこで見るかを決めます。</p></article>
+          <article class="topic-card accent-magenta"><span class="label">Data</span><h3>永続化</h3><p>コンテナを消しても残すデータは、別の仕組みで管理します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="10 / 47" aria-labelledby="slide-10-title">
+      <div class="content">
+        <h2 id="slide-10-title">レジストリの役割</h2>
+        <p class="lead">コンテナイメージは、レジストリに置いて実行環境から取得します。開発側が push し、実行環境が pull するという流れで理解します。</p>
+        <div class="flow-row" aria-label="レジストリへの push と pull">
+          <div class="node">開発 / 講師準備<small>イメージを用意</small></div>
+          <div class="arrow">→</div>
+          <div class="node web active">レジストリ<small>イメージを保管</small></div>
+          <div class="arrow">→</div>
+          <div class="node ap">実行環境<small>イメージを取得</small></div>
+        </div>
+        <p class="note">本回では受講者はイメージを push せず、講師共有 ACR にある NGINX イメージを利用します。</p>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="11 / 47" aria-labelledby="slide-11-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-11-title">ACR とは</h2>
+          <p class="lead">Azure Container Registry は、Azure 上でコンテナイメージを保管するレジストリです。ログインサーバー名、リポジトリ名、タグでイメージを識別します。</p>
+        </div>
+        <table class="table" aria-label="ACR の主な要素">
+          <thead><tr><th>要素</th><th>意味</th><th>本回の見方</th></tr></thead>
+          <tbody>
+            <tr><td>ログインサーバー名</td><td>どの ACR かを示す名前</td><td>講師が案内する共有 ACR を使います。</td></tr>
+            <tr><td>リポジトリ</td><td>イメージのまとまり</td><td>NGINX 用のリポジトリを指定します。</td></tr>
+            <tr><td>タグ</td><td>イメージの版を表すラベル</td><td>講師指定タグを使い、自己判断で変えません。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="12 / 47" aria-labelledby="slide-12-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-12-title">第4回の共有 ACR</h2>
+          <p class="lead">本回では、講師が事前に用意した共有 ACR の NGINX イメージを利用します。受講者ごとの ACR 作成は第5回以降で扱います。</p>
+        </div>
+        <div class="layout-2 equal">
+          <article class="compare-card accent-blue"><span class="label">講師管理</span><h3>共有 ACR</h3><p>NGINX イメージを事前に格納し、受講者が参照できるように準備します。</p></article>
+          <article class="compare-card accent-teal"><span class="label">受講者作成</span><h3>ACI とリソースグループ</h3><p>本回で作成し、最後に削除する対象です。共有 ACR は削除しません。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="13 / 47" aria-labelledby="slide-13-title">
+      <div class="content">
+        <h2 id="slide-13-title">コントロールプレーンとデータプレーン</h2>
+        <p class="lead">コンテナ環境では、イメージを保管する場所、作成や管理を受け付ける面、実際にコンテナが動く面を分けて見ると理解しやすくなります。</p>
+        <figure class="diagram" role="img" aria-label="レジストリ、コントロールプレーン、データプレーンの関係">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-04/l04-d12-container-planes.drawio.svg" alt="Azure Container Registry、ACI、Container Apps、AKS をレジストリ、コントロールプレーン、データプレーンとして整理した図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="14 / 47" aria-labelledby="slide-14-title">
+      <div class="content">
+        <h2 id="slide-14-title">Azure のコンテナサービス</h2>
+        <p class="lead">Azure には、単体コンテナをすばやく動かすものから、本格的なアプリ実行基盤や Kubernetes クラスターまで、複数の選択肢があります。</p>
+        <table class="table" aria-label="Azure コンテナサービス整理表">
+          <thead><tr><th>サービス</th><th>主な役割</th><th>本講座での扱い</th></tr></thead>
+          <tbody>
+            <tr><td>Azure Container Registry</td><td>コンテナイメージを保管する</td><td>第4回では共有 ACR、第5回以降は受講者ごとに作成します。</td></tr>
+            <tr><td>Azure Container Instances</td><td>単体コンテナをすばやく実行する</td><td>第4回のハンズオン対象です。</td></tr>
+            <tr><td>Azure Container Apps</td><td>コンテナ化アプリをマネージド環境で動かす</td><td>第5回から第6回の Todo アプリで利用します。</td></tr>
+            <tr><td>Azure Kubernetes Service</td><td>Kubernetes クラスターを利用する</td><td>本回では存在紹介に留めます。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="15 / 47" aria-labelledby="slide-15-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-15-title">ACI の位置づけ</h2>
+          <p class="lead">Azure Container Instances は、少ない設定でコンテナを直接実行したいときに使いやすいサービスです。今回のような単体 Web サーバの確認に向いています。</p>
+        </div>
+        <div class="card-grid">
+          <article class="topic-card accent-blue"><span class="label">Simple</span><h3>単体コンテナ</h3><p>クラスターを意識せず、コンテナグループとして起動します。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Public</span><h3>HTTP 公開</h3><p>Public と TCP 80 を指定し、FQDN でアクセス確認できます。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Short-lived</span><h3>検証や短時間処理</h3><p>小さな検証、バッチ、講座用の体験に向いています。</p></article>
+          <article class="topic-card accent-green"><span class="label">Next</span><h3>本格運用は別途検討</h3><p>複数サービスのアプリは Container Apps などへつなげます。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="16 / 47" aria-labelledby="slide-16-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-16-title">ACA と AKS は今日深掘りしない</h2>
+          <p class="lead">Container Apps と AKS は重要ですが、本回では存在と使い分けの入口に留めます。第5回からは Container Apps で Todo アプリ構成へ進みます。</p>
+        </div>
+        <div class="layout-3">
+          <article class="topic-card accent-teal"><span class="label">ACI</span><h3>今日使う</h3><p>単体コンテナを直接実行し、NGINX の表示確認をします。</p></article>
+          <article class="topic-card accent-blue"><span class="label">ACA</span><h3>次回以降</h3><p>Web/API を持つアプリをマネージドなコンテナ基盤で動かします。</p></article>
+          <article class="topic-card accent-magenta"><span class="label">AKS</span><h3>概要のみ</h3><p>Kubernetes を使う本格的な制御が必要な場面で選択肢になります。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="17 / 47" aria-labelledby="slide-17-title">
+      <div class="content">
+        <h2 id="slide-17-title">今日作るアーキテクチャ</h2>
+        <p class="lead">ブラウザーから ACI の FQDN へアクセスし、ACI が共有 ACR から取得した NGINX イメージを実行してページを返します。</p>
+        <figure class="diagram" role="img" aria-label="NGINX on ACI の完成アーキテクチャ">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-04/l04-d15-nginx-aci-architecture.drawio.svg" alt="受講者リソースグループ内の Azure Container Instances が、講師共有 ACR から NGINX イメージを取得し、ブラウザーへ HTTP 80 で公開する構成" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="18 / 47" aria-labelledby="slide-18-title">
+      <div class="content">
+        <h2 id="slide-18-title">ハンズオンで使う値</h2>
+        <p class="lead">名前と DNS ラベルをそろえると、50名同時でも衝突を避けやすくなります。受講者番号は自分の番号に置き換えます。</p>
+        <table class="table" aria-label="ハンズオン入力値一覧">
+          <thead><tr><th>項目</th><th>値の例</th><th>注意</th></tr></thead>
+          <tbody>
+            <tr><td>リソースグループ名</td><td><code>rg-azbeg-l04-s01</code></td><td><code>s01</code> は自分の受講者番号に置き換えます。</td></tr>
+            <tr><td>ACI 名</td><td><code>aci-azbeg-l04-s01</code></td><td>第4回のリソースだと分かる名前にします。</td></tr>
+            <tr><td>DNS name label</td><td><code>aci-azbeg-l04-s01-&lt;接尾辞&gt;</code></td><td>リージョン内で一意にします。</td></tr>
+            <tr><td>イメージ</td><td><code>&lt;共有ACR&gt;/azbeg/nginx-l04:&lt;タグ&gt;</code></td><td>講師指定値を使います。</td></tr>
+            <tr><td>公開ポート</td><td>TCP 80</td><td>HTTPS は本回では扱いません。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="19 / 47" aria-labelledby="slide-19-title">
+      <div class="content">
+        <h2 id="slide-19-title">ハンズオンの流れ</h2>
+        <p class="lead">リソースグループを作り、ACI に共有 ACR のイメージを指定し、FQDN で確認します。最後に受講者リソースグループを削除します。</p>
+        <figure class="diagram" role="img" aria-label="ハンズオンの進行図">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-04/l04-d16-handson-progress.drawio.svg" alt="リソースグループ作成、ACI 作成、共有 ACR のイメージ指定、Public と HTTP 80 設定、Running 確認、NGINX 表示確認、削除までの流れ" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="20 / 47" aria-labelledby="slide-20-title">
+      <div class="content media-stack reverse">
+        <div>
+          <h2 id="slide-20-title">Azure Portal にサインイン</h2>
+          <p class="lead">講師が案内したアカウントで Azure Portal に入り、対象サブスクリプションが見えることを確認します。</p>
+          <article class="step-card accent-blue"><span class="label">確認</span><h3>作業するサブスクリプション</h3><p>個人の別アカウントで入っていないか、対象サブスクリプションが表示されているかを先に確認します。</p></article>
+        </div>
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS01-masked.png" alt="Azure Portal のサブスクリプション確認画面。アカウントやサブスクリプション情報はマスク済み。" />
+          <figcaption class="caption">Azure Portal で対象サブスクリプションを確認する</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="21 / 47" aria-labelledby="slide-21-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS02-masked.png" alt="Azure Portal のリソースグループ作成画面。サブスクリプション情報はマスク済み。" />
+          <figcaption class="caption">リソースグループを作成する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-21-title">リソースグループを作成する</h2>
+          <p class="lead">本回の受講者作成リソースは、受講者ごとのリソースグループにまとめます。最後にこの単位で削除します。</p>
+          <ul class="bullets compact"><li>名前は第4回と自分の受講者番号を含めます。</li><li>リージョンは講師指定の値を選びます。</li><li>共有 ACR とは別の、受講者作業用の入れ物です。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="22 / 47" aria-labelledby="slide-22-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS03-masked.png" alt="Azure Portal のリソースグループ Overview 画面。リソース ID などはマスク済み。" />
+          <figcaption class="caption">作成したリソースグループを確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-22-title">リソースグループ作成を確認する</h2>
+          <p class="lead">作成したリソースグループの Overview を開き、場所と名前が講師指定の値になっていることを確認します。</p>
+          <article class="step-card accent-teal"><span class="label">完了条件</span><h3>空の入れ物ができている</h3><p>この時点ではまだ ACI はありません。ここからコンテナ実行環境を追加します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="23 / 47" aria-labelledby="slide-23-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS04-masked.png" alt="Azure Portal の Container Instances 作成開始画面。アカウント情報はマスク済み。" />
+          <figcaption class="caption">Container Instances の作成を開始する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-23-title">Container Instances の作成を開始する</h2>
+          <p class="lead">Azure Portal から Container Instances の作成画面を開きます。似た名前の Container Apps や AKS を選ばないようにします。</p>
+          <ul class="bullets compact"><li>検索またはリソース作成から Container Instances を開きます。</li><li>作成先のリソースグループを確認します。</li><li>サービス名が Container Instances であることを確認します。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="24 / 47" aria-labelledby="slide-24-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS05-masked.png" alt="Azure Portal の ACI Basics タブ。コンテナグループ名、リージョン、OS などの基本情報が表示されている。" />
+          <figcaption class="caption">基本情報を入力する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-24-title">基本情報を入力する</h2>
+          <p class="lead">コンテナグループ名、リージョン、OS 種別、SKU を指定します。名前とリージョンは後続の確認にも関係します。</p>
+          <table class="table"><tbody><tr><th>確認</th><td>名前に受講者番号を含め、リージョンは講師指定値にします。</td></tr><tr><th>注意</th><td>OS type は Linux、SKU は講師指定または標準の小さな構成を使います。</td></tr></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="25 / 47" aria-labelledby="slide-25-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS06-masked.png" alt="Azure Portal の ACI コンテナイメージ指定画面。ACR 名などの機密になり得る値はマスク済み。" />
+          <figcaption class="caption">講師共有 ACR のイメージを指定する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-25-title">イメージを指定する</h2>
+          <p class="lead">講師共有 ACR のログインサーバー名、イメージ名、タグを指定します。受講者は秘密情報を画面やメモに残しません。</p>
+          <article class="step-card accent-orange"><span class="label">つまずきやすい</span><h3>ログインサーバー名、リポジトリ、タグ</h3><p>どれか 1 つでも違うと image pull で失敗します。講師指定値と照合します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="26 / 47" aria-labelledby="slide-26-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS07-masked.png" alt="Azure Portal の ACI CPU とメモリ設定画面。サブスクリプション情報はマスク済み。" />
+          <figcaption class="caption">CPU とメモリを確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-26-title">CPU とメモリを確認する</h2>
+          <p class="lead">本回の NGINX は小さな構成で十分です。高価な設定や不要な GPU 設定になっていないことを確認します。</p>
+          <div class="layout-2 equal">
+            <article class="step-card accent-teal"><span class="label">目安</span><h3>低コスト構成</h3><p>例として 1 vCPU / 1.5 GiB 程度の講師指定値を使います。</p></article>
+            <article class="step-card accent-orange"><span class="label">注意</span><h3>自己判断で増やさない</h3><p>大きな値を選ぶとクォータやコストの問題が出ます。</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="27 / 47" aria-labelledby="slide-27-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS08-masked.png" alt="Azure Portal の ACI Networking 設定画面。Public、TCP、80 の設定箇所が表示されている。" />
+          <figcaption class="caption">Public と HTTP 80 を設定する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-27-title">ネットワークを公開する</h2>
+          <p class="lead">ブラウザーからアクセスするため、Public と TCP 80 を設定します。本回では HTTPS や独自ドメインは扱いません。</p>
+          <ul class="bullets compact"><li>公開範囲が Public になっていることを確認します。</li><li>Protocol は TCP、Port は 80 を使います。</li><li>Private を選ぶとインターネットから表示できません。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="28 / 47" aria-labelledby="slide-28-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS09-masked.png" alt="Azure Portal の DNS name label 入力画面。公開したくない FQDN などはマスク済み。" />
+          <figcaption class="caption">DNS name label を入力する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-28-title">DNS ラベルを入力する</h2>
+          <p class="lead">FQDN はブラウザーでアクセスする宛先になります。リージョン内で一意になるように、受講者番号と講師指定の接尾辞を含めます。</p>
+          <article class="step-card accent-blue"><span class="label">完了条件</span><h3>FQDN が作れる状態</h3><p>DNS ラベルが重複すると検証に失敗します。衝突したら講師の指示に従って接尾辞を追加します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="29 / 47" aria-labelledby="slide-29-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS10-masked.png" alt="Azure Portal の Tags タブ。タグ入力例が表示されている。ユーザーや内部情報はマスク済み。" />
+          <figcaption class="caption">タグを設定する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-29-title">タグを設定する</h2>
+          <p class="lead">タグを付けると、講師が用途や削除対象を確認しやすくなります。受講者番号を自分の値に置き換えます。</p>
+          <div class="tag-list" aria-label="タグ例">
+            <span class="tag">Course</span><span class="tag">Lesson</span><span class="tag">StudentId</span><span class="tag">Environment</span><span class="tag">DeleteAfter</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="30 / 47" aria-labelledby="slide-30-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS11-masked.png" alt="Azure Portal の Review + create 画面。サブスクリプションや ACR 情報はマスク済み。" />
+          <figcaption class="caption">内容を確認して作成する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-30-title">内容を確認して作成する</h2>
+          <p class="lead">作成前に、リージョン、イメージ、公開ポート、DNS ラベル、タグを確認します。Validation が通ったら作成します。</p>
+          <article class="step-card accent-green"><span class="label">作成前チェック</span><h3>名前、場所、イメージ、公開設定</h3><p>後から直せるものもありますが、ハンズオンでは作成前確認を習慣にします。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="31 / 47" aria-labelledby="slide-31-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS12-masked.png" alt="Azure Portal のデプロイ完了画面。リソース ID などはマスク済み。" />
+          <figcaption class="caption">デプロイ完了を待つ</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-31-title">デプロイ完了を待つ</h2>
+          <p class="lead">ACI の作成とイメージ取得には少し時間がかかります。完了後は作成された Container Instance の Overview へ進みます。</p>
+          <ul class="bullets compact"><li>作成中に画面を閉じても、Portal の Deployments から確認できます。</li><li>失敗した場合はエラーメッセージの先頭を講師と確認します。</li><li>image pull の失敗は、イメージ名や権限の確認につながります。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="32 / 47" aria-labelledby="slide-32-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS13-masked.png" alt="Azure Portal の ACI Overview 画面。FQDN やリソース情報はマスク済み。" />
+          <figcaption class="caption">ACI の状態と FQDN を確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-32-title">ACI の Overview を確認する</h2>
+          <p class="lead">ACI が Running になり、FQDN または IP アドレスが表示されることを確認します。ブラウザーからアクセスする宛先はここで確認します。</p>
+          <article class="step-card accent-blue"><span class="label">完了条件</span><h3>Status が Running</h3><p>Provisioning 中にアクセスすると失敗することがあります。起動状態を確認してから進みます。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="33 / 47" aria-labelledby="slide-33-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS14-masked.png" alt="ブラウザーで NGINX の初期ページが表示されている画面。アクセス先情報はマスク済み。" />
+          <figcaption class="caption">ブラウザーで NGINX のページを確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-33-title">ブラウザーでアクセスする</h2>
+          <p class="lead">ACI Overview で確認した FQDN に HTTP でアクセスし、NGINX のページが表示されることを確認します。</p>
+          <article class="step-card accent-green"><span class="label">完了条件</span><h3>NGINX のページが表示される</h3><p>表示できれば、ブラウザー、公開ポート、ACI、コンテナイメージの流れがつながっています。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="34 / 47" aria-labelledby="slide-34-title">
+      <div class="content">
+        <h2 id="slide-34-title">表示されないときの見方</h2>
+        <p class="lead">画面が出ない場合は、状態、宛先、アクセス方法、ポート、イメージ取得の順に確認します。焦って設定を増やさず、手前から切り分けます。</p>
+        <figure class="diagram" role="img" aria-label="NGINX が表示されないときの確認順">
+          <img class="diagram-svg" src="../../assets/diagrams/lesson-04/l04-d17-troubleshooting-order.drawio.svg" alt="ACI が Running か、FQDN か、HTTP か、TCP 80 か、イメージ名とタグが正しいか、ACR から pull できているかを順に確認する図" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="35 / 47" aria-labelledby="slide-35-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS15-masked.png" alt="Azure Portal の ACI Logs または Events 画面。実リソース名や内部情報はマスク済み。" />
+          <figcaption class="caption">ログまたはイベントを確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-35-title">ログとイベントを確認する</h2>
+          <p class="lead">ACI では、コンテナのログやイベントから起動状態を確認できます。Image pull やコンテナ開始のイベントは切り分けの入口になります。</p>
+          <ul class="bullets compact"><li>ブラウザー表示だけでなく Portal 側の状態も確認します。</li><li>Image pull の失敗は ACR やタグの確認につながります。</li><li>ログに秘密情報が含まれる場合は公開資料に残しません。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="36 / 47" aria-labelledby="slide-36-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS16-masked.png" alt="Azure Portal のリソースグループ内リソース一覧。リソース ID やサブスクリプション情報はマスク済み。" />
+          <figcaption class="caption">リソースグループ内のリソースを見る</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-36-title">リソースグループ内を見る</h2>
+          <p class="lead">ACI では、VM のように NIC や OS ディスクを個別に作って管理しません。受講者リソースグループ内に何が作られたかを確認します。</p>
+          <article class="step-card accent-teal"><span class="label">見るポイント</span><h3>共有 ACR は別扱い</h3><p>共有 ACR は講師管理のリソースです。受講者の削除対象には含めません。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="37 / 47" aria-labelledby="slide-37-title">
+      <div class="content">
+        <h2 id="slide-37-title">VM 構成と ACI 構成を比べる</h2>
+        <p class="lead">同じ NGINX 表示でも、利用者が意識する管理対象は変わります。第3回と第4回の体験を、実行単位と作成物で比較します。</p>
+        <table class="table" aria-label="VM と ACI の比較表">
+          <thead><tr><th>観点</th><th>第3回: VM</th><th>第4回: ACI</th></tr></thead>
+          <tbody>
+            <tr><td>実行単位</td><td>VM 上の OS と NGINX</td><td>コンテナイメージから起動した NGINX コンテナ</td></tr>
+            <tr><td>作成時に意識したもの</td><td>VM、Disk、NIC、Public IP、NSG</td><td>ACI、イメージ、公開ポート、FQDN</td></tr>
+            <tr><td>NGINX の準備</td><td>カスタムデータでインストール</td><td>イメージに含まれるものを実行</td></tr>
+            <tr><td>OS 管理</td><td>利用者が意識する範囲が広い</td><td>VM より意識する範囲が小さい</td></tr>
+            <tr><td>削除</td><td>受講者リソースグループ削除</td><td>受講者リソースグループ削除</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="38 / 47" aria-labelledby="slide-38-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-38-title">省略された管理対象</h2>
+          <p class="lead">ACI では OS ディスクや NIC を個別に作らず、NGINX のインストール手順も書きません。コンテナ実行に集中しやすくなります。</p>
+        </div>
+        <div class="card-grid">
+          <article class="topic-card accent-blue"><span class="label">Disk</span><h3>OS ディスクを作らない</h3><p>VM のような OS ディスクを個別に確認しません。</p></article>
+          <article class="topic-card accent-teal"><span class="label">NIC</span><h3>NIC を作らない</h3><p>ネットワークの細部より、公開設定と FQDN に注目します。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Install</span><h3>NGINX を手で入れない</h3><p>イメージに含まれている NGINX を実行します。</p></article>
+          <article class="topic-card accent-green"><span class="label">Patch</span><h3>OS パッチの見え方が違う</h3><p>ただしイメージの更新責任は別途残ります。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="39 / 47" aria-labelledby="slide-39-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-39-title">省略されない設計対象</h2>
+          <p class="lead">ACI でも設計が不要になるわけではありません。どのイメージを使い、どこから取得し、どのポートを公開し、どう削除するかは考えます。</p>
+        </div>
+        <div class="layout-3">
+          <article class="topic-card accent-orange"><span class="label">Image</span><h3>どのイメージか</h3><p>タグ、更新、脆弱性、由来を確認する必要があります。</p></article>
+          <article class="topic-card accent-blue"><span class="label">Access</span><h3>どこへ公開するか</h3><p>Public、FQDN、ポート、HTTPS の扱いを判断します。</p></article>
+          <article class="topic-card accent-green"><span class="label">Operation</span><h3>ログと削除</h3><p>状態確認、トラブル時のログ、コストを残さない削除が必要です。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="40 / 47" aria-labelledby="slide-40-title">
+      <div class="content">
+        <h2 id="slide-40-title">コストが発生する場所</h2>
+        <p class="lead">ACI は実行中の CPU/メモリ時間などが課金対象になります。本回では最後に受講者リソースグループを削除し、作成した課金対象を残しません。</p>
+        <table class="table" aria-label="コストが発生する主なリソース">
+          <thead><tr><th>リソース</th><th>課金注意</th><th>本回の扱い</th></tr></thead>
+          <tbody>
+            <tr><td>Azure Container Instances</td><td>実行中の CPU/メモリ時間が課金対象になります。</td><td>最後に削除します。</td></tr>
+            <tr><td>Log/診断関連</td><td>有効化した場合に課金が発生することがあります。</td><td>本回では詳細に扱いません。</td></tr>
+            <tr><td>共有 ACR</td><td>講師管理の共有リソースです。</td><td>受講者は削除しません。</td></tr>
+            <tr><td>DNS label/FQDN</td><td>ACI に付随します。</td><td>ACI 削除で解放されます。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="41 / 47" aria-labelledby="slide-41-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS17-masked.png" alt="Azure Portal の Delete resource group 確認画面。サブスクリプションやリソース情報はマスク済み。" />
+          <figcaption class="caption">リソースグループを削除する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-41-title">リソースグループを削除する</h2>
+          <p class="lead">受講者が作成したリソースグループだけを削除します。共有 ACR や講師共有リソースグループは削除対象ではありません。</p>
+          <article class="step-card accent-orange"><span class="label">重要</span><h3>停止ではなく削除まで行う</h3><p>本回では、ACI を停止しただけで終わらせず、受講者リソースグループを削除して完了とします。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="42 / 47" aria-labelledby="slide-42-title">
+      <div class="content media-stack">
+        <figure class="screenshot-frame">
+          <img src="../images/screenshots/L04-SS18-masked.png" alt="Azure Portal の Resource groups 一覧画面。サブスクリプションやリソース名はマスク済み。" />
+          <figcaption class="caption">削除完了または削除中であることを確認する</figcaption>
+        </figure>
+        <div>
+          <h2 id="slide-42-title">削除完了を確認する</h2>
+          <p class="lead">対象リソースグループが一覧から消えたこと、または削除中になっていることを確認します。ここまでが本回のハンズオン完了です。</p>
+          <ul class="bullets compact"><li>削除には反映待ちが発生する場合があります。</li><li>別のリソースグループを削除しないよう名前を確認します。</li><li>講師は最後に全員の削除状況を確認します。</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="43 / 47" aria-labelledby="slide-43-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-43-title">早く終えた人向け</h2>
+          <p class="lead">余裕がある人は、共有 ACR の範囲内で別タグの NGINX イメージを試すか、ACI のログやイベントをもう少し観察します。</p>
+        </div>
+        <div class="layout-2 equal">
+          <article class="topic-card accent-teal"><span class="label">Option</span><h3>別タグを試す</h3><p>講師が案内した範囲で、別の表示内容を持つ NGINX イメージを試します。</p></article>
+          <article class="topic-card accent-blue"><span class="label">Observe</span><h3>ログを見る</h3><p>起動イベント、コンテナログ、状態変化を確認し、トラブル時の見方に慣れます。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="44 / 47" aria-labelledby="slide-44-title">
+      <div class="content">
+        <h2 id="slide-44-title">よくある失敗</h2>
+        <p class="lead">イメージ名、タグ、DNS ラベル、ACR 参照権限、ポート設定は特につまずきやすいポイントです。症状から確認箇所へ短く戻ります。</p>
+        <table class="table" aria-label="よくある失敗一覧">
+          <thead><tr><th>失敗</th><th>症状</th><th>確認箇所</th><th>対応</th></tr></thead>
+          <tbody>
+            <tr><td>サービス選択ミス</td><td>Container Apps や AKS の画面にいる</td><td>作成画面のサービス名</td><td>Container Instances に戻ります。</td></tr>
+            <tr><td>イメージ名ミス</td><td>Image pull で失敗する</td><td>イメージ名、タグ、ACR ログインサーバー</td><td>講師指定値と照合します。</td></tr>
+            <tr><td>DNS ラベル重複</td><td>DNS label の検証に失敗する</td><td>Networking の DNS name label</td><td>接尾辞を追加します。</td></tr>
+            <tr><td>HTTP 表示失敗</td><td>ブラウザーで表示できない</td><td>Running 状態、FQDN、TCP 80</td><td>確認順に切り分けます。</td></tr>
+            <tr><td>削除対象の誤解</td><td>共有 ACR を削除しようとする</td><td>リソースグループ名</td><td>受講者 RG だけ削除します。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="45 / 47" aria-labelledby="slide-45-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-45-title">復旧できない場合</h2>
+          <p class="lead">時間内に直せない場合は、手順の完了よりも VM とコンテナの違いの理解を優先します。講師デモで完成状態を見て比較理解に戻ります。</p>
+        </div>
+        <div class="layout-3">
+          <article class="topic-card accent-orange"><span class="label">作成失敗</span><h3>原因を切り分ける</h3><p>名前、リージョン、DNS ラベル、権限、クォータを確認します。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Image pull</span><h3>共有 ACR を確認</h3><p>講師がイメージ名、タグ、参照方式、権限を確認します。</p></article>
+          <article class="topic-card accent-green"><span class="label">最後に必ず</span><h3>削除を完了</h3><p>作成途中リソースがある場合も、削除だけは完了させます。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="46 / 47" aria-labelledby="slide-46-title">
+      <div class="content layout-2">
+        <div>
+          <h2 id="slide-46-title">今日のまとめ</h2>
+          <p class="lead">コンテナは VM を置き換える魔法ではなく、配布と実行の単位を変える技術です。ACR は保管場所、ACI は実行場所として整理します。</p>
+        </div>
+        <div class="card-grid" aria-label="今日の要点">
+          <article class="topic-card accent-blue"><span class="label">1</span><h3>イメージは配布単位</h3><p>NGINX の実行に必要な内容を、コンテナイメージとして扱いました。</p></article>
+          <article class="topic-card accent-teal"><span class="label">2</span><h3>ACR は保管場所</h3><p>本回では講師共有 ACR のイメージを ACI から取得しました。</p></article>
+          <article class="topic-card accent-orange"><span class="label">3</span><h3>ACI は実行場所</h3><p>Public、TCP 80、FQDN を設定し、ブラウザーから確認しました。</p></article>
+          <article class="topic-card accent-green"><span class="label">4</span><h3>削除までが完了</h3><p>受講者リソースグループだけを削除し、共有 ACR は残します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="47 / 47" aria-labelledby="slide-47-title">
+      <div class="content">
+        <h2 id="slide-47-title">確認クイズと QA</h2>
+        <p class="lead">操作で詰まった点と、VM との違いで分からない点を確認します。最後に、ACR、ACI、公開ポート、削除対象を短く言葉にします。</p>
+        <div class="quiz-grid" aria-label="確認クイズ">
+          <article class="quiz-card accent-blue"><p class="q">問1</p><h3>イメージを保管する場所は?</h3><p class="answer">Azure Container Registry</p></article>
+          <article class="quiz-card accent-teal"><p class="q">問2</p><h3>本回で作成した実行サービスは?</h3><p class="answer">Azure Container Instances</p></article>
+          <article class="quiz-card accent-orange"><p class="q">問3</p><h3>公開した代表的なポートは?</h3><p class="answer">TCP 80</p></article>
+          <article class="quiz-card accent-green"><p class="q">問4</p><h3>最後に削除する対象は?</h3><p class="answer">受講者ごとのリソースグループ</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

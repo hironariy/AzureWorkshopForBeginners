@@ -117,7 +117,7 @@
 | 22 | リソースグループ作成を確認する | 作成したリソースグループが表示されることを確認します。 | Overview、場所、タグ | L05-SS03 |
 | 23 | VNet を作成する | Container Apps と PostgreSQL の接続を考える土台として VNet を作成します。 | VNet 名、アドレス空間 | L05-SS04 |
 | 24 | サブネットを作成する | アプリ実行環境、Private Endpoint、PostgreSQL の区画を分けて考えます。 | `snet-container-apps`、`snet-private-endpoints`、`snet-postgresql` | L05-SS05 |
-| 25 | ACR を作成する | 元のガイドの「オプション A: 特定公開アクセスを有効にする」に従って、受講者ごとの ACR を作成します。 | ACR 名、Premium SKU、Private endpoint、特定公開アクセス | L05-SS06 |
+| 25 | ACR を作成する | 元のガイドの「オプション A: 特定公開アクセスを有効にする」に従って、受講者ごとの ACR を作成します。 | ACR 名、Premium SKU、Private endpoint、特定公開アクセス。HTML版では1スライド内に2枚のスクリーンショットを並べる | L05-SS06a / L05-SS06b |
 | 26 | ACR の Overview を確認する | 第6回で使うログインサーバー名を確認します。 | Login server、Registry name | L05-SS07 |
 | 27 | API Container App と Environment を作成する | 元ガイドどおり、まずプレースホルダー API Container App を作成し、この中で Environment も作成します。 | API app、CAE、VNet、プレースホルダーイメージ | L05-SS09 |
 | 28 | API Container App の URL を記録する | 第6回の設定で使う内部 API URL を記録します。 | Application URL、internal URL、マスク注意 | L05-SS10 |
@@ -130,10 +130,10 @@
 | 35 | PostgreSQL の Overview を確認する | サーバー名、状態、接続に必要な値を確認します。 | Server name、FQDN、Status | L05-SS15 |
 | 36 | Managed Identity を作成する | DB への権限付与に使う User-assigned Managed Identity を作成します。 | User-assigned managed identity | L05-SS17 |
 | 37 | Managed Identity の値を記録する | DB 権限付与と第6回の設定で使う Client ID などを確認します。 | Client ID、Resource ID、マスク注意 | L05-SS18 |
-| 38 | データベースを作成し権限を付与する | Todo アプリ用 DB を作成し、作成した Managed Identity に DB のパーミッションを付与します。 | Database name、`tododb`、Managed Identity 権限 | L05-SS16 |
+| 38 | データベースを作成し権限を付与する | Todo アプリ用 DB を作成し、作成した Managed Identity に DB のパーミッションを付与します。 | Database name、`tododb`、Managed Identity 権限。HTML版では1スライド内に2枚のスクリーンショットを並べる | L05-SS16a / L05-SS16b |
 | 39 | Entra ID アプリ登録を作成する | Web サインイン用のアプリ登録を作成し、Web Container App URL を redirect URI に設定します。 | App registration、SPA redirect URI | L05-SS19 |
 | 40 | アプリ登録の ID を記録する | Application client ID と Tenant ID を記録します。 | Client ID、Tenant ID、Directory ID | L05-SS20 |
-| 41 | 接続情報一覧に記録する | フェーズ1.9のサマリーとして、必要な値を一覧にまとめます。 | 記録テンプレート、秘密情報の扱い | L05-T03 |
+| 41 | 接続情報一覧に記録する | フェーズ1.9のサマリーとして、必要な値を一覧にまとめます。 | 記録テンプレート、元ガイドのステップ1.9、秘密情報の扱い | L05-T03 / L05-SS27 |
 | 42 | 記録すべき値と隠す値 | 第6回で必要な値と、公開してはいけない値を分けます。 | 接続文字列、サーバー名、ID、URL | L05-T04 |
 | 43 | 作成済みリソースを確認する | リソースグループ内に必要なリソースがそろっているか確認します。 | RG リソース一覧 | L05-SS24 |
 | 44 | 第5回終了時点のアーキテクチャ | まだ実アプリのイメージは動いていませんが、フェーズ1.9までの土台ができました。 | 作成済み/第6回で更新する範囲の色分け | L05-D17 |
@@ -181,7 +181,8 @@
 | L05-SS03 | スクリーンショット | 必須 | 筆者が提供 | リソースグループ Overview |
 | L05-SS04 | スクリーンショット | 必須 | 筆者が提供 | VNet 作成画面 |
 | L05-SS05 | スクリーンショット | 必須 | 筆者が提供 | サブネット作成または確認画面 |
-| L05-SS06 | スクリーンショット | 必須 | 筆者が提供 | ACR 作成画面。特定公開アクセス設定を含む |
+| L05-SS06a | スクリーンショット | 必須 | 筆者が提供 | ACR 作成画面の基本設定。スライド25で L05-SS06b と同一スライドに配置する |
+| L05-SS06b | スクリーンショット | 必須 | 筆者が提供 | ACR 作成画面のネットワーク設定。特定公開アクセス設定を含む。スライド25で L05-SS06a と同一スライドに配置する |
 | L05-SS07 | スクリーンショット | 必須 | 筆者が提供 | ACR Overview と login server |
 | L05-SS09 | スクリーンショット | 必須 | 筆者が提供 | API Container App と Container Apps Environment 作成画面 |
 | L05-SS10 | スクリーンショット | 必須 | 筆者が提供 | API Container App Overview と Application URL |
@@ -190,7 +191,8 @@
 | L05-SS13 | スクリーンショット | 必須 | 筆者が提供 | PostgreSQL ネットワーク設定画面 |
 | L05-SS14 | スクリーンショット | 必須 | 筆者が提供 | PostgreSQL Review + create |
 | L05-SS15 | スクリーンショット | 必須 | 筆者が提供 | PostgreSQL Overview とサーバー名 |
-| L05-SS16 | スクリーンショット | 必須 | 筆者が提供 | PostgreSQL Database 作成と Managed Identity への権限付与画面 |
+| L05-SS16a | スクリーンショット | 必須 | 筆者が提供 | PostgreSQL Database 作成画面。スライド38で L05-SS16b と同一スライドに配置する |
+| L05-SS16b | スクリーンショット | 必須 | 筆者が提供 | Managed Identity への DB パーミッション付与画面。スライド38で L05-SS16a と同一スライドに配置する |
 | L05-SS17 | スクリーンショット | 必須 | 筆者が提供 | Managed Identity 作成画面 |
 | L05-SS18 | スクリーンショット | 必須 | 筆者が提供 | Managed Identity Overview |
 | L05-SS19 | スクリーンショット | 必須 | 筆者が提供 | Entra ID App registration 作成画面 |
@@ -198,8 +200,7 @@
 | L05-SS24 | スクリーンショット | 必須 | 筆者が提供 | リソースグループ内の作成済みリソース一覧 |
 | L05-SS25 | スクリーンショット | 必須 | 筆者が提供 | PostgreSQL Stop 操作画面 |
 | L05-SS26 | スクリーンショット | 必須 | 筆者が提供 | PostgreSQL Stopped 状態確認画面 |
-| L05-SS27 | スクリーンショット | 任意 | 筆者が提供 | 第6回用接続情報メモの記入例。秘密情報はダミー化 |
-| L05-SS28 | スクリーンショット | 任意 | 筆者が提供 | エラー時の Deployment details または Activity log |
+| L05-SS27 | スクリーンショット | 任意 | 筆者が提供 | アプリの元ガイドのステップ1.9「サマリー - すべてのリソース詳細を収集」の該当箇所。L05-T03 の補助として参照する |
 | L05-SS29 | スクリーンショット | 必須 | 筆者が提供 | Web Container App 作成画面 |
 | L05-SS30 | スクリーンショット | 必須 | 筆者が提供 | Web Container App Overview と Application URL |
 
@@ -525,7 +526,8 @@
 | L05-SS03 | Resource group Overview | 作成確認 | 1600 x 900 (16:9) | 第6回まで削除しない旨を本文で補足する | リソース ID、サブスクリプション ID |
 | L05-SS04 | Virtual networks > Create | VNet 作成 | 1440 x 900 (16:10) | 名前、リージョン、アドレス空間が分かるようにする | サブスクリプション ID、ユーザー名 |
 | L05-SS05 | VNet の Subnets | サブネット作成/確認 | 1600 x 900 (16:9) | サブネット名と用途が分かる状態で取得する | リソース ID、サブスクリプション ID |
-| L05-SS06 | Container registry > Create | ACR 作成 | 1440 x 900 (16:10) | ACR 名、Premium SKU、リージョン、Private endpoint に加え、元のガイドの「オプション A: 特定公開アクセスを有効にする」に従ったネットワーク設定を示す | サブスクリプション ID、ユーザー名 |
+| L05-SS06a | Container registry > Create > Basics | ACR 作成の基本設定 | 1440 x 900 (16:10) | ACR 名、Premium SKU、リージョンが分かる状態で取得する。HTML版では L05-SS06b と同じスライドに左右または上下で配置する | サブスクリプション ID、ユーザー名 |
+| L05-SS06b | Container registry > Create > Networking | ACR 作成のネットワーク設定 | 1440 x 900 (16:10) | Private endpoint と、元のガイドの「オプション A: 特定公開アクセスを有効にする」に従ったネットワーク設定が分かる状態で取得する。HTML版では L05-SS06a と同じスライドに左右または上下で配置する | サブスクリプション ID、ユーザー名、Private IP、内部ネットワーク情報 |
 | L05-SS07 | ACR Overview | ACR 値記録 | 1600 x 900 (16:9) | Login server が分かる状態。実環境名は公開時に必要に応じてマスク | リソース ID、サブスクリプション ID |
 | L05-SS09 | Container Apps > Create | API Container App と CAE 作成 | 1200 x 1600 (3:4) | `app-todomanagement-api`、新規 Container Apps Environment、VNet、プレースホルダーイメージが分かるようにする。監視用ワークスペースは Environment 作成手順内の設定として扱い、単独スライドにしない | サブスクリプション ID、リソース ID |
 | L05-SS10 | API Container App Overview | API URL 記録 | 1600 x 900 (16:9) | Application URL が分かる状態。内部 URL は公開時に必要に応じてマスク | リソース ID、サブスクリプション ID、内部 FQDN |
@@ -534,7 +536,8 @@
 | L05-SS13 | PostgreSQL Networking | DB ネットワーク設定 | 1200 x 1600 (3:4) | 参照手順に合わせた接続方式が分かるようにする | サブスクリプション ID、Private IP、内部情報 |
 | L05-SS14 | PostgreSQL Review + create | 作成前確認 | 1200 x 1600 (3:4) | Validation passed と主要設定が見える状態 | サブスクリプション ID、パスワード、内部情報 |
 | L05-SS15 | PostgreSQL Overview | DB 値記録 | 1600 x 900 (16:9) | Server name、Status が分かる状態 | リソース ID、サブスクリプション ID、必要に応じてサーバー名 |
-| L05-SS16 | PostgreSQL Databases / 権限設定 | DB 作成と権限付与 | 1200 x 1600 (3:4) | `tododb` などの DB 名と、作成した Managed Identity に DB のパーミッションを付与する操作が分かる状態。コマンドや値を写す場合は秘密情報を含めない | リソース ID、サブスクリプション ID、DB ユーザー名、内部情報 |
+| L05-SS16a | PostgreSQL Databases | DB 作成 | 1200 x 1600 (3:4) | `tododb` などの DB 名が分かる状態で取得する。HTML版では L05-SS16b と同じスライドに左右または上下で配置する | リソース ID、サブスクリプション ID、DB ユーザー名 |
+| L05-SS16b | PostgreSQL 権限設定 / 実行結果 | Managed Identity への権限付与 | 1200 x 1600 (3:4) | 作成した Managed Identity に DB のパーミッションを付与する操作または結果が分かる状態で取得する。コマンドや値を写す場合は秘密情報を含めない。HTML版では L05-SS16a と同じスライドに左右または上下で配置する | リソース ID、サブスクリプション ID、DB ユーザー名、内部情報 |
 | L05-SS17 | Managed Identities > Create | Managed Identity 作成 | 1440 x 900 (16:10) | 名前とリージョンが分かるようにする | サブスクリプション ID、ユーザー名 |
 | L05-SS18 | Managed Identity Overview | ID 値記録 | 1600 x 900 (16:9) | Client ID、Resource ID などを確認する。公開時はマスク | Client ID、Resource ID、Subscription ID |
 | L05-SS19 | Microsoft Entra ID > App registrations > New registration | App registration 作成 | 1440 x 900 (16:10) | 名前と supported account type が分かる状態 | テナント ID、ユーザー名 |
@@ -542,8 +545,7 @@
 | L05-SS24 | Resource group 内のリソース一覧 | 作成済み確認 | 1600 x 900 (16:9) | 第5回で作成したリソースが並ぶ状態 | リソース ID、サブスクリプション ID |
 | L05-SS25 | PostgreSQL Stop 操作画面 | 停止操作 | 1440 x 900 (16:10) | Stop ボタンまたは確認ダイアログが分かる状態 | サブスクリプション ID、サーバー名 |
 | L05-SS26 | PostgreSQL Stopped 状態 | 停止確認 | 1600 x 900 (16:9) | Status が Stopped であることを示す | サブスクリプション ID、サーバー名 |
-| L05-SS27 | 接続情報メモの記入例 | 第6回引き継ぎ | 1200 x 1600 (3:4) | 値はすべてダミー化する | すべての実 ID、secret、パスワード、接続文字列 |
-| L05-SS28 | Deployment details / Activity log | エラー確認例 | 1200 x 1600 (3:4) | 失敗時の確認先として取得する。公開版では内容を慎重に確認 | リソース ID、Subscription ID、内部エラー詳細 |
+| L05-SS27 | アプリの元ガイド ステップ1.9「サマリー - すべてのリソース詳細を収集」 | 第6回引き継ぎ値の参照元を示す | 1600 x 900 (16:9) | GitHub 上の `DEPLOY_GUIDE_GUI-ja_JP.md` のステップ1.9該当セクションを表示して取得する。Azure Portal の一覧画面ではなく、元ガイドのサマリー項目を参照して値を集める意図が分かる画角にする | ブラウザーのアカウント情報、リポジトリ外の個人情報、表示される実 ID や secret |
 | L05-SS29 | Container Apps > Create | Web Container App 作成 | 1200 x 1600 (3:4) | `app-todomanagement-web`、既存 Container Apps Environment、Ingress、プレースホルダーイメージが分かるようにする | サブスクリプション ID、リソース ID |
 | L05-SS30 | Web Container App Overview | Web URL 記録 | 1600 x 900 (16:9) | Application URL が分かる状態。Entra ID redirect URI に使うことを本文で補足する | リソース ID、サブスクリプション ID、FQDN |
 

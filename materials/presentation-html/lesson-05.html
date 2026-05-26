@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第5回 Todo アプリの構築 1 | Azure Workshop for Beginners</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --azure: #0078d4;
+      --azure-dark: #005a9e;
+      --teal: #008575;
+      --green: #498205;
+      --orange: #ca5010;
+      --magenta: #c239b3;
+      --ink: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d6dde8;
+      --soft: #f6f8fb;
+      --soft-blue: #e8f3ff;
+      --soft-green: #edf7ed;
+      --soft-orange: #fff4e5;
+      --soft-magenta: #fdf0fb;
+      --white: #ffffff;
+      --shadow: 0 18px 44px rgba(31, 41, 55, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-snap-type: y mandatory; background: #eef2f7; }
+    body { margin: 0; color: var(--ink); font-family: "Segoe UI", "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; line-height: 1.6; letter-spacing: 0; background: #eef2f7; }
+    .deck { width: 100%; }
+    .slide { position: relative; min-height: 100vh; scroll-snap-align: start; display: grid; align-items: start; padding: clamp(42px, 5.2vh, 76px) 5vw clamp(56px, 6vh, 88px); background: linear-gradient(90deg, rgba(0, 120, 212, 0.06), rgba(0, 133, 117, 0.03) 42%, rgba(255, 255, 255, 0) 70%), var(--white); border-bottom: 1px solid var(--line); }
+    .slide:nth-child(4n + 2) { background: linear-gradient(90deg, rgba(73, 130, 5, 0.07), rgba(255,255,255,0) 62%), var(--white); }
+    .slide:nth-child(4n + 3) { background: linear-gradient(90deg, rgba(202, 80, 16, 0.06), rgba(255,255,255,0) 62%), var(--white); }
+    .slide:nth-child(4n) { background: linear-gradient(90deg, rgba(194, 57, 179, 0.055), rgba(255,255,255,0) 62%), var(--white); }
+    .slide::after { content: attr(data-slide); position: absolute; right: 3vw; bottom: 2.4vh; color: #667085; font-size: clamp(0.8rem, 1.2vw, 1rem); font-weight: 600; }
+    .content { width: min(1500px, 100%); margin: 0 auto; display: grid; align-content: start; gap: clamp(18px, 2.1vh, 28px); }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 18px; font-size: clamp(2.75rem, 6.2vw, 6.1rem); line-height: 1.02; font-weight: 750; letter-spacing: 0; }
+    h2 { width: 100%; margin-bottom: 0; padding-bottom: clamp(10px, 1.2vh, 16px); border-bottom: 3px solid rgba(0, 120, 212, 0.28); font-size: clamp(1.82rem, 3.25vw, 3.55rem); line-height: 1.08; font-weight: 740; letter-spacing: 0; }
+    h3 { margin-bottom: 10px; font-size: clamp(1.16rem, 1.8vw, 1.55rem); line-height: 1.25; font-weight: 720; letter-spacing: 0; }
+    .lead { max-width: 1320px; margin-bottom: 0; color: #334155; font-size: clamp(1.04rem, 1.56vw, 1.36rem); line-height: 1.52; font-weight: 500; }
+    .title-meta, .tag-list { display: flex; flex-wrap: wrap; gap: 12px; }
+    .title-meta { margin-top: 34px; color: #334155; font-size: clamp(1rem, 1.5vw, 1.3rem); font-weight: 650; }
+    .pill, .tag { display: inline-flex; align-items: center; min-height: 34px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,0.86); color: #344054; font-weight: 700; }
+    .layout-2 { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr); gap: clamp(22px, 3.6vw, 54px); align-items: start; }
+    .layout-2.equal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .layout-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
+    .layout-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+    .card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .content.layout-2, .content.media-stack, .content.media-stack.reverse { grid-template-columns: minmax(0, 1fr); gap: clamp(18px, 2.2vh, 30px); align-items: start; }
+    .content.layout-2 > *, .content.media-stack > *, .content.media-stack.reverse > * { grid-column: 1 / -1; }
+    .content.layout-2 > :first-child, .content.media-stack > div, .content.media-stack.reverse > div { display: grid; gap: clamp(14px, 1.8vh, 22px); }
+    .content.media-stack > div, .content.media-stack.reverse > div { order: -1; }
+    .topic-card, .compare-card, .quiz-card, .step-card, .mini-card { border: 1px solid var(--line); background: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 10px 24px rgba(31,41,55,0.08); }
+    .topic-card, .compare-card, .quiz-card, .step-card { padding: clamp(18px, 2.1vw, 26px); }
+    .mini-card { padding: 16px; }
+    .topic-card .label, .compare-card .label, .mini-card .label, .step-card .label { display: inline-flex; margin-bottom: 10px; color: var(--azure-dark); font-size: 0.9rem; font-weight: 800; text-transform: uppercase; }
+    .topic-card p, .compare-card p, .mini-card p, .step-card p, .quiz-card p { margin-bottom: 0; color: #435266; font-size: clamp(0.96rem, 1.34vw, 1.14rem); }
+    .accent-green { border-top: 6px solid var(--green); }
+    .accent-orange { border-top: 6px solid var(--orange); }
+    .accent-teal { border-top: 6px solid var(--teal); }
+    .accent-magenta { border-top: 6px solid var(--magenta); }
+    .accent-blue { border-top: 6px solid var(--azure); }
+    .bullets { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; font-size: clamp(1.02rem, 1.55vw, 1.28rem); }
+    .bullets li { position: relative; padding-left: 28px; }
+    .bullets li::before { content: ""; position: absolute; left: 0; top: 0.72em; width: 10px; height: 10px; border-radius: 999px; background: var(--azure); }
+    .bullets.compact { gap: 9px; font-size: clamp(0.95rem, 1.3vw, 1.1rem); }
+    .diagram { margin: 0; padding: clamp(18px, 2.4vw, 30px); border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.88); box-shadow: var(--shadow); overflow: hidden; }
+    .diagram-svg { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; max-height: 56vh; object-fit: contain; }
+    .screenshot-frame { display: grid; justify-items: center; gap: 10px; margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; overflow: visible; }
+    .screenshot-frame img { display: block; width: 100%; max-height: 58vh; object-fit: contain; border-radius: 6px; background: transparent; box-shadow: 0 16px 36px rgba(31,41,55,0.14); }
+    .media-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+    .media-pair .screenshot-frame img { max-height: 44vh; }
+    .caption { margin-top: 8px; color: var(--muted); text-align: center; font-size: clamp(0.84rem, 1.08vw, 0.96rem); font-weight: 650; }
+    .table { width: 100%; border-collapse: collapse; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: var(--white); font-size: clamp(0.88rem, 1.18vw, 1.02rem); }
+    .table th, .table td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .table th { color: #1e3a5f; background: var(--soft-blue); font-weight: 800; }
+    .table tr:last-child td { border-bottom: 0; }
+    .flow-row, .layer-row, .timeline-row { display: flex; align-items: stretch; gap: 12px; }
+    .timeline-row { flex-wrap: wrap; }
+    .node { flex: 1 1 0; min-width: 0; display: grid; place-items: center; min-height: 86px; padding: 14px; border: 2px solid var(--line); border-radius: 8px; background: var(--soft); text-align: center; font-size: clamp(1rem, 1.42vw, 1.18rem); font-weight: 750; }
+    .node small { display: block; margin-top: 6px; color: var(--muted); font-size: 0.78em; font-weight: 650; }
+    .node.web { border-color: #9ed0f8; background: var(--soft-blue); }
+    .node.ap { border-color: #8fd6ca; background: #e9f7f5; }
+    .node.db { border-color: #f2c185; background: var(--soft-orange); }
+    .node.ref { border-style: dashed; color: #475467; background: #f8fafc; }
+    .node.active { border-width: 3px; box-shadow: inset 0 0 0 3px rgba(0,120,212,0.16); }
+    .arrow { align-self: center; flex: 0 0 auto; color: var(--muted); font-size: clamp(1.3rem, 2vw, 1.8rem); font-weight: 800; }
+    .callout { padding: clamp(18px, 2vw, 24px); border-left: 7px solid var(--azure); border-radius: 8px; background: rgba(255,255,255,0.86); box-shadow: 0 10px 24px rgba(31,41,55,0.08); font-size: clamp(1rem, 1.45vw, 1.2rem); font-weight: 650; }
+    .quiz-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .quiz-card { display: grid; gap: 10px; }
+    .quiz-card .q { color: var(--azure-dark); font-weight: 800; }
+    .answer { color: #2f6b00; font-weight: 800; }
+    .note { color: var(--muted); font-size: clamp(0.92rem, 1.2vw, 1rem); }
+    @media (max-width: 980px) { html { scroll-snap-type: none; } .slide { min-height: auto; padding: 48px 22px 66px; } .layout-2, .layout-2.equal, .layout-3, .layout-4, .card-grid, .quiz-grid, .media-pair { grid-template-columns: 1fr; } .flow-row, .layer-row { flex-direction: column; } .arrow { transform: rotate(90deg); } .screenshot-frame img, .media-pair .screenshot-frame img { max-height: none; } }
+    @media print { html { scroll-snap-type: none; } .slide { min-height: 100vh; page-break-after: always; } }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide" data-slide="1 / 50" aria-labelledby="slide-1-title">
+      <div class="content">
+        <h1 id="slide-1-title">Todo アプリの構築 1</h1>
+        <p class="lead">この回では、Azure Container Apps と Azure Database for PostgreSQL を使う Todo アプリの土台を作り、第6回でデプロイするための値を整理します。</p>
+        <div class="title-meta" aria-label="講座情報"><span class="pill">第5回</span><span class="pill">オンライン座学 + ハンズオン</span><span class="pill">50分レクチャー/ハンズオン + 10分 QA</span><span class="pill">2026年7月16日</span></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="2 / 50" aria-labelledby="slide-2-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-2-title">今日のゴール</h2><p class="lead">今日はアプリを完成させる日ではありません。完成に必要な Azure リソースを作り、名前、URL、ID、DB の状態を第6回へ引き継げるようにします。</p></div>
+        <div class="card-grid" aria-label="今日の到達目標">
+          <article class="topic-card accent-blue"><span class="label">Goal 1</span><h3>全体像を持つ</h3><p>Web、API、DB が Azure のどのサービスに対応するか説明できる。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Goal 2</span><h3>土台を作る</h3><p>ACR、Container Apps、PostgreSQL、VNet、Identity を作成する。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Goal 3</span><h3>値を記録する</h3><p>第6回で GitHub Actions に設定する値を一覧に整理する。</p></article>
+          <article class="topic-card accent-green"><span class="label">Goal 4</span><h3>DB を停止する</h3><p>リソースは残しつつ PostgreSQL のコンピュート課金を抑える。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="3 / 50" aria-labelledby="slide-3-title">
+      <div class="content">
+        <h2 id="slide-3-title">第3回から第4回の振り返り</h2>
+        <p class="lead">これまでは Web サーバ単体を VM と ACI で動かしました。今回は Web だけでなく、API と DB を含む複合アプリへ進みます。</p>
+        <div class="timeline-row" aria-label="第3回から第5回までの流れ"><div class="node web">第3回<small>Azure VM + NGINX</small></div><div class="arrow">→</div><div class="node ap">第4回<small>ACI + NGINX コンテナ</small></div><div class="arrow">→</div><div class="node db active">第5回/第6回<small>Web/API/DB の Todo アプリ</small></div></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="4 / 50" aria-labelledby="slide-4-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-4-title">単体 Web サーバから複合アプリへ</h2><p class="lead">Todo アプリでは画面を表示するだけでなく、Todo の保存、更新、削除、サインイン、デプロイの自動化まで複数サービスが連携します。</p></div>
+        <div class="layout-3">
+          <article class="topic-card accent-blue"><span class="label">Web</span><h3>画面と入口</h3><p>利用者がアクセスする画面を提供します。</p></article>
+          <article class="topic-card accent-teal"><span class="label">API</span><h3>業務処理</h3><p>Todo の作成、更新、削除を処理します。</p></article>
+          <article class="topic-card accent-orange"><span class="label">DB</span><h3>データ保持</h3><p>Todo の状態を PostgreSQL に保存します。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="5 / 50" aria-labelledby="slide-5-title">
+      <div class="content">
+        <h2 id="slide-5-title">Todo アプリの完成形</h2>
+        <p class="lead">完成形では Web と API が Azure Container Apps で動き、コンテナイメージは ACR に置かれ、Todo データは Azure Database for PostgreSQL に保存されます。</p>
+        <figure class="diagram" role="img" aria-label="Todo アプリ完成アーキテクチャ"><img class="diagram-svg" src="../../assets/diagrams/lesson-05/l05-d04-todo-complete-architecture.drawio.svg" alt="Todo アプリの Web、API、PostgreSQL、ACR、Entra ID、Managed Identity、GitHub Actions の関係" /></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="6 / 50" aria-labelledby="slide-6-title">
+      <div class="content">
+        <h2 id="slide-6-title">第5回と第6回の分担</h2>
+        <p class="lead">2回続きのハンズオンなので、今日は土台を作って引き継ぐ日、第6回は GitHub Actions で実アプリをデプロイして動作確認する日、と分けて考えます。</p>
+        <figure class="diagram" role="img" aria-label="第5回と第6回の作業分担"><img class="diagram-svg" src="../../assets/diagrams/lesson-05/l05-d01-goal-and-handoff.drawio.svg" alt="第5回で Azure リソースを作り、第6回で GitHub Actions とデプロイに進む分担" /></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="7 / 50" aria-labelledby="slide-7-title">
+      <div class="content">
+        <h2 id="slide-7-title">Web/API/DB と Azure サービス</h2>
+        <p class="lead">Web 3層の役割を、今回の Azure サービスに対応付けます。第5回では主に配置先と接続先を作り、第6回で実アプリのイメージに更新します。</p>
+        <table class="table" aria-label="Web API DB と Azure サービス対応表"><thead><tr><th>役割</th><th>Azure サービス</th><th>第5回での状態</th></tr></thead><tbody><tr><td>Web 層</td><td>Azure Container Apps</td><td>プレースホルダー作成、第6回で実イメージへ更新</td></tr><tr><td>API 層</td><td>Azure Container Apps</td><td>プレースホルダー作成、第6回で実イメージへ更新</td></tr><tr><td>DB 層</td><td>Azure Database for PostgreSQL Flexible Server</td><td>作成して、最後に停止</td></tr><tr><td>イメージ保管</td><td>Azure Container Registry</td><td>受講者ごとに作成</td></tr><tr><td>認証/権限</td><td>Managed Identity、Entra ID アプリ登録</td><td>DB アクセスとサインインの入口を準備</td></tr></tbody></table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="8 / 50" aria-labelledby="slide-8-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-8-title">DBaaS とは</h2><p class="lead">DBaaS は、データベースサーバーの基盤運用をクラウドサービスに任せ、利用者はデータ、接続、認証、コスト管理に集中する考え方です。</p></div>
+        <div class="layout-2 equal"><article class="compare-card accent-blue"><span class="label">Azure に任せる</span><h3>基盤運用</h3><p>物理基盤、マネージド DB 基盤、バックアップ機能、パッチ適用機能などをサービスとして利用します。</p></article><article class="compare-card accent-orange"><span class="label">利用者が決める</span><h3>使い方</h3><p>データモデル、接続元、認証方式、ネットワーク、権限、停止/削除の判断を行います。</p></article></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="9 / 50" aria-labelledby="slide-9-title">
+      <div class="content">
+        <h2 id="slide-9-title">PostgreSQL の役割</h2>
+        <p class="lead">PostgreSQL は、API からの問い合わせに応じて Todo を表として保存し、検索、更新、削除できるリレーショナルデータベースです。</p>
+        <div class="flow-row" aria-label="API と PostgreSQL の関係"><div class="node ap">API Container App<small>作成、更新、削除、検索を依頼</small></div><div class="arrow">→</div><div class="node db active">PostgreSQL<small>Todo テーブルに保存</small></div><div class="arrow">→</div><div class="node ref">ページ更新後も保持<small>DB に保存されたことを確認</small></div></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="10 / 50" aria-labelledby="slide-10-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-10-title">Azure Database for PostgreSQL</h2><p class="lead">Azure Database for PostgreSQL Flexible Server は、PostgreSQL エンジンを Azure のマネージドサービスとして使う選択肢です。</p></div>
+        <div class="card-grid"><article class="topic-card accent-blue"><span class="label">Flexible Server</span><h3>構成を選ぶ</h3><p>リージョン、バージョン、コンピュート、ネットワーク、認証方式を選びます。</p></article><article class="topic-card accent-teal"><span class="label">Operations</span><h3>運用を任せる</h3><p>バックアップ、パッチ適用、開始/停止などをサービス機能として扱います。</p></article><article class="topic-card accent-orange"><span class="label">Security</span><h3>接続を制御する</h3><p>認証方式、管理者、VNet、Private access を手順に合わせて設定します。</p></article><article class="topic-card accent-magenta"><span class="label">Cost</span><h3>停止を使う</h3><p>第6回まで残すため、削除ではなく Stop してコストを抑えます。</p></article></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="11 / 50" aria-labelledby="slide-11-title">
+      <div class="content">
+        <h2 id="slide-11-title">停止と削除の違い</h2>
+        <p class="lead">第5回の最後はリソースグループを削除しません。第6回で使うため PostgreSQL は残し、コンピュートだけを停止します。</p>
+        <table class="table" aria-label="PostgreSQL の停止と削除の違い"><thead><tr><th>操作</th><th>何が起きるか</th><th>第5回での扱い</th></tr></thead><tbody><tr><td>Running</td><td>DB が利用可能でコンピュート課金が発生する</td><td>ハンズオン中のみ</td></tr><tr><td>Stopped</td><td>DB を再開可能な状態で止める。ストレージ課金は残る可能性がある</td><td>第5回終了時の状態</td></tr><tr><td>Deleted</td><td>リソースとデータを削除する</td><td>第6回前には実行しない</td></tr></tbody></table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="12 / 50" aria-labelledby="slide-12-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-12-title">Container Apps Environment</h2><p class="lead">Container Apps Environment は、Web と API の Container App を動かす共通の環境です。第5回ではプレースホルダーを作り、第6回で実イメージへ更新します。</p></div>
+        <div class="layer-row" aria-label="Container Apps Environment の中の Web と API"><div class="node web active">Environment<small>共通の実行環境</small></div><div class="arrow">→</div><div class="node web">Web Container App<small>画面</small></div><div class="arrow">→</div><div class="node ap">API Container App<small>処理</small></div></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="13 / 50" aria-labelledby="slide-13-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-13-title">ACR の役割</h2><p class="lead">第4回では講師共有の ACR からイメージを pull しました。第5回からは受講者ごとの ACR を作り、第6回で GitHub Actions から push します。</p></div>
+        <div class="layout-2 equal"><article class="compare-card accent-teal"><span class="label">第4回</span><h3>共有 ACR を参照</h3><p>受講者は講師が準備した NGINX イメージを使うだけでした。</p></article><article class="compare-card accent-orange"><span class="label">第5回から</span><h3>個別 ACR を作成</h3><p>自分の Todo アプリの Web/API イメージを置く場所になります。</p></article></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="14 / 50" aria-labelledby="slide-14-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-14-title">VNet とサブネット</h2><p class="lead">アプリ実行環境と DB 接続を安全に整理するため、VNet の中に用途別のサブネットを用意します。詳細なネットワーク設計は第7回で扱います。</p></div>
+        <div class="layout-3"><article class="topic-card accent-blue"><span class="label">Container Apps</span><h3>snet-container-apps</h3><p>Container Apps Environment で使う区画です。</p></article><article class="topic-card accent-teal"><span class="label">Private Endpoint</span><h3>snet-private-endpoints</h3><p>プライベート接続用の区画として整理します。</p></article><article class="topic-card accent-orange"><span class="label">PostgreSQL</span><h3>snet-postgresql</h3><p>PostgreSQL Flexible Server の接続に使います。</p></article></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="15 / 50" aria-labelledby="slide-15-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-15-title">Managed Identity</h2><p class="lead">Managed Identity は、アプリや Azure リソースが秘密情報を直接持たずに Azure 上の権限を使うための ID です。</p></div>
+        <div class="card-grid"><article class="topic-card accent-blue"><span class="label">User-assigned</span><h3>明示的に作る ID</h3><p>本回では受講者ごとに作成し、第6回の DB 接続設定で使います。</p></article><article class="topic-card accent-teal"><span class="label">Secretless</span><h3>秘密情報を減らす</h3><p>接続文字列やパスワードを直接持つ範囲を減らす考え方につながります。</p></article></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="16 / 50" aria-labelledby="slide-16-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-16-title">Entra ID アプリ登録</h2><p class="lead">Web サインインでは、Microsoft Entra ID にアプリを登録し、Web Container App の URL を redirect URI として扱います。</p></div>
+        <div class="flow-row" aria-label="Web サインインと Entra ID アプリ登録"><div class="node web">Web Container App<small>利用者の入口</small></div><div class="arrow">→</div><div class="node ap active">Entra ID アプリ登録<small>Client ID / Tenant ID</small></div><div class="arrow">→</div><div class="node ref">Redirect URI<small>Web URL と一致させる</small></div></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="17 / 50" aria-labelledby="slide-17-title">
+      <div class="content">
+        <h2 id="slide-17-title">秘密情報の扱い</h2>
+        <p class="lead">接続情報の一部は第6回で必要ですが、公開資料やスクリーンショットに残してよい情報とは限りません。記録する値と隠す値を分けます。</p>
+        <div class="layout-3"><article class="topic-card accent-green"><span class="label">記録する</span><h3>リソース名と URL</h3><p>第6回の入力値として手元メモに整理します。</p></article><article class="topic-card accent-orange"><span class="label">公開時にマスク</span><h3>ID と FQDN</h3><p>Subscription ID、Tenant ID、Client ID、FQDN は公開資料では隠します。</p></article><article class="topic-card accent-magenta"><span class="label">公開しない</span><h3>Secret と接続文字列</h3><p>認証情報、client secret、接続文字列は画面共有にも残しません。</p></article></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="18 / 50" aria-labelledby="slide-18-title">
+      <div class="content">
+        <h2 id="slide-18-title">ハンズオンで使う値</h2>
+        <p class="lead">名前をそろえると、講師が状況を確認しやすく、第6回で variables に入れる値も迷いにくくなります。</p>
+        <table class="table" aria-label="ハンズオン入力値一覧"><thead><tr><th>項目</th><th>値の例</th><th>注意</th></tr></thead><tbody><tr><td>Resource group</td><td>rg-azbeg-l05-s01</td><td>第6回まで削除しない</td></tr><tr><td>ACR</td><td>acrazbegl05s01&lt;接尾辞&gt;</td><td>小文字英数字、グローバル一意</td></tr><tr><td>API/Web App</td><td>app-todomanagement-api / web</td><td>同じ Environment に作成</td></tr><tr><td>PostgreSQL</td><td>psql-azbeg-l05-s01-&lt;接尾辞&gt;</td><td>最後に Stop</td></tr><tr><td>Identity / Entra</td><td>id-azbeg-l05-s01 / app-azbeg-l05-s01</td><td>Client ID などを記録</td></tr></tbody></table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="19 / 50" aria-labelledby="slide-19-title">
+      <div class="content">
+        <h2 id="slide-19-title">ハンズオンの流れ</h2>
+        <p class="lead">リソースを作成し、値を記録し、最後に PostgreSQL を停止します。作成操作が多いので、今どこを作っているかを図で確認しながら進めます。</p>
+        <figure class="diagram" role="img" aria-label="第5回ハンズオン進行図"><img class="diagram-svg" src="../../assets/diagrams/lesson-05/l05-d16-handson-progress.drawio.svg" alt="リソースグループ、VNet、ACR、Container Apps、PostgreSQL、Identity、値の記録、DB 停止の順序" /></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="20 / 50" aria-labelledby="slide-20-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-20-title">Azure Portal にサインイン</h2><p class="lead">講師が案内したアカウントで Azure Portal に入り、作業対象のサブスクリプションが見えることを確認します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS01-masked.png" alt="Azure Portal のサインイン後またはサブスクリプション確認画面。アカウント情報はマスク済み。" /><figcaption class="caption">対象サブスクリプションを確認する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="21 / 50" aria-labelledby="slide-21-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-21-title">リソースグループを作成する</h2><p class="lead">第5回と第6回で使う Azure リソースは、受講者ごとの同じリソースグループにまとめます。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS02-masked.png" alt="Azure Portal のリソースグループ作成画面。サブスクリプション情報はマスク済み。" /><figcaption class="caption">Resource groups から Create を選ぶ</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="22 / 50" aria-labelledby="slide-22-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-22-title">リソースグループ作成を確認する</h2><p class="lead">作成したリソースグループの Overview を開き、名前、リージョン、これから作るリソースの配置先を確認します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS03-masked.png" alt="リソースグループ Overview 画面。リソース ID やサブスクリプション情報はマスク済み。" /><figcaption class="caption">第6回まで削除しない外枠を確認する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="23 / 50" aria-labelledby="slide-23-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-23-title">VNet を作成する</h2><p class="lead">Container Apps と PostgreSQL の接続を考える土台として、受講者ごとの VNet を作成します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS04-masked.png" alt="Virtual Network の作成画面。サブスクリプションやユーザー情報はマスク済み。" /><figcaption class="caption">VNet 名とリージョンを指定する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="24 / 50" aria-labelledby="slide-24-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-24-title">サブネットを作成する</h2><p class="lead">Container Apps、Private Endpoint、PostgreSQL の用途を分けて、後続手順で参照するサブネット名をそろえます。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS05-masked.png" alt="VNet の Subnets 画面。内部情報やリソース ID はマスク済み。" /><figcaption class="caption">用途別のサブネットを確認する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="25 / 50" aria-labelledby="slide-25-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-25-title">ACR を作成する</h2><p class="lead">第6回で Web/API のコンテナイメージを push するため、受講者ごとの Azure Container Registry を作成します。</p></div>
+        <div class="media-pair"><figure class="screenshot-frame"><img src="../images/screenshots/L05-SS06a-masked.png" alt="Azure Container Registry 作成の基本設定画面。サブスクリプション情報はマスク済み。" /><figcaption class="caption">基本設定を入力する</figcaption></figure><figure class="screenshot-frame"><img src="../images/screenshots/L05-SS06b-masked.png" alt="Azure Container Registry 作成のネットワーク設定画面。内部ネットワーク情報はマスク済み。" /><figcaption class="caption">ネットワーク設定を確認する</figcaption></figure></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="26 / 50" aria-labelledby="slide-26-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-26-title">ACR の Overview を確認する</h2><p class="lead">第6回の GitHub Actions 設定では ACR 名と login server を参照します。画面で確認し、接続情報一覧に記録します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS07-masked.png" alt="Azure Container Registry Overview 画面。リソース ID やサブスクリプション情報はマスク済み。" /><figcaption class="caption">ACR 名と login server を確認する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="27 / 50" aria-labelledby="slide-27-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-27-title">API Container App と Environment を作成する</h2><p class="lead">まず API 側のプレースホルダー Container App を作成し、この操作の中で Container Apps Environment も用意します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS09-masked.png" alt="API Container App と Container Apps Environment の作成画面。リソース情報はマスク済み。" /><figcaption class="caption">API と実行環境を作成する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="28 / 50" aria-labelledby="slide-28-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-28-title">API Container App の URL を記録する</h2><p class="lead">API の Application URL は、第6回で Web から API を呼び出す設定に使います。Web URL と取り違えないようにします。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS10-masked.png" alt="API Container App Overview と Application URL の確認画面。内部 URL やリソース情報はマスク済み。" /><figcaption class="caption">API Application URL を記録する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="29 / 50" aria-labelledby="slide-29-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-29-title">Web Container App を作成する</h2><p class="lead">同じ Container Apps Environment に、Web 側のプレースホルダー Container App を作成します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS29-masked.png" alt="Web Container App 作成画面。リソース情報はマスク済み。" /><figcaption class="caption">Web Container App を既存 Environment に配置する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="30 / 50" aria-labelledby="slide-30-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-30-title">Web Container App の URL を記録する</h2><p class="lead">Web URL は利用者がアクセスする入口であり、Entra ID アプリ登録の redirect URI と第6回の variables に使います。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS30-masked.png" alt="Web Container App Overview と Application URL の確認画面。FQDN やリソース情報はマスク済み。" /><figcaption class="caption">Web Application URL を記録する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="31 / 50" aria-labelledby="slide-31-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-31-title">PostgreSQL Flexible Server を作成する</h2><p class="lead">Todo データを保存する DB 層として、Azure Database for PostgreSQL Flexible Server を作成します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS11-masked.png" alt="PostgreSQL Flexible Server 作成の Basics 画面。サブスクリプションや実サーバー名はマスク済み。" /><figcaption class="caption">サーバー名、リージョン、バージョン、SKU を確認する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="32 / 50" aria-labelledby="slide-32-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-32-title">PostgreSQL の認証を設定する</h2><p class="lead">元ガイドに合わせ、Microsoft Entra authentication only など講師検証済みの認証設定を選びます。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS12-masked.png" alt="PostgreSQL Flexible Server の Authentication 設定画面。ユーザー名や認証情報はマスク済み。" /><figcaption class="caption">認証方式と管理者を確認する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="33 / 50" aria-labelledby="slide-33-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-33-title">PostgreSQL のネットワークを設定する</h2><p class="lead">Container Apps から PostgreSQL に接続できるよう、Private access、VNet、Private DNS などの設定を手順に合わせます。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS13-masked.png" alt="PostgreSQL Flexible Server の Networking 設定画面。内部ネットワーク情報はマスク済み。" /><figcaption class="caption">接続方式とサブネットを確認する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="34 / 50" aria-labelledby="slide-34-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-34-title">PostgreSQL の作成内容を確認する</h2><p class="lead">作成前に、リージョン、SKU、認証、ネットワークが講師の案内と一致しているか確認します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS14-masked.png" alt="PostgreSQL Flexible Server の Review and create 画面。サブスクリプションや内部情報はマスク済み。" /><figcaption class="caption">Review + create で検証結果を見る</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="35 / 50" aria-labelledby="slide-35-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-35-title">PostgreSQL の Overview を確認する</h2><p class="lead">作成後にサーバー名、状態、接続に必要な値を確認し、第6回の接続情報一覧に反映します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS15-masked.png" alt="PostgreSQL Flexible Server Overview 画面。リソース ID やサーバー名は必要に応じてマスク済み。" /><figcaption class="caption">Status とサーバー情報を確認する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="36 / 50" aria-labelledby="slide-36-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-36-title">Managed Identity を作成する</h2><p class="lead">DB への権限付与と第6回の設定に使う User-assigned Managed Identity を作成します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS17-masked.png" alt="Managed Identity 作成画面。サブスクリプションやユーザー情報はマスク済み。" /><figcaption class="caption">User-assigned Managed Identity を作る</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="37 / 50" aria-labelledby="slide-37-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-37-title">Managed Identity の値を記録する</h2><p class="lead">Client ID や Resource ID は第6回で variables に使います。公開資料ではマスクしつつ、手元メモには正しく記録します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS18-masked.png" alt="Managed Identity Overview 画面。Client ID や Resource ID はマスク済み。" /><figcaption class="caption">Client ID と Resource ID を確認する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="38 / 50" aria-labelledby="slide-38-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-38-title">データベースを作成し権限を付与する</h2><p class="lead">Todo アプリ用の DB を作成し、Managed Identity が DB にアクセスできるように権限を付与します。</p></div>
+        <div class="media-pair"><figure class="screenshot-frame"><img src="../images/screenshots/L05-SS16a-masked.png" alt="PostgreSQL の Databases 画面。リソース情報はマスク済み。" /><figcaption class="caption">Todo 用 DB を作成する</figcaption></figure><figure class="screenshot-frame"><img src="../images/screenshots/L05-SS16b-masked.png" alt="Managed Identity への DB パーミッション付与画面または結果。内部情報はマスク済み。" /><figcaption class="caption">Managed Identity に権限を付与する</figcaption></figure></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="39 / 50" aria-labelledby="slide-39-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-39-title">Entra ID アプリ登録を作成する</h2><p class="lead">Web サインイン用のアプリ登録を作成し、Web Container App URL を SPA redirect URI として設定します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS19-masked.png" alt="Microsoft Entra ID の App registration 作成画面。テナントやユーザー情報はマスク済み。" /><figcaption class="caption">App registration を新規作成する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="40 / 50" aria-labelledby="slide-40-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-40-title">アプリ登録の ID を記録する</h2><p class="lead">Application client ID と Tenant ID は第6回の Web サインイン設定で使います。GitHub Actions 用 Service Principal の ID とは別物です。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS20-masked.png" alt="App registration Overview 画面。Application client ID、Object ID、Tenant ID はマスク済み。" /><figcaption class="caption">Client ID と Tenant ID を記録する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="41 / 50" aria-labelledby="slide-41-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-41-title">接続情報一覧に記録する</h2><p class="lead">元ガイドのサマリー項目を見ながら、Resource group、ACR、Web/API URL、PostgreSQL、Identity、Entra ID の値をそろえます。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS27-masked.png" alt="Todo アプリ元ガイドのサマリー項目を表示した画面。アカウント情報や実 ID はマスク済み。" /><figcaption class="caption">第6回に必要な値の一覧を確認する</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="42 / 50" aria-labelledby="slide-42-title">
+      <div class="content">
+        <h2 id="slide-42-title">記録すべき値と隠す値</h2>
+        <p class="lead">値を記録することと、公開資料に残すことは別です。第6回で使う値ほど、公開時のマスク対象にもなりやすい点に注意します。</p>
+        <table class="table" aria-label="記録すべき値と隠す値"><thead><tr><th>分類</th><th>例</th><th>扱い</th></tr></thead><tbody><tr><td>記録する値</td><td>Resource group、ACR 名、DB 名、Container Apps Environment</td><td>第6回用メモに記録</td></tr><tr><td>公開時にマスク</td><td>Subscription ID、Tenant ID、Client ID、FQDN、URL</td><td>スクリーンショットでは隠す</td></tr><tr><td>公開しない値</td><td>接続文字列、認証情報、Service Principal の secret</td><td>画面共有にも残さない</td></tr></tbody></table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="43 / 50" aria-labelledby="slide-43-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-43-title">作成済みリソースを確認する</h2><p class="lead">リソースグループ内に、VNet、ACR、API/Web Container App、Container Apps Environment、PostgreSQL、Managed Identity がそろっているか確認します。</p></div>
+        <figure class="screenshot-frame"><img src="../images/screenshots/L05-SS24-masked.png" alt="リソースグループ内の作成済みリソース一覧。リソース ID や実名はマスク済み。" /><figcaption class="caption">第5回で作成したリソースを一覧で見る</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="44 / 50" aria-labelledby="slide-44-title">
+      <div class="content">
+        <h2 id="slide-44-title">第5回終了時点のアーキテクチャ</h2>
+        <p class="lead">まだ実アプリのコンテナイメージは動いていませんが、デプロイ先、DB、認証、権限、記録すべき値がそろいました。</p>
+        <figure class="diagram" role="img" aria-label="第5回終了時点のアーキテクチャ"><img class="diagram-svg" src="../../assets/diagrams/lesson-05/l05-d17-lesson5-end-state.drawio.svg" alt="第5回で作成済みのリソースと第6回で更新する範囲" /></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="45 / 50" aria-labelledby="slide-45-title">
+      <div class="content media-stack">
+        <div><h2 id="slide-45-title">PostgreSQL を停止する</h2><p class="lead">第6回までリソースは残しますが、DB のコンピュート課金を抑えるため PostgreSQL Flexible Server を Stop します。</p></div>
+        <div class="media-pair"><figure class="screenshot-frame"><img src="../images/screenshots/L05-SS25-masked.png" alt="PostgreSQL Flexible Server の Stop 操作画面。サブスクリプションやサーバー名はマスク済み。" /><figcaption class="caption">Stop 操作を実行する</figcaption></figure><figure class="screenshot-frame"><img src="../images/screenshots/L05-SS26-masked.png" alt="PostgreSQL Flexible Server が Stopped 状態になった確認画面。サーバー情報はマスク済み。" /><figcaption class="caption">Stopped 状態を確認する</figcaption></figure></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="46 / 50" aria-labelledby="slide-46-title">
+      <div class="content">
+        <h2 id="slide-46-title">停止後の課金注意</h2>
+        <p class="lead">Stop は削除ではありません。コンピュート課金を抑える目的で使いますが、ストレージなどの課金が残る可能性はあります。</p>
+        <div class="layout-3"><article class="topic-card accent-orange"><span class="label">Running</span><h3>ハンズオン中</h3><p>利用可能な状態で、コンピュート課金が発生します。</p></article><article class="topic-card accent-green"><span class="label">Stopped</span><h3>第6回まで</h3><p>再開可能な状態で止め、コンピュート課金を抑えます。</p></article><article class="topic-card accent-magenta"><span class="label">Deleted</span><h3>第6回後に判断</h3><p>不要ならリソースグループや外部資格情報も整理します。</p></article></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="47 / 50" aria-labelledby="slide-47-title">
+      <div class="content">
+        <h2 id="slide-47-title">よくある失敗</h2>
+        <p class="lead">操作量が多い回なので、名前、権限、ネットワーク、接続情報、停止忘れを短時間で確認できるようにします。</p>
+        <table class="table" aria-label="Lesson 5 のよくある失敗"><thead><tr><th>失敗</th><th>症状</th><th>確認箇所</th></tr></thead><tbody><tr><td>名前重複</td><td>ACR や PostgreSQL 作成に失敗</td><td>接尾辞、命名制約</td></tr><tr><td>権限不足</td><td>作成やアプリ登録に失敗</td><td>RBAC、Entra ID 設定</td></tr><tr><td>DB 権限漏れ</td><td>第6回で API から DB 接続に失敗</td><td>Managed Identity への DB パーミッション</td></tr><tr><td>記録漏れ</td><td>第6回で値が分からない</td><td>接続情報テンプレート</td></tr><tr><td>停止忘れ</td><td>DB が Running のまま</td><td>PostgreSQL Overview</td></tr></tbody></table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="48 / 50" aria-labelledby="slide-48-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-48-title">復旧できない場合</h2><p class="lead">時間内にリソース作成を完了できない場合でも、どの値が何に使われるかを理解して第6回へつなげます。</p></div>
+        <div class="card-grid"><article class="topic-card accent-orange"><span class="label">権限不足</span><h3>サンプル値に切り替え</h3><p>講師が事前準備した値やデモ環境で説明を続けます。</p></article><article class="topic-card accent-teal"><span class="label">作成失敗</span><h3>役割を確認</h3><p>作れなかったリソースがアーキテクチャ上で何を担当するか確認します。</p></article><article class="topic-card accent-blue"><span class="label">時間不足</span><h3>第6回の入力値を優先</h3><p>URL、ID、ACR、DB、Identity の意味を表で確認します。</p></article><article class="topic-card accent-green"><span class="label">DB 作成済み</span><h3>停止だけは完了</h3><p>PostgreSQL が Running の場合は最後に Stop を確認します。</p></article></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="49 / 50" aria-labelledby="slide-49-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-49-title">今日のまとめ</h2><p class="lead">Todo アプリの完成には、アプリ実行、イメージ保管、DB、認証、ネットワーク、デプロイ設定がそろう必要があります。第5回では、その土台を作りました。</p></div>
+        <div class="layout-3"><article class="topic-card accent-blue"><span class="label">1</span><h3>複数サービスで構成</h3><p>Web/API/DB を Azure サービスに対応付けました。</p></article><article class="topic-card accent-orange"><span class="label">2</span><h3>値を引き継ぐ</h3><p>第6回の GitHub Actions 設定に使う値を整理しました。</p></article><article class="topic-card accent-green"><span class="label">3</span><h3>削除ではなく停止</h3><p>PostgreSQL を Stop し、第6回で再開できる状態にします。</p></article></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="50 / 50" aria-labelledby="slide-50-title">
+      <div class="content">
+        <h2 id="slide-50-title">QA</h2>
+        <p class="lead">作成したリソース、接続情報一覧、PostgreSQL の停止状態を確認し、第6回のデプロイに向けて不明点を解消します。</p>
+        <div class="quiz-grid"><article class="quiz-card"><p class="q">確認 1</p><p>Web、API、DB はそれぞれどの Azure サービスに対応しますか。</p></article><article class="quiz-card"><p class="q">確認 2</p><p>第6回で使う値は、どの画面から再確認できますか。</p></article><article class="quiz-card"><p class="q">確認 3</p><p>PostgreSQL を Stop することと Resource group を削除することは何が違いますか。</p></article></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<mxfile host="app.diagrams.net" agent="GitHub Copilot" version="24.7.17">
+  <diagram id="l06-d08-complete-communication" name="完成アーキテクチャと通信経路">
+    <mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="browser" value="利用者ブラウザー" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F6F8FB;strokeColor=#D6DDE8;fontSize=18;fontStyle=1" vertex="1" parent="1"><mxGeometry x="55" y="260" width="165" height="95" as="geometry"/></mxCell>
+        <mxCell id="web" value="Web Container App" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Apps.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="305" y="245" width="200" height="105" as="geometry"/></mxCell>
+        <mxCell id="entra" value="Microsoft Entra ID&lt;br&gt;サインイン" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/identity/Azure_Active_Directory.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="325" y="455" width="210" height="100" as="geometry"/></mxCell>
+        <mxCell id="api" value="API Container App" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Apps.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="620" y="245" width="200" height="105" as="geometry"/></mxCell>
+        <mxCell id="pg" value="Azure Database for PostgreSQL" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/databases/Azure_Database_PostgreSQL_Server.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="970" y="245" width="225" height="115" as="geometry"/></mxCell>
+        <mxCell id="mi" value="Managed Identity" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/identity/Managed_Identities.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="690" y="455" width="200" height="100" as="geometry"/></mxCell>
+        <mxCell id="acr" value="Azure Container Registry" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Registries.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="515" y="85" width="220" height="95" as="geometry"/></mxCell>
+        <mxCell id="gha" value="GitHub Actions&lt;br&gt;デプロイ時のみ" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F3FF;strokeColor=#0078D4;fontSize=18;fontStyle=1" vertex="1" parent="1"><mxGeometry x="145" y="90" width="215" height="90" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

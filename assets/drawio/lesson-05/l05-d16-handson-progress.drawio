@@ -1,0 +1,17 @@
+<mxfile host="app.diagrams.net" agent="GitHub Copilot" version="24.7.17">
+  <diagram id="l05-d16-handson-progress" name="第5回ハンズオン進行図">
+    <mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="rg" value="1 Resource Group" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/general/Resourcegroups.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="55" y="285" width="130" height="90" as="geometry"/></mxCell>
+        <mxCell id="vnet" value="2 VNet/Subnets" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/networking/Virtual_Networks.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="210" y="285" width="140" height="90" as="geometry"/></mxCell>
+        <mxCell id="acr" value="3 ACR" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Registries.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="380" y="285" width="130" height="90" as="geometry"/></mxCell>
+        <mxCell id="aca" value="4 API/Web Container Apps" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Apps.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="540" y="285" width="160" height="90" as="geometry"/></mxCell>
+        <mxCell id="pg" value="5 PostgreSQL" style="shape=image;html=1;aspect=fixed;image=img/lib/azure2/databases/Azure_Database_PostgreSQL_Server.svg;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="730" y="285" width="150" height="90" as="geometry"/></mxCell>
+        <mxCell id="id" value="6 Identity / Entra" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D6DDE8;strokeWidth=2;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="910" y="295" width="150" height="70" as="geometry"/></mxCell>
+        <mxCell id="values" value="7 値を記録" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D6DDE8;strokeWidth=2;fontSize=16;fontStyle=1" vertex="1" parent="1"><mxGeometry x="1090" y="295" width="130" height="70" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

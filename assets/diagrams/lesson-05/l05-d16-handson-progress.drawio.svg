@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" role="img" data-mxgraph="editable" content="&lt;mxfile host=&quot;app.diagrams.net&quot; agent=&quot;GitHub Copilot&quot;&gt;&lt;diagram id=&quot;l05-d16-handson-progress&quot; name=&quot;第5回ハンズオン進行図&quot;&gt;&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=&quot;rg&quot; value=&quot;Resource Group&quot; style=&quot;shape=image;html=1;aspect=fixed;image=img/lib/azure2/general/Resourcegroups.svg&quot;/&gt;&lt;mxCell id=&quot;vnet&quot; value=&quot;VNet&quot; style=&quot;shape=image;html=1;aspect=fixed;image=img/lib/azure2/networking/Virtual_Networks.svg&quot;/&gt;&lt;mxCell id=&quot;acr&quot; value=&quot;ACR&quot; style=&quot;shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Registries.svg&quot;/&gt;&lt;mxCell id=&quot;aca&quot; value=&quot;Container Apps&quot; style=&quot;shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Apps.svg&quot;/&gt;&lt;mxCell id=&quot;pg&quot; value=&quot;PostgreSQL&quot; style=&quot;shape=image;html=1;aspect=fixed;image=img/lib/azure2/databases/Azure_Database_PostgreSQL_Server.svg&quot;/&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;&lt;/diagram&gt;&lt;/mxfile&gt;">
+  <title>第5回ハンズオン進行図</title>
+  <desc>リソースグループ、VNet、ACR、Container Apps、PostgreSQL、Identity、接続情報記録、PostgreSQL停止までの順序を示す。</desc>
+  <defs><marker id="arrow-l05-d16" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#0078D4"/></marker><style><![CDATA[text{font-family:'Segoe UI','Yu Gothic UI',Meiryo,sans-serif}]]></style></defs>
+  <rect width="1280" height="720" fill="#fff"/>
+  <text x="640" y="78" text-anchor="middle" font-size="30" font-weight="800" fill="#005A9E">第5回ハンズオンの進み方</text>
+  <rect x="55" y="245" width="1165" height="205" rx="14" fill="#F7FCFF" stroke="#D6DDE8" stroke-width="2"/>
+  <g font-size="17" font-weight="800" fill="#1F2937">
+    <rect x="75" y="300" width="120" height="82" rx="8" fill="#E8F3FF" stroke="#9ED0F8"/><text x="135" y="333" text-anchor="middle">1</text><text x="135" y="360" text-anchor="middle">RG</text>
+    <rect x="225" y="300" width="120" height="82" rx="8" fill="#E9F7F5" stroke="#8FD6CA"/><text x="285" y="333" text-anchor="middle">2</text><text x="285" y="360" text-anchor="middle">VNet</text>
+    <rect x="375" y="300" width="120" height="82" rx="8" fill="#FFF4E5" stroke="#F2C185"/><text x="435" y="333" text-anchor="middle">3</text><text x="435" y="360" text-anchor="middle">ACR</text>
+    <rect x="525" y="300" width="140" height="82" rx="8" fill="#E8F3FF" stroke="#9ED0F8"/><text x="595" y="333" text-anchor="middle">4</text><text x="595" y="360" text-anchor="middle">API/Web</text>
+    <rect x="695" y="300" width="140" height="82" rx="8" fill="#FDF0FB" stroke="#E9A7E2"/><text x="765" y="333" text-anchor="middle">5</text><text x="765" y="360" text-anchor="middle">PostgreSQL</text>
+    <rect x="865" y="300" width="140" height="82" rx="8" fill="#fff" stroke="#D6DDE8"/><text x="935" y="333" text-anchor="middle">6</text><text x="935" y="360" text-anchor="middle">Identity</text>
+    <rect x="1035" y="300" width="140" height="82" rx="8" fill="#fff" stroke="#D6DDE8"/><text x="1105" y="333" text-anchor="middle">7</text><text x="1105" y="360" text-anchor="middle">値を記録</text>
+  </g>
+  <g stroke="#0078D4" stroke-width="4" marker-end="url(#arrow-l05-d16)">
+    <line x1="195" y1="341" x2="225" y2="341"/><line x1="345" y1="341" x2="375" y2="341"/><line x1="495" y1="341" x2="525" y2="341"/><line x1="665" y1="341" x2="695" y2="341"/><line x1="835" y1="341" x2="865" y2="341"/><line x1="1005" y1="341" x2="1035" y2="341"/>
+  </g>
+  <rect x="465" y="505" width="350" height="76" rx="10" fill="#FFF4E5" stroke="#CA5010" stroke-width="3"/>
+  <text x="640" y="537" text-anchor="middle" font-size="21" font-weight="800" fill="#CA5010">最後に PostgreSQL を Stop</text>
+  <text x="640" y="565" text-anchor="middle" font-size="15" fill="#5F6B7A">削除せず、第6回で再開して使います</text>
+</svg>

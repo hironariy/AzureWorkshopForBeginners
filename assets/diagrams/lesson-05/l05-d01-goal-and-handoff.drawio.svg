@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" role="img" data-mxgraph="editable" content="&lt;mxfile host=&quot;app.diagrams.net&quot; agent=&quot;GitHub Copilot&quot;&gt;&lt;diagram id=&quot;l05-d01-goal-and-handoff&quot; name=&quot;第5回のゴールと第6回への引き継ぎ&quot;&gt;&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=&quot;0&quot;/&gt;&lt;mxCell id=&quot;1&quot; parent=&quot;0&quot;/&gt;&lt;mxCell id=&quot;aca&quot; value=&quot;Azure Container Apps&quot; style=&quot;shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Apps.svg&quot;/&gt;&lt;mxCell id=&quot;acr&quot; value=&quot;Azure Container Registry&quot; style=&quot;shape=image;html=1;aspect=fixed;image=img/lib/azure2/containers/Container_Registries.svg&quot;/&gt;&lt;mxCell id=&quot;pg&quot; value=&quot;Azure Database for PostgreSQL&quot; style=&quot;shape=image;html=1;aspect=fixed;image=img/lib/azure2/databases/Azure_Database_PostgreSQL_Server.svg&quot;/&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;&lt;/diagram&gt;&lt;/mxfile&gt;">
+  <title>第5回のゴールと第6回への引き継ぎ</title>
+  <desc>第5回でAzureリソースを作成して値を記録し、第6回でGitHub Actionsによるデプロイと動作確認へ引き継ぐ流れを示す。</desc>
+  <defs>
+    <marker id="arrow-l05-d01" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#CA5010"/></marker>
+    <style><![CDATA[text{font-family:'Segoe UI','Yu Gothic UI',Meiryo,sans-serif}]]></style>
+  </defs>
+  <rect width="1280" height="720" fill="#fff"/>
+  <text x="640" y="70" text-anchor="middle" font-size="30" font-weight="800" fill="#005A9E">第5回は土台作り、第6回はデプロイ</text>
+  <rect x="70" y="125" width="470" height="430" rx="10" fill="#F7FCFF" stroke="#0078D4" stroke-width="3"/>
+  <text x="305" y="170" text-anchor="middle" font-size="24" font-weight="800" fill="#005A9E">第5回で作る土台</text>
+  <rect x="115" y="215" width="170" height="80" rx="8" fill="#E8F3FF" stroke="#9ED0F8" stroke-width="2"/><text x="200" y="250" text-anchor="middle" font-size="19" font-weight="800" fill="#1F2937">Resource Group</text><text x="200" y="276" text-anchor="middle" font-size="14" fill="#5F6B7A">外枠</text>
+  <rect x="325" y="215" width="170" height="80" rx="8" fill="#E9F7F5" stroke="#8FD6CA" stroke-width="2"/><text x="410" y="250" text-anchor="middle" font-size="19" font-weight="800" fill="#1F2937">VNet / Subnets</text><text x="410" y="276" text-anchor="middle" font-size="14" fill="#5F6B7A">接続の区画</text>
+  <rect x="115" y="335" width="170" height="80" rx="8" fill="#FFF4E5" stroke="#F2C185" stroke-width="2"/><text x="200" y="369" text-anchor="middle" font-size="19" font-weight="800" fill="#1F2937">ACR</text><text x="200" y="395" text-anchor="middle" font-size="14" fill="#5F6B7A">イメージ保管</text>
+  <rect x="325" y="335" width="170" height="80" rx="8" fill="#FDF0FB" stroke="#E9A7E2" stroke-width="2"/><text x="410" y="369" text-anchor="middle" font-size="19" font-weight="800" fill="#1F2937">PostgreSQL</text><text x="410" y="395" text-anchor="middle" font-size="14" fill="#5F6B7A">Todo データ</text>
+  <rect x="150" y="455" width="320" height="70" rx="8" fill="#fff" stroke="#D6DDE8" stroke-width="2"/><text x="310" y="483" text-anchor="middle" font-size="19" font-weight="800" fill="#1F2937">Managed Identity / Entra</text><text x="310" y="510" text-anchor="middle" font-size="14" fill="#5F6B7A">認証と権限の入口</text>
+  <rect x="740" y="125" width="470" height="430" rx="10" fill="#F7FFF7" stroke="#498205" stroke-width="3"/>
+  <text x="975" y="170" text-anchor="middle" font-size="24" font-weight="800" fill="#2F6B00">第6回で完成させる</text>
+  <rect x="800" y="215" width="170" height="80" rx="8" fill="#fff" stroke="#D6DDE8" stroke-width="2"/><text x="885" y="250" text-anchor="middle" font-size="19" font-weight="800" fill="#1F2937">GitHub Actions</text><text x="885" y="276" text-anchor="middle" font-size="14" fill="#5F6B7A">ビルドと push</text>
+  <rect x="1010" y="215" width="170" height="80" rx="8" fill="#E8F3FF" stroke="#9ED0F8" stroke-width="2"/><text x="1095" y="250" text-anchor="middle" font-size="19" font-weight="800" fill="#1F2937">Web / API</text><text x="1095" y="276" text-anchor="middle" font-size="14" fill="#5F6B7A">実イメージへ更新</text>
+  <rect x="800" y="345" width="170" height="80" rx="8" fill="#fff" stroke="#D6DDE8" stroke-width="2"/><text x="885" y="380" text-anchor="middle" font-size="19" font-weight="800" fill="#1F2937">Todo 操作</text><text x="885" y="406" text-anchor="middle" font-size="14" fill="#5F6B7A">作成・編集・削除</text>
+  <rect x="1010" y="345" width="170" height="80" rx="8" fill="#fff" stroke="#D6DDE8" stroke-width="2"/><text x="1095" y="380" text-anchor="middle" font-size="19" font-weight="800" fill="#1F2937">停止 / 削除</text><text x="1095" y="406" text-anchor="middle" font-size="14" fill="#5F6B7A">コスト管理</text>
+  <line x1="555" y1="340" x2="725" y2="340" stroke="#CA5010" stroke-width="5" marker-end="url(#arrow-l05-d01)"/>
+  <rect x="532" y="292" width="216" height="36" rx="18" fill="#fff" stroke="#F2C185"/><text x="640" y="316" text-anchor="middle" font-size="16" font-weight="800" fill="#CA5010">名前 / URL / ID を引き継ぐ</text>
+</svg>

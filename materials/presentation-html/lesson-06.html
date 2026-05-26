@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第6回 Todo アプリの構築 2 | Azure Workshop for Beginners</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --azure: #0078d4;
+      --azure-dark: #005a9e;
+      --teal: #008575;
+      --green: #498205;
+      --orange: #ca5010;
+      --magenta: #c239b3;
+      --ink: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d6dde8;
+      --soft: #f6f8fb;
+      --soft-blue: #e8f3ff;
+      --soft-green: #edf7ed;
+      --soft-orange: #fff4e5;
+      --soft-magenta: #fdf0fb;
+      --white: #ffffff;
+      --shadow: 0 18px 44px rgba(31, 41, 55, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-snap-type: y mandatory; background: #eef2f7; }
+    body { margin: 0; color: var(--ink); font-family: "Segoe UI", "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; line-height: 1.6; letter-spacing: 0; background: #eef2f7; }
+    .deck { width: 100%; }
+    .slide { position: relative; min-height: 100vh; scroll-snap-align: start; display: grid; align-items: start; padding: clamp(42px, 5.2vh, 76px) 5vw clamp(56px, 6vh, 88px); background: linear-gradient(90deg, rgba(0, 120, 212, 0.06), rgba(0, 133, 117, 0.03) 42%, rgba(255, 255, 255, 0) 70%), var(--white); border-bottom: 1px solid var(--line); }
+    .slide:nth-child(4n + 2) { background: linear-gradient(90deg, rgba(73, 130, 5, 0.07), rgba(255,255,255,0) 62%), var(--white); }
+    .slide:nth-child(4n + 3) { background: linear-gradient(90deg, rgba(202, 80, 16, 0.06), rgba(255,255,255,0) 62%), var(--white); }
+    .slide:nth-child(4n) { background: linear-gradient(90deg, rgba(194, 57, 179, 0.055), rgba(255,255,255,0) 62%), var(--white); }
+    .slide::after { content: attr(data-slide); position: absolute; right: 3vw; bottom: 2.4vh; color: #667085; font-size: clamp(0.8rem, 1.2vw, 1rem); font-weight: 600; }
+    .content { width: min(1500px, 100%); margin: 0 auto; display: grid; align-content: start; gap: clamp(18px, 2.1vh, 28px); }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 18px; font-size: clamp(2.75rem, 6.2vw, 6.1rem); line-height: 1.02; font-weight: 750; letter-spacing: 0; }
+    h2 { width: 100%; margin-bottom: 0; padding-bottom: clamp(10px, 1.2vh, 16px); border-bottom: 3px solid rgba(0, 120, 212, 0.28); font-size: clamp(1.82rem, 3.25vw, 3.55rem); line-height: 1.08; font-weight: 740; letter-spacing: 0; }
+    h3 { margin-bottom: 10px; font-size: clamp(1.16rem, 1.8vw, 1.55rem); line-height: 1.25; font-weight: 720; letter-spacing: 0; }
+    .lead { max-width: 1320px; margin-bottom: 0; color: #334155; font-size: clamp(1.04rem, 1.56vw, 1.36rem); line-height: 1.52; font-weight: 500; }
+    .title-meta, .tag-list { display: flex; flex-wrap: wrap; gap: 12px; }
+    .title-meta { margin-top: 34px; color: #334155; font-size: clamp(1rem, 1.5vw, 1.3rem); font-weight: 650; }
+    .pill, .tag { display: inline-flex; align-items: center; min-height: 34px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,0.86); color: #344054; font-weight: 700; }
+    .layout-2 { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr); gap: clamp(22px, 3.6vw, 54px); align-items: start; }
+    .layout-2.equal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .layout-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
+    .layout-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+    .card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .content.layout-2, .content.media-stack, .content.media-stack.reverse { grid-template-columns: minmax(0, 1fr); gap: clamp(18px, 2.2vh, 30px); align-items: start; }
+    .content.layout-2 > *, .content.media-stack > *, .content.media-stack.reverse > * { grid-column: 1 / -1; }
+    .content.layout-2 > :first-child, .content.media-stack > div, .content.media-stack.reverse > div { display: grid; gap: clamp(14px, 1.8vh, 22px); }
+    .content.media-stack > div, .content.media-stack.reverse > div { order: -1; }
+    .topic-card, .compare-card, .quiz-card, .step-card, .mini-card { border: 1px solid var(--line); background: rgba(255,255,255,0.9); border-radius: 8px; box-shadow: 0 10px 24px rgba(31,41,55,0.08); }
+    .topic-card, .compare-card, .quiz-card, .step-card { padding: clamp(18px, 2.1vw, 26px); }
+    .mini-card { padding: 16px; }
+    .topic-card .label, .compare-card .label, .mini-card .label, .step-card .label { display: inline-flex; margin-bottom: 10px; color: var(--azure-dark); font-size: 0.9rem; font-weight: 800; text-transform: uppercase; }
+    .topic-card p, .compare-card p, .mini-card p, .step-card p, .quiz-card p { margin-bottom: 0; color: #435266; font-size: clamp(0.96rem, 1.34vw, 1.14rem); }
+    .accent-green { border-top: 6px solid var(--green); }
+    .accent-orange { border-top: 6px solid var(--orange); }
+    .accent-teal { border-top: 6px solid var(--teal); }
+    .accent-magenta { border-top: 6px solid var(--magenta); }
+    .accent-blue { border-top: 6px solid var(--azure); }
+    .bullets { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; font-size: clamp(1.02rem, 1.55vw, 1.28rem); }
+    .bullets li { position: relative; padding-left: 28px; }
+    .bullets li::before { content: ""; position: absolute; left: 0; top: 0.72em; width: 10px; height: 10px; border-radius: 999px; background: var(--azure); }
+    .bullets.compact { gap: 9px; font-size: clamp(0.95rem, 1.3vw, 1.1rem); }
+    .diagram { margin: 0; padding: clamp(18px, 2.4vw, 30px); border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,0.88); box-shadow: var(--shadow); overflow: hidden; }
+    .diagram-svg { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; max-height: 56vh; object-fit: contain; }
+    .compact-diagram .diagram-svg { max-height: 40vh; }
+    .screenshot-frame { display: grid; justify-items: center; gap: 10px; margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; overflow: visible; }
+    .screenshot-frame img { display: block; width: 100%; max-height: 58vh; object-fit: contain; border-radius: 6px; background: transparent; box-shadow: 0 16px 36px rgba(31,41,55,0.14); }
+    .media-stack { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.72fr); gap: clamp(16px, 2.2vw, 28px); align-items: start; }
+    .media-stack.reverse { grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.08fr); }
+    .media-stack .screenshot-frame img { max-height: 52vh; }
+    .screen-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+    .screen-pair .screenshot-frame img { max-height: 38vh; }
+    .caption { margin-top: 8px; color: var(--muted); text-align: center; font-size: clamp(0.84rem, 1.08vw, 0.96rem); font-weight: 650; }
+    .table { width: 100%; border-collapse: collapse; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: var(--white); font-size: clamp(0.88rem, 1.18vw, 1.02rem); }
+    .table th, .table td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .table th { color: #1e3a5f; background: var(--soft-blue); font-weight: 800; }
+    .table tr:last-child td { border-bottom: 0; }
+    .flow-row, .layer-row, .timeline-row { display: flex; align-items: stretch; gap: 12px; }
+    .timeline-row { flex-wrap: wrap; }
+    .node { flex: 1 1 0; min-width: 0; display: grid; place-items: center; min-height: 86px; padding: 14px; border: 2px solid var(--line); border-radius: 8px; background: var(--soft); text-align: center; font-size: clamp(1rem, 1.42vw, 1.18rem); font-weight: 750; }
+    .node small { display: block; margin-top: 6px; color: var(--muted); font-size: 0.78em; font-weight: 650; }
+    .node.web { border-color: #9ed0f8; background: var(--soft-blue); }
+    .node.ap { border-color: #8fd6ca; background: #e9f7f5; }
+    .node.db { border-color: #f2c185; background: var(--soft-orange); }
+    .node.ref { border-style: dashed; color: #475467; background: #f8fafc; }
+    .node.active { border-width: 3px; box-shadow: inset 0 0 0 3px rgba(0,120,212,0.16); }
+    .arrow { align-self: center; flex: 0 0 auto; color: var(--muted); font-size: clamp(1.3rem, 2vw, 1.8rem); font-weight: 800; }
+    .callout { padding: clamp(18px, 2vw, 24px); border-left: 7px solid var(--azure); border-radius: 8px; background: rgba(255,255,255,0.86); box-shadow: 0 10px 24px rgba(31,41,55,0.08); font-size: clamp(1rem, 1.45vw, 1.2rem); font-weight: 650; }
+    .code-block { margin: 0; padding: 16px 18px; border: 1px solid var(--line); border-radius: 8px; background: #0f172a; color: #e5edf7; overflow: auto; font-size: clamp(0.78rem, 1.02vw, 0.92rem); line-height: 1.45; box-shadow: 0 10px 24px rgba(31,41,55,0.12); }
+    .quiz-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .quiz-card { display: grid; gap: 10px; }
+    .quiz-card .q { color: var(--azure-dark); font-weight: 800; }
+    .answer { color: #2f6b00; font-weight: 800; }
+    .note { color: var(--muted); font-size: clamp(0.92rem, 1.2vw, 1rem); }
+    code { padding: 0.1em 0.28em; border-radius: 4px; background: #eef2f7; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; }
+    @media (max-width: 980px) { html { scroll-snap-type: none; } .slide { min-height: auto; padding: 48px 22px 66px; } .layout-2, .layout-2.equal, .layout-3, .layout-4, .card-grid, .quiz-grid, .media-stack, .media-stack.reverse, .screen-pair { grid-template-columns: 1fr; } .flow-row, .layer-row { flex-direction: column; } .arrow { transform: rotate(90deg); } .screenshot-frame img, .screen-pair .screenshot-frame img { max-height: none; } }
+    @media print { html { scroll-snap-type: none; } .slide { min-height: 100vh; page-break-after: always; } }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide" data-slide="1 / 48" aria-labelledby="slide-1-title">
+      <div class="content">
+        <h1 id="slide-1-title">Todo アプリの構築 2</h1>
+        <p class="lead">この回では、第5回で作成した Azure リソースへ Todo アプリをデプロイし、Web、API、DB が連携して動く完成形を確認します。</p>
+        <div class="title-meta" aria-label="講座情報"><span class="pill">第6回</span><span class="pill">オンライン座学 + ハンズオン</span><span class="pill">50分レクチャー/ハンズオン + 10分 QA</span><span class="pill">2026年7月23日</span></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="2 / 48" aria-labelledby="slide-2-title">
+      <div class="content layout-2">
+        <div><h2 id="slide-2-title">今日のゴール</h2><p class="lead">今日は GitHub Actions で Web/API の実イメージをデプロイし、ブラウザーから Todo アプリにアクセスして基本動作を確認します。</p></div>
+        <div class="card-grid" aria-label="今日の到達目標"><article class="topic-card accent-blue"><span class="label">Goal 1</span><h3>DB を再開する</h3><p>第5回で停止した PostgreSQL を Running に戻します。</p></article><article class="topic-card accent-teal"><span class="label">Goal 2</span><h3>GitHub Actions を設定</h3><p>Secret と variables を登録し、workflow を有効化します。</p></article><article class="topic-card accent-orange"><span class="label">Goal 3</span><h3>デプロイを確認</h3><p>ACR のイメージと Container Apps の revision を確認します。</p></article><article class="topic-card accent-green"><span class="label">Goal 4</span><h3>動作と後片付け</h3><p>Todo 操作を確認し、停止または削除方針を決めます。</p></article></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="3 / 48" aria-labelledby="slide-3-title"><div class="content"><h2 id="slide-3-title">第5回の終了状態</h2><p class="lead">前回は Azure 側の土台を作り、PostgreSQL を停止して引き継ぎました。本回はその状態から再開します。</p><figure class="diagram"><img class="diagram-svg" src="../../assets/diagrams/lesson-05/l05-d17-lesson5-end-state.drawio.svg" alt="第5回で作成済みのリソースと第6回で更新する範囲" /></figure></div></section>
+
+    <section class="slide" data-slide="4 / 48" aria-labelledby="slide-4-title"><div class="content"><h2 id="slide-4-title">第6回で完成させる範囲</h2><p class="lead">第5回で作ったリソースに対して、第6回ではリポジトリ、認証情報、variables、workflow、デプロイ、動作確認を進めます。</p><table class="table" aria-label="第6回の作業範囲"><thead><tr><th>区分</th><th>第5回まで</th><th>第6回で行うこと</th></tr></thead><tbody><tr><td>Azure</td><td>リソース作成済み</td><td>DB 再開、ACR と Container Apps の更新確認</td></tr><tr><td>GitHub</td><td>未設定</td><td>リポジトリ、Secret、variables、workflow を設定</td></tr><tr><td>アプリ</td><td>プレースホルダー</td><td>実イメージに更新し、Todo 操作を確認</td></tr></tbody></table></div></section>
+
+    <section class="slide" data-slide="5 / 48" aria-labelledby="slide-5-title"><div class="content"><h2 id="slide-5-title">元ガイドとの対応</h2><p class="lead">本回では、元ガイドのフェーズ2からフェーズ4を扱います。GitHub 側の設定から、デプロイメント検証までを一続きで確認します。</p><table class="table" aria-label="元ガイドと第6回の対応"><thead><tr><th>元ガイドの範囲</th><th>本回での扱い</th><th>注意</th></tr></thead><tbody><tr><td>フェーズ2</td><td>テンプレートからリポジトリを作成</td><td>Public を想定</td></tr><tr><td>ステップ3.1</td><td>Service Principal と認証情報</td><td>Cloud Shell から実行</td></tr><tr><td>ステップ3.2/3.3</td><td>Secret と Repository variables</td><td>Secret value は表示しない</td></tr><tr><td>ステップ3.4/3.5</td><td>workflow 有効化と実行</td><td>Actions ログを確認</td></tr><tr><td>フェーズ4</td><td>Container Apps とアプリ動作確認</td><td>URL と redirect URI の一致を確認</td></tr></tbody></table></div></section>
+
+    <section class="slide" data-slide="6 / 48" aria-labelledby="slide-6-title"><div class="content layout-2"><div><h2 id="slide-6-title">GitHub Actions が行うこと</h2><p class="lead">GitHub Actions は、手作業で行うビルド、ACR への push、Container Apps の更新を workflow として実行します。</p></div><div class="layout-4"><article class="topic-card accent-blue"><span class="label">1</span><h3>コード取得</h3><p>リポジトリの API/Web コードを使います。</p></article><article class="topic-card accent-teal"><span class="label">2</span><h3>ビルド</h3><p>コンテナイメージを作成します。</p></article><article class="topic-card accent-orange"><span class="label">3</span><h3>push</h3><p>ACR にイメージを登録します。</p></article><article class="topic-card accent-green"><span class="label">4</span><h3>更新</h3><p>Container Apps の revision を更新します。</p></article></div></div></section>
+
+    <section class="slide" data-slide="7 / 48" aria-labelledby="slide-7-title"><div class="content"><h2 id="slide-7-title">デプロイの通信経路</h2><p class="lead">GitHub Actions は Service Principal を使って Azure にログインし、ACR と Container Apps を更新します。PostgreSQL はデプロイ先ではなく、実行時の接続先です。</p><figure class="diagram"><img class="diagram-svg" src="../../assets/diagrams/lesson-06/l06-d05-github-actions-deploy-flow.drawio.svg" alt="GitHub Actions から Azure Resource Manager、ACR、Container Apps へ進むデプロイフロー" /></figure></div></section>
+
+    <section class="slide" data-slide="8 / 48" aria-labelledby="slide-8-title"><div class="content"><h2 id="slide-8-title">Secret と Variables</h2><p class="lead">GitHub に登録する値は、秘密情報と設定値に分けます。Secret は値を再表示できない前提で慎重に扱います。</p><table class="table" aria-label="Secret と Variables の違い"><thead><tr><th>種類</th><th>例</th><th>扱い</th></tr></thead><tbody><tr><td>Secret</td><td><code>AZURE_CREDENTIALS</code></td><td>値は再表示できない。公開資料に残さない。</td></tr><tr><td>Repository variables</td><td><code>RESOURCE_GROUP</code>、<code>ACR_NAME</code>、URL、ID</td><td>設定値として使う。実環境名や ID は公開時にマスクする。</td></tr></tbody></table></div></section>
+
+    <section class="slide" data-slide="9 / 48" aria-labelledby="slide-9-title"><div class="content layout-2"><div><h2 id="slide-9-title">Service Principal の役割</h2><p class="lead">GitHub Actions は人の代わりに Azure を操作します。その Azure 側の ID として Service Principal を使い、RBAC で操作範囲を決めます。</p></div><div class="card-grid"><article class="topic-card accent-blue"><span class="label">Identity</span><h3>Azure 側の実行 ID</h3><p>workflow が Azure にログインするための ID です。</p></article><article class="topic-card accent-teal"><span class="label">Scope</span><h3>操作範囲</h3><p>原則として第5回のリソースグループをスコープにします。</p></article><article class="topic-card accent-orange"><span class="label">Role</span><h3>ロール付与</h3><p>講師が検証したロールと権限で実行します。</p></article><article class="topic-card accent-magenta"><span class="label">Secret</span><h3>JSON を登録</h3><p>取得した JSON は GitHub Secret に入れ、画面共有しません。</p></article></div></div></section>
+
+    <section class="slide" data-slide="10 / 48" aria-labelledby="slide-10-title"><div class="content"><h2 id="slide-10-title">今日使う値を確認する</h2><p class="lead">第5回の接続情報一覧が、GitHub Actions 設定の入力値になります。Web URL と API URL、ACR 名と login server を取り違えないようにします。</p><table class="table" aria-label="第5回から引き継ぐ値"><thead><tr><th>項目</th><th>使う場所</th><th>注意</th></tr></thead><tbody><tr><td>Resource group</td><td>Service Principal scope、<code>RESOURCE_GROUP</code></td><td>第5回の RG を使う</td></tr><tr><td>ACR name</td><td><code>ACR_NAME</code></td><td><code>.azurecr.io</code> を含めない</td></tr><tr><td>PostgreSQL FQDN</td><td><code>POSTGRES_SERVER</code></td><td>サーバー名だけでなく FQDN を使う</td></tr><tr><td>Web URL</td><td><code>AZURE_REDIRECT_URI</code></td><td>Entra ID redirect URI と一致</td></tr><tr><td>API URL</td><td><code>API_PROXY_TARGET</code></td><td>内部 API URL を使う</td></tr></tbody></table></div></section>
+
+    <section class="slide" data-slide="11 / 48" aria-labelledby="slide-11-title"><div class="content"><h2 id="slide-11-title">PostgreSQL を再開する</h2><p class="lead">前回停止した PostgreSQL を、デプロイ後の動作確認に向けて Running に戻します。Start 後の完了を待ってから次へ進みます。</p><div class="screen-pair"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS01-masked.png" alt="PostgreSQL Flexible Server の Start 操作画面。サーバー名やサブスクリプション情報はマスク済み。" /><figcaption class="caption">Start 操作を実行する</figcaption></figure><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS02-masked.png" alt="PostgreSQL Flexible Server が Running 状態になった確認画面。サーバー名やリソース情報はマスク済み。" /><figcaption class="caption">Running 状態を確認する</figcaption></figure></div></div></section>
+
+    <section class="slide" data-slide="12 / 48" aria-labelledby="slide-12-title"><div class="content media-stack reverse"><div><h2 id="slide-12-title">テンプレートからリポジトリを作成する</h2><p class="lead">元ガイドに従い、テンプレートリポジトリから受講者用の Todo アプリリポジトリを作成します。</p><article class="step-card accent-blue"><span class="label">GitHub</span><h3>Use this template</h3><p>受講者個人の GitHub アカウントに、作業用リポジトリを作成します。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS03-masked.png" alt="GitHub テンプレートリポジトリの Use this template 画面。GitHub アカウント情報はマスク済み。" /><figcaption class="caption">テンプレートリポジトリを開く</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="13 / 48" aria-labelledby="slide-13-title"><div class="content media-stack"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS04-masked.png" alt="Create repository from template 画面。GitHub ユーザー情報はマスク済み。" /><figcaption class="caption">リポジトリ名と Public を指定する</figcaption></figure><div><h2 id="slide-13-title">リポジトリを作成する</h2><p class="lead">Repository name は受講者番号などで識別しやすくします。元ガイドの初心者向けフローでは Public を想定します。</p><ul class="bullets compact"><li>個人アカウント側に作成します。</li><li>Repository URL を記録します。</li><li>組織ポリシーで詰まる場合は講師に確認します。</li></ul></div></div></section>
+
+    <section class="slide" data-slide="14 / 48" aria-labelledby="slide-14-title"><div class="content media-stack reverse"><div><h2 id="slide-14-title">作成したリポジトリを確認する</h2><p class="lead">作成したリポジトリが、第6回の作業場所になります。Actions と Settings に移動できることを確認します。</p><article class="step-card accent-green"><span class="label">確認</span><h3>Settings と Actions</h3><p>Secret、variables、workflow 実行の入口を確認します。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS05-masked.png" alt="作成済み GitHub リポジトリ画面。GitHub ユーザー情報はマスク済み。" /><figcaption class="caption">作成済みリポジトリを確認する</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="15 / 48" aria-labelledby="slide-15-title"><div class="content"><h2 id="slide-15-title">Cloud Shell を開く</h2><p class="lead">Service Principal 作成と workflow 有効化は、講師指示に従い Azure Cloud Shell で行います。ローカル端末の Azure CLI は使いません。</p><div class="screen-pair"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS06-masked.png" alt="Azure Cloud Shell 起動画面。ユーザーやサブスクリプション情報はマスク済み。" /><figcaption class="caption">Cloud Shell を開く</figcaption></figure><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS07-masked.png" alt="Cloud Shell でサブスクリプション確認を行う画面。ID はマスク済み。" /><figcaption class="caption">対象サブスクリプションを確認する</figcaption></figure></div></div></section>
+
+    <section class="slide" data-slide="16 / 48" aria-labelledby="slide-16-title"><div class="content media-stack reverse"><div><h2 id="slide-16-title">Service Principal を作成する</h2><p class="lead">GitHub Actions が Azure にログインするための資格情報を作成します。出力 JSON には secret が含まれるため、スクリーンショットや資料に残しません。</p><article class="step-card accent-orange"><span class="label">Secret</span><h3>JSON は画面共有しない</h3><p>値は GitHub Secret に登録し、公開資料では扱いません。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS08-masked.png" alt="Cloud Shell で Service Principal 作成コマンドを示す画面。出力 JSON や ID はマスク済み。" /><figcaption class="caption">Service Principal 作成コマンドを実行する</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="17 / 48" aria-labelledby="slide-17-title"><div class="content media-stack"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS09-masked.png" alt="GitHub Settings の Secrets and variables Actions 画面。アカウント情報はマスク済み。" /><figcaption class="caption">Secrets and variables の入口</figcaption></figure><div><h2 id="slide-17-title">Actions 設定画面を開く</h2><p class="lead">GitHub リポジトリの Settings から、Actions 用の Secrets と Variables を設定する画面へ移動します。</p><ul class="bullets compact"><li>Secret と Variables のタブを見分けます。</li><li>Secret value は登録後に再表示できません。</li><li>実 ID や URL は公開資料ではマスクします。</li></ul></div></div></section>
+
+    <section class="slide" data-slide="18 / 48" aria-labelledby="slide-18-title"><div class="content media-stack reverse"><div><h2 id="slide-18-title"><code>AZURE_CREDENTIALS</code> を登録する</h2><p class="lead">Service Principal の JSON 全体を GitHub Actions Secret として登録します。名前のスペルと JSON 全体のコピー漏れに注意します。</p><article class="step-card accent-magenta"><span class="label">Secret</span><h3>値は表示しない</h3><p>登録画面の Secret value は、スクリーンショットでも黒塗りにします。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS10-masked.png" alt="GitHub Actions の New repository secret 画面。Secret value は黒塗りでマスク済み。" /><figcaption class="caption"><code>AZURE_CREDENTIALS</code> Secret を追加する</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="19 / 48" aria-labelledby="slide-19-title"><div class="content media-stack"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS11-masked.png" alt="GitHub Repository variables タブ。実 ID や URL はマスク済み。" /><figcaption class="caption">Repository variables タブを開く</figcaption></figure><div><h2 id="slide-19-title">Repository variables の全体</h2><p class="lead">デプロイ先リソース名やアプリ設定値は variables として登録します。Secret とは違い、設定値として読み取られます。</p><ul class="bullets compact"><li>元ガイドの変数名をそのまま使います。</li><li>第5回の接続情報一覧を参照します。</li><li>URL と ID は公開時にマスクします。</li></ul></div></div></section>
+
+    <section class="slide" data-slide="20 / 48" aria-labelledby="slide-20-title"><div class="content"><h2 id="slide-20-title">Azure リソース系の変数</h2><p class="lead">Resource Group、ACR、Container Apps Environment は、workflow がどの Azure リソースを更新するかを示します。</p><table class="table" aria-label="Azure リソース系 variables"><thead><tr><th>変数名</th><th>値</th><th>注意</th></tr></thead><tbody><tr><td><code>RESOURCE_GROUP</code></td><td>第5回の Resource group 名</td><td>Service Principal の scope と合わせる</td></tr><tr><td><code>ACR_NAME</code></td><td>ACR 名</td><td><code>.azurecr.io</code> は含めない</td></tr><tr><td><code>CONTAINER_APP_ENVIRONMENT</code></td><td>Container Apps Environment 名</td><td>第5回で作成済み</td></tr><tr><td><code>REPOSITORY</code></td><td>GitHub repository URL</td><td>受講者の repo を指定</td></tr></tbody></table></div></section>
+
+    <section class="slide" data-slide="21 / 48" aria-labelledby="slide-21-title"><div class="content"><h2 id="slide-21-title">PostgreSQL 系の変数</h2><p class="lead">API が DB に接続するため、PostgreSQL のサーバー、DB 名、ユーザー相当の値を設定します。</p><table class="table" aria-label="PostgreSQL variables"><thead><tr><th>変数名</th><th>値</th><th>注意</th></tr></thead><tbody><tr><td><code>POSTGRES_SERVER</code></td><td>PostgreSQL サーバー FQDN</td><td>FQDN を使う</td></tr><tr><td><code>POSTGRES_DB</code></td><td><code>tododb</code></td><td>元ガイドに合わせる</td></tr><tr><td><code>POSTGRES_USER</code></td><td>Managed Identity 名</td><td><code>postgres</code> ではない</td></tr><tr><td><code>DATABASE_TYPE</code></td><td><code>postgresql</code></td><td>固定値</td></tr></tbody></table></div></section>
+
+    <section class="slide" data-slide="22 / 48" aria-labelledby="slide-22-title"><div class="content"><h2 id="slide-22-title">Entra ID と URL の変数</h2><p class="lead">Web サインインと Web/API 連携では、Entra ID の Client ID、Tenant ID、Web URL、API URL を正しく対応させます。</p><table class="table" aria-label="Entra ID と URL variables"><thead><tr><th>変数名</th><th>値</th><th>注意</th></tr></thead><tbody><tr><td><code>AZURE_CLIENT_ID</code></td><td>Web サインイン用 App registration の Client ID</td><td>GitHub Actions 用 SP ではない</td></tr><tr><td><code>AZURE_TENANT_ID</code></td><td>Tenant ID</td><td>公開時はマスク</td></tr><tr><td><code>USER_ASSIGNED_IDENTITY_CLIENT_ID</code></td><td>Managed Identity client ID</td><td>公開時はマスク</td></tr><tr><td><code>AZURE_REDIRECT_URI</code></td><td>Web Container App URL</td><td><code>/callback</code> は付けない</td></tr><tr><td><code>API_PROXY_TARGET</code></td><td>API Container App URL</td><td>Web URL と取り違えない</td></tr></tbody></table></div></section>
+
+    <section class="slide" data-slide="23 / 48" aria-labelledby="slide-23-title"><div class="content media-stack reverse"><div><h2 id="slide-23-title">ワークフローファイルを確認する</h2><p class="lead">テンプレートでは workflow が実行対象になっていない場合があります。API と Web の workflow ファイルを有効化する準備をします。</p><article class="step-card accent-blue"><span class="label">Workflow</span><h3>API と Web の2本</h3><p>それぞれの build-deploy workflow が main ブランチに存在する状態を目指します。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS13-masked.png" alt="workflow テンプレートファイルの確認画面。GitHub ユーザー情報はマスク済み。" /><figcaption class="caption">workflow テンプレートファイルを確認する</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="24 / 48" aria-labelledby="slide-24-title"><div class="content"><h2 id="slide-24-title">ワークフローを有効化する</h2><p class="lead">Azure Cloud Shell でリポジトリを clone し、テンプレートファイルを実行対象の YAML として配置して commit/push します。</p><div class="screen-pair"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS14-masked.png" alt="Cloud Shell で workflow ファイルをコピーするコマンド例。GitHub 情報はマスク済み。" /><figcaption class="caption">workflow ファイルをコピーする</figcaption></figure><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS15-masked.png" alt="Cloud Shell で commit と push を実行する例。個人情報はマスク済み。" /><figcaption class="caption">commit/push で反映する</figcaption></figure></div></div></section>
+
+    <section class="slide" data-slide="25 / 48" aria-labelledby="slide-25-title"><div class="content media-stack reverse"><div><h2 id="slide-25-title">Actions タブを確認する</h2><p class="lead">push 後に、API と Web の workflow が Actions タブに表示されることを確認します。表示されない場合はファイル名と配置先を見直します。</p><article class="step-card accent-green"><span class="label">確認</span><h3>2つの workflow</h3><p>API と Web の build-deploy workflow が表示されます。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS16-masked.png" alt="GitHub Actions タブに workflow が表示された画面。GitHub ユーザー情報はマスク済み。" /><figcaption class="caption">Actions タブで workflow を確認する</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="26 / 48" aria-labelledby="slide-26-title"><div class="content media-stack"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS17-masked.png" alt="GitHub Actions の workflow 実行中画面。ユーザー情報や内部ログはマスク済み。" /><figcaption class="caption">workflow 実行を監視する</figcaption></figure><div><h2 id="slide-26-title">ワークフロー実行を監視する</h2><p class="lead">失敗時は Portal だけでなく、まず GitHub Actions の job log を確認します。Secret や variables のミスはここに現れます。</p><ul class="bullets compact"><li>実行中、成功、失敗の状態を確認します。</li><li>失敗ログに秘密情報が出ていないか注意します。</li><li>Portal 側の確認は workflow の成功後に行います。</li></ul></div></div></section>
+
+    <section class="slide" data-slide="27 / 48" aria-labelledby="slide-27-title"><div class="content media-stack reverse"><div><h2 id="slide-27-title">ワークフロー成功を確認する</h2><p class="lead">API と Web の workflow が成功すると、ACR にイメージが作成され、Container Apps の revision が更新されます。</p><article class="step-card accent-teal"><span class="label">Success</span><h3>次は Azure 側を確認</h3><p>成功状態を見てから ACR と Container Apps を開きます。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS18-masked.png" alt="GitHub Actions の workflow 成功画面。GitHub ユーザー情報はマスク済み。" /><figcaption class="caption">workflow 成功を確認する</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="28 / 48" aria-labelledby="slide-28-title"><div class="content media-stack"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS20-masked.png" alt="ACR Repositories 画面。Registry 名やサブスクリプション情報はマスク済み。" /><figcaption class="caption">ACR の repositories を確認する</figcaption></figure><div><h2 id="slide-28-title">ACR の Repositories を確認する</h2><p class="lead">workflow が成功すると、ACR に API/Web のコンテナイメージが作成されます。タグや repository の存在を確認します。</p><ul class="bullets compact"><li>ACR 名が第5回の値と一致しているか確認します。</li><li>API と Web のイメージがあるか見ます。</li><li>push 失敗時は Actions ログへ戻ります。</li></ul></div></div></section>
+
+    <section class="slide" data-slide="29 / 48" aria-labelledby="slide-29-title"><div class="content media-stack reverse"><div><h2 id="slide-29-title">Environment 内のアプリ一覧</h2><p class="lead">Container Apps Environment 内に、API と Web の Container App が並んでいることを確認します。</p><article class="step-card accent-blue"><span class="label">Environment</span><h3>同じ実行環境</h3><p>第5回で作った API/Web が同じ Environment にあるか確認します。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS21-masked.png" alt="Container Apps Environment 内のアプリ一覧画面。リソース情報はマスク済み。" /><figcaption class="caption">Environment 内の API/Web を確認する</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="30 / 48" aria-labelledby="slide-30-title"><div class="content media-stack"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS22-masked.png" alt="API Container App revisions 画面。image や内部 FQDN は必要に応じてマスク済み。" /><figcaption class="caption">API Container App の revision</figcaption></figure><div><h2 id="slide-30-title">API の revision を確認する</h2><p class="lead">API のプレースホルダーが、実アプリのイメージを使う revision に更新されていることを確認します。</p><ul class="bullets compact"><li>image が ACR の API イメージになっているか見ます。</li><li>Status が正常か確認します。</li><li>プレースホルダー revision と見分けます。</li></ul></div></div></section>
+
+    <section class="slide" data-slide="31 / 48" aria-labelledby="slide-31-title"><div class="content media-stack reverse"><div><h2 id="slide-31-title">Web の revision を確認する</h2><p class="lead">Web 側も新しいイメージの revision に更新されます。API と同じく、image と Status を確認します。</p><article class="step-card accent-green"><span class="label">Web</span><h3>利用者の入口</h3><p>この revision が正常に動くことで、Web URL からアプリにアクセスできます。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS23-masked.png" alt="Web Container App revisions 画面。image やリソース情報はマスク済み。" /><figcaption class="caption">Web Container App の revision</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="32 / 48" aria-labelledby="slide-32-title"><div class="content media-stack"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS24-masked.png" alt="Web Container App Overview と Application URL の確認画面。URL やリソース情報はマスク済み。" /><figcaption class="caption">Web Application URL を確認する</figcaption></figure><div><h2 id="slide-32-title">Web URL を確認する</h2><p class="lead">利用者がアクセスする入口は Web Container App の Application URL です。第5回で記録した URL と一致しているか確認します。</p><ul class="bullets compact"><li>ブラウザーで開く URL です。</li><li>Entra ID redirect URI と一致させます。</li><li>公開資料では実 URL をマスクします。</li></ul></div></div></section>
+
+    <section class="slide" data-slide="33 / 48" aria-labelledby="slide-33-title"><div class="content media-stack reverse"><div><h2 id="slide-33-title">Entra ID redirect URI を確認する</h2><p class="lead">Web サインインが成功するには、Entra ID の SPA redirect URI と Web Container App URL が一致している必要があります。</p><article class="step-card accent-orange"><span class="label">注意</span><h3><code>/callback</code> は付けない</h3><p>元ガイドの指定どおり、Web URL と variables を照合します。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS25-masked.png" alt="Entra ID App registration の Authentication 画面。Tenant ID や Client ID はマスク済み。" /><figcaption class="caption">SPA redirect URI を確認する</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="34 / 48" aria-labelledby="slide-34-title"><div class="content media-stack"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS26-masked.png" alt="GitHub Repository variables の URL 確認画面。URL やユーザー情報はマスク済み。" /><figcaption class="caption">URL variables を確認する</figcaption></figure><div><h2 id="slide-34-title">GitHub variables の URL を確認する</h2><p class="lead"><code>AZURE_REDIRECT_URI</code> と <code>API_PROXY_TARGET</code> が、実際の Web/API URL と一致しているか確認します。</p><ul class="bullets compact"><li>Web URL と API URL を取り違えない。</li><li>末尾のパスを余計に足さない。</li><li>URL は公開資料ではマスクする。</li></ul></div></div></section>
+
+    <section class="slide" data-slide="35 / 48" aria-labelledby="slide-35-title"><div class="content media-stack reverse"><div><h2 id="slide-35-title">Web アプリにアクセスする</h2><p class="lead">ブラウザーで Web URL を開き、Todo アプリのログイン画面が表示されることを確認します。</p><article class="step-card accent-blue"><span class="label">利用者目線</span><h3>Web URL を開く</h3><p>ここから Web、Entra ID、API、DB の連携確認に進みます。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS27-masked.png" alt="Todo アプリのログイン画面。URL やユーザー情報はマスク済み。" /><figcaption class="caption">Todo アプリのログイン画面を確認する</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="36 / 48" aria-labelledby="slide-36-title"><div class="content media-stack"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS28-masked.png" alt="Microsoft Entra ID サインイン画面。ユーザー名やメールアドレスはマスク済み。" /><figcaption class="caption">Entra ID でサインインする</figcaption></figure><div><h2 id="slide-36-title">Entra ID でサインインする</h2><p class="lead">Microsoft Entra ID の認証を通って Todo 画面に入ります。個人情報が画面共有やスクリーンショットに写らないようにします。</p><ul class="bullets compact"><li>想定テナントのアカウントを選びます。</li><li>サインイン失敗時は redirect URI を確認します。</li><li>ユーザー名やメールは公開しません。</li></ul></div></div></section>
+
+    <section class="slide" data-slide="37 / 48" aria-labelledby="slide-37-title"><div class="content"><h2 id="slide-37-title">Todo を作成する</h2><p class="lead">新しい Todo を追加し、Web から API を通って DB に保存されることを確認します。</p><div class="screen-pair"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS29-masked.png" alt="Todo List 画面。ユーザー情報や Todo 内容はマスク済み。" /><figcaption class="caption">Todo 一覧を表示する</figcaption></figure><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS30-masked.png" alt="Todo 作成後の画面。個人情報や業務情報はマスク済み。" /><figcaption class="caption">Todo 作成を確認する</figcaption></figure></div></div></section>
+
+    <section class="slide" data-slide="38 / 48" aria-labelledby="slide-38-title"><div class="content media-stack reverse"><div><h2 id="slide-38-title">Todo を編集・削除する</h2><p class="lead">更新と削除が成功することで、Web、API、DB の基本動作が一通りつながっていることを確認できます。</p><article class="step-card accent-green"><span class="label">動作確認</span><h3>作成、編集、削除</h3><p>画面だけでなく、ページ更新後の保持も確認します。</p></article></div><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS31-masked.png" alt="Todo 編集または削除後の画面。個人情報や業務情報はマスク済み。" /><figcaption class="caption">編集または削除の反映を確認する</figcaption></figure></div></section>
+
+    <section class="slide" data-slide="39 / 48" aria-labelledby="slide-39-title"><div class="content layout-2"><div><h2 id="slide-39-title">更新後も保持されることを確認する</h2><p class="lead">ページを更新しても Todo の状態が残ることで、画面だけでなく DB 保存まで動いていることを確認できます。</p></div><div class="layout-3"><article class="topic-card accent-blue"><span class="label">Web</span><h3>画面表示</h3><p>一覧を再取得して表示します。</p></article><article class="topic-card accent-teal"><span class="label">API</span><h3>問い合わせ</h3><p>保存済み Todo を API が取得します。</p></article><article class="topic-card accent-orange"><span class="label">DB</span><h3>永続化</h3><p>PostgreSQL に保存されていることを確認します。</p></article></div></div></section>
+
+    <section class="slide" data-slide="40 / 48" aria-labelledby="slide-40-title"><div class="content"><h2 id="slide-40-title">完成した通信経路を振り返る</h2><p class="lead">Web、API、PostgreSQL、Entra ID、ACR、GitHub Actions、Managed Identity の役割を、実行時通信とデプロイ時通信に分けて整理します。</p><figure class="diagram"><img class="diagram-svg" src="../../assets/diagrams/lesson-06/l06-d08-complete-communication.drawio.svg" alt="完成後の実行時通信とデプロイ時通信の関係" /></figure></div></section>
+
+    <section class="slide" data-slide="41 / 48" aria-labelledby="slide-41-title"><div class="content"><h2 id="slide-41-title">よくある失敗: 認証と変数</h2><p class="lead">デプロイ失敗の多くは、認証情報、変数名、値の取り違えから始まります。Portal を見る前に Actions のログを確認します。</p><table class="table" aria-label="認証と変数のよくある失敗"><thead><tr><th>失敗</th><th>症状</th><th>確認箇所</th></tr></thead><tbody><tr><td>Azure ログイン失敗</td><td>workflow が Azure にログインできない</td><td><code>AZURE_CREDENTIALS</code>、SP 権限</td></tr><tr><td>変数名ミス</td><td>リソースを見つけられない</td><td>Repository variables</td></tr><tr><td>ACR 名ミス</td><td>image push/pull が失敗</td><td><code>ACR_NAME</code> と login server</td></tr><tr><td>Client ID の取り違え</td><td>サインインや workflow が失敗</td><td>Web 用 app client ID と SP client ID</td></tr></tbody></table></div></section>
+
+    <section class="slide" data-slide="42 / 48" aria-labelledby="slide-42-title"><div class="content"><h2 id="slide-42-title">よくある失敗: DB とサインイン</h2><p class="lead">アプリが表示されても、API と DB、redirect URI、Container Apps revision のどこかで止まることがあります。確認順をそろえます。</p><table class="table" aria-label="DB とサインインのよくある失敗"><thead><tr><th>失敗</th><th>症状</th><th>確認箇所</th></tr></thead><tbody><tr><td>DB 接続失敗</td><td>Todo 画面で API エラー</td><td><code>POSTGRES_SERVER</code>、DB 権限、PostgreSQL Running</td></tr><tr><td>サインイン失敗</td><td>Login 後にエラー</td><td>redirect URI、<code>AZURE_CLIENT_ID</code>、Tenant ID</td></tr><tr><td>デプロイが見えない</td><td>revision が更新されない</td><td>Actions、ACR repositories、Container Apps revisions</td></tr><tr><td>Secret 表示</td><td>画面共有に機密情報が写る</td><td>Secret value、SP JSON、サインイン画面</td></tr></tbody></table></div></section>
+
+    <section class="slide" data-slide="43 / 48" aria-labelledby="slide-43-title"><div class="content layout-2"><div><h2 id="slide-43-title">スキップ判断</h2><p class="lead">時間内に復旧できない場合は、アプリ完成そのものよりも、どのサービスが何を担当したかの理解を優先します。</p></div><div class="card-grid"><article class="topic-card accent-orange"><span class="label">GitHub 不可</span><h3>デモ repo へ切り替え</h3><p>variables と workflow の意味を画面共有で確認します。</p></article><article class="topic-card accent-magenta"><span class="label">SP 作成不可</span><h3>講師サンプル</h3><p>事前作成資格情報またはデモ環境で流れを確認します。</p></article><article class="topic-card accent-blue"><span class="label">workflow 失敗</span><h3>成功済み画面で確認</h3><p>Actions、ACR、revision の関係を追います。</p></article><article class="topic-card accent-teal"><span class="label">DB/認証失敗</span><h3>通信経路を確認</h3><p>完成環境で Web/API/DB と Entra ID の役割を整理します。</p></article></div></div></section>
+
+    <section class="slide" data-slide="44 / 48" aria-labelledby="slide-44-title"><div class="content"><h2 id="slide-44-title">クリーンアップ方針</h2><p class="lead">第6回終了後は、復習のために残す場合でも、不要な課金と資格情報の残置を避けるために停止または削除方針を確認します。</p><figure class="diagram"><img class="diagram-svg" src="../../assets/diagrams/lesson-06/l06-d10-cleanup-targets.drawio.svg" alt="PostgreSQL 停止、Resource group 削除、Entra ID と GitHub 側の資格情報整理の判断図" /></figure></div></section>
+
+    <section class="slide" data-slide="45 / 48" aria-labelledby="slide-45-title"><div class="content"><h2 id="slide-45-title">停止または削除を確認する</h2><p class="lead">少なくとも PostgreSQL の停止を確認します。講師指示がある場合は Resource group 削除と、Entra ID/GitHub 側の残存情報も整理します。</p><div class="screen-pair"><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS32-masked.png" alt="PostgreSQL Stop または Stopped 状態の確認画面。サーバー名やサブスクリプション情報はマスク済み。" /><figcaption class="caption">PostgreSQL を停止する</figcaption></figure><figure class="screenshot-frame"><img src="../images/screenshots/L06-SS33-masked.png" alt="Resource group 削除確認画面。リソース ID や実リソース名はマスク済み。" /><figcaption class="caption">削除する場合は対象を確認する</figcaption></figure></div></div></section>
+
+    <section class="slide" data-slide="46 / 48" aria-labelledby="slide-46-title"><div class="content layout-2"><div><h2 id="slide-46-title">今日のまとめ</h2><p class="lead">複数サービスをつなぐときは、デプロイ、認証、接続情報、動作確認、コスト管理をまとめて考えます。</p></div><div class="layout-3"><article class="topic-card accent-blue"><span class="label">1</span><h3>Actions は自動化</h3><p>ビルド、ACR push、Container Apps 更新を行いました。</p></article><article class="topic-card accent-teal"><span class="label">2</span><h3>値でサービスがつながる</h3><p>URL、ID、ネットワーク、権限を対応させました。</p></article><article class="topic-card accent-orange"><span class="label">3</span><h3>終わり方も設計</h3><p>PostgreSQL、RG、Secret、SP の扱いを確認しました。</p></article></div></div></section>
+
+    <section class="slide" data-slide="47 / 48" aria-labelledby="slide-47-title"><div class="content"><h2 id="slide-47-title">確認クイズ</h2><p class="lead">GitHub Actions と Azure リソースの関係を、自分の言葉で確認します。</p><div class="quiz-grid"><article class="quiz-card"><p class="q">問1</p><p>GitHub Actions は今回どの作業を自動化しましたか。</p><p class="answer">ビルド、ACR への push、Container Apps 更新。</p></article><article class="quiz-card"><p class="q">問2</p><p><code>ACR_NAME</code> に login server を入れてよいですか。</p><p class="answer">いいえ。通常は ACR 名のみです。</p></article><article class="quiz-card"><p class="q">問3</p><p>Resource group 削除だけでは残る可能性があるものは何ですか。</p><p class="answer">Entra ID App registration、Service Principal、GitHub Secret。</p></article></div></div></section>
+
+    <section class="slide" data-slide="48 / 48" aria-labelledby="slide-48-title"><div class="content"><h2 id="slide-48-title">QA</h2><p class="lead">第5回から第6回で完成した Todo アプリの構成、GitHub Actions、認証、DB 接続、後片付けについて質問を受けます。</p><div class="callout">完成したアプリを見て終わりではなく、どのサービスがどの責務を持ったか、どの値でつながったか、どこを停止または削除するかまで確認して閉じます。</div></div></section>
+  </main>
+</body>
+</html>

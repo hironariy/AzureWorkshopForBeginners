@@ -467,6 +467,7 @@ Azure Portal から Ubuntu Server の Azure VM を作成し、VM 起動時のカ
 
 VM 作成時の Advanced タブで、Custom data に以下の Bash スクリプトを貼り付けます。
 cloud-init は先頭の `#!/bin/bash` を見て、VM 起動時の Custom Script として実行します。
+Azure Portal の Custom data 欄は日本語を直接貼り付けると入力エラーになるため、スクリプト内では HTML 文字参照で `Azure 初心者講座` を表現します。ブラウザー表示では日本語として表示されます。
 本ドラフト段階の案であり、講師は講座前に Ubuntu イメージと Portal UI で動作確認します。
 
 ```bash
@@ -486,7 +487,7 @@ cat > /var/www/html/index.html <<'HTML'
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Azure 初心者講座</title>
+  <title>Azure &#x521D;&#x5FC3;&#x8005;&#x8B1B;&#x5EA7;</title>
   <style>
     :root {
       color-scheme: light;
@@ -544,9 +545,9 @@ cat > /var/www/html/index.html <<'HTML'
 <body>
   <main>
     <p class="label">Lesson 3 | Azure VM + NGINX</p>
-    <h1>Azure 初心者講座</h1>
-    <p>このページは、Azure VM の起動時に Custom Script で NGINX をインストールし、配置したカスタムトップページです。</p>
-    <p class="status">HTTP で Azure VM に到達できています</p>
+    <h1>Azure &#x521D;&#x5FC3;&#x8005;&#x8B1B;&#x5EA7;</h1>
+    <p>This custom top page was created by Azure VM Custom data after installing NGINX.</p>
+    <p class="status">HTTP access to Azure VM is working</p>
   </main>
 </body>
 </html>

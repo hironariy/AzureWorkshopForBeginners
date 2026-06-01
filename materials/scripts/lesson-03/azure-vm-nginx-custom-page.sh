@@ -14,7 +14,7 @@ cat > /var/www/html/index.html <<'HTML'
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Azure 初心者講座</title>
+  <title>Azure &#x521D;&#x5FC3;&#x8005;&#x8B1B;&#x5EA7;</title>
   <style>
     :root {
       color-scheme: light;
@@ -72,9 +72,9 @@ cat > /var/www/html/index.html <<'HTML'
 <body>
   <main>
     <p class="label">Lesson 3 | Azure VM + NGINX</p>
-    <h1>Azure 初心者講座</h1>
-    <p>このページは、Azure VM の起動時に Custom Script で NGINX をインストールし、配置したカスタムトップページです。</p>
-    <p class="status">HTTP で Azure VM に到達できています</p>
+    <h1>Azure &#x521D;&#x5FC3;&#x8005;&#x8B1B;&#x5EA7;</h1>
+    <p>This custom top page was created by Azure VM Custom data after installing NGINX.</p>
+    <p class="status">HTTP access to Azure VM is working</p>
   </main>
 </body>
 </html>

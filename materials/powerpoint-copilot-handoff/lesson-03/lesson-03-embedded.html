@@ -727,12 +727,12 @@
         </figure>
         <div>
           <h2 id="slide-25-title">カスタムデータを設定する</h2>
-          <p class="lead">VM 起動時の Custom Script で NGINX をインストールし、「Azure 初心者講座」のトップページを配置します。貼り付け時は先頭行を崩さないようにします。</p>
+          <p class="lead">VM 起動時の Custom Script で NGINX をインストールし、「Azure 初心者講座」のトップページを配置します。Custom data 欄に貼るコードは英数字と記号だけにします。</p>
           <pre class="code-block"><code>#!/bin/bash
 apt-get update
 apt-get install -y nginx
 cat &gt; /var/www/html/index.html &lt;&lt;'HTML'
-&lt;h1&gt;Azure 初心者講座&lt;/h1&gt;
+&lt;h1&gt;Azure &amp;#x521D;&amp;#x5FC3;&amp;#x8005;&amp;#x8B1B;&amp;#x5EA7;&lt;/h1&gt;
 &lt;p&gt;Azure VM + NGINX のカスタムトップページです。&lt;/p&gt;
 HTML
 systemctl enable nginx

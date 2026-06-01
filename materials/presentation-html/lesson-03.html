@@ -723,18 +723,20 @@
       <div class="content media-stack">
         <figure class="screenshot-frame">
           <img src="../images/screenshots/L03-SS10-masked.png" alt="Azure Portal の VM Advanced タブ。Custom data 入力欄が表示されている。" />
-          <figcaption class="caption">Custom data に cloud-init を貼り付ける</figcaption>
+          <figcaption class="caption">Custom data に Custom Script を貼り付ける</figcaption>
         </figure>
         <div>
           <h2 id="slide-25-title">カスタムデータを設定する</h2>
-          <p class="lead">VM 起動時の cloud-init で NGINX をインストールし、確認用のページを配置します。貼り付け時は先頭行とインデントを崩さないようにします。</p>
-          <pre class="code-block"><code>#cloud-config
-package_update: true
-packages:
-  - nginx
-runcmd:
-  - systemctl enable nginx
-  - systemctl restart nginx</code></pre>
+          <p class="lead">VM 起動時の Custom Script で NGINX をインストールし、「Azure 初心者講座」のトップページを配置します。貼り付け時は先頭行を崩さないようにします。</p>
+          <pre class="code-block"><code>#!/bin/bash
+apt-get update
+apt-get install -y nginx
+cat &gt; /var/www/html/index.html &lt;&lt;'HTML'
+&lt;h1&gt;Azure 初心者講座&lt;/h1&gt;
+&lt;p&gt;Azure VM + NGINX のカスタムトップページです。&lt;/p&gt;
+HTML
+systemctl enable nginx
+systemctl restart nginx</code></pre>
         </div>
       </div>
     </section>

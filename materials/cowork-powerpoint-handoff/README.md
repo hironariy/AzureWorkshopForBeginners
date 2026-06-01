@@ -1,5 +1,7 @@
 # M365 Copilot Cowork PowerPoint Handoff
 
+> PowerPoint Copilot 用の Base64 埋め込み HTML 版は `materials/powerpoint-copilot-handoff/` に作成済みです。このディレクトリは Cowork 用のリンク画像版として残しています。
+
 このディレクトリは、第2回から第6回の HTML プレゼンテーションを PowerPoint 化するために M365 Copilot Cowork へ渡す素材をまとめたものです。
 
 ## 使い方

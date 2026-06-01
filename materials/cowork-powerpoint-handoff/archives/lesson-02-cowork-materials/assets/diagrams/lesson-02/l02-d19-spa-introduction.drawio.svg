@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" role="img" content="&lt;mxfile host=&quot;app.diagrams.net&quot; agent=&quot;GitHub Copilot&quot; version=&quot;24.7.17&quot;&gt;
+  &lt;diagram id=&quot;l02-d19-spa-introduction&quot; name=&quot;SPAの導入図&quot;&gt;
+    &lt;mxGraphModel dx=&quot;1280&quot; dy=&quot;720&quot; grid=&quot;1&quot; gridSize=&quot;10&quot; guides=&quot;1&quot; tooltips=&quot;1&quot; connect=&quot;1&quot; arrows=&quot;1&quot; fold=&quot;1&quot; page=&quot;1&quot; pageScale=&quot;1&quot; pageWidth=&quot;1280&quot; pageHeight=&quot;720&quot; math=&quot;0&quot; shadow=&quot;0&quot;&gt;
+      &lt;root&gt;
+        &lt;mxCell id=&quot;0&quot;/&gt;
+        &lt;mxCell id=&quot;1&quot; parent=&quot;0&quot;/&gt;
+        &lt;mxCell id=&quot;cell-2&quot; value=&quot;SPA はブラウザー側で画面を組み立てる見方&quot; style=&quot;text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=28;fontStyle=1;fontColor=#005A9E&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;60&quot; y=&quot;42&quot; width=&quot;1160&quot; height=&quot;48&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;cell-3&quot; value=&quot;ブラウザー
+SPA
+画面遷移の多くを処理&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F3FF;strokeColor=#D6DDE8;strokeWidth=2;dashed=0;fontSize=18;fontStyle=1;fontColor=#1F2937&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;95&quot; y=&quot;220&quot; width=&quot;230&quot; height=&quot;165&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;cell-4&quot; value=&quot;静的ホスティング
+HTML / JS / CSS&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#EDF7ED;strokeColor=#D6DDE8;strokeWidth=2;dashed=0;fontSize=18;fontStyle=1;fontColor=#1F2937&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;445&quot; y=&quot;180&quot; width=&quot;230&quot; height=&quot;125&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;cell-5&quot; value=&quot;API
+動的処理&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7F5;strokeColor=#D6DDE8;strokeWidth=2;dashed=0;fontSize=18;fontStyle=1;fontColor=#1F2937&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;445&quot; y=&quot;375&quot; width=&quot;230&quot; height=&quot;125&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;cell-6&quot; value=&quot;DB
+データ保存&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#FDF0FB;strokeColor=#D6DDE8;strokeWidth=2;dashed=0;fontSize=18;fontStyle=1;fontColor=#1F2937&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;820&quot; y=&quot;375&quot; width=&quot;230&quot; height=&quot;125&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;cell-7&quot; value=&quot;第9回で詳しく扱う&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F3FF;strokeColor=#D6DDE8;strokeWidth=2;fontSize=16;fontStyle=1;fontColor=#005A9E&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry x=&quot;835&quot; y=&quot;185&quot; width=&quot;260&quot; height=&quot;56&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;cell-8&quot; value=&quot;配信&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#0078D4;strokeWidth=3;dashed=0;fontSize=14;fontStyle=1;fontColor=#0078D4&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;cell-4&quot; target=&quot;cell-3&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;cell-9&quot; value=&quot;API 呼び出し&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#0078D4;strokeWidth=3;dashed=0;fontSize=14;fontStyle=1;fontColor=#0078D4&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;cell-3&quot; target=&quot;cell-5&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;cell-10&quot; value=&quot;保存/検索&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#0078D4;strokeWidth=3;dashed=0;fontSize=14;fontStyle=1;fontColor=#0078D4&quot; edge=&quot;1&quot; parent=&quot;1&quot; source=&quot;cell-5&quot; target=&quot;cell-6&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot;/&gt;&lt;/mxCell&gt;
+      &lt;/root&gt;
+    &lt;/mxGraphModel&gt;
+  &lt;/diagram&gt;
+&lt;/mxfile&gt;
+" data-mxgraph="editable">
+  <title>SPAの導入図</title>
+  <desc>SPAがブラウザー側で画面を構成し、APIとDBに接続する別の見方を示す。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0078D4"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#1F2937" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="1280" height="720" fill="#FFFFFF"/>
+  
+  <line x1="445" y1="242.5" x2="325" y2="302.5" stroke="#0078D4" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/><rect x="290" y="241.5" width="190" height="28" rx="14" fill="#FFFFFF" opacity="0.92"/><text x="385" y="262.5" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="15" font-weight="800" fill="#0078D4">配信</text>
+<line x1="325" y1="302.5" x2="445" y2="437.5" stroke="#0078D4" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/><rect x="290" y="339" width="190" height="28" rx="14" fill="#FFFFFF" opacity="0.92"/><text x="385" y="360" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="15" font-weight="800" fill="#0078D4">API 呼び出し</text>
+<line x1="675" y1="437.5" x2="820" y2="437.5" stroke="#0078D4" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/><rect x="652.5" y="406.5" width="190" height="28" rx="14" fill="#FFFFFF" opacity="0.92"/><text x="747.5" y="427.5" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="15" font-weight="800" fill="#0078D4">保存/検索</text>
+  <text x="640" y="42" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="28" font-weight="850" fill="#005A9E"><tspan x="640" dy="0">SPA はブラウザー側で画面を組み立てる見方</tspan></text>
+<rect x="95" y="220" width="230" height="165" rx="8" fill="#E8F3FF" stroke="#D6DDE8" stroke-width="2"/><rect x="95" y="220" width="230" height="8" rx="4" fill="#0078D4"/><text x="210" y="282.7" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="21" font-weight="800" fill="#1F2937"><tspan x="210" dy="0">ブラウザー</tspan></text><text x="210" y="322.3" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="15" font-weight="650" fill="#667085"><tspan x="210" dy="0">SPA</tspan><tspan x="210" dy="19">画面遷移の多くを処理</tspan></text>
+<rect x="445" y="180" width="230" height="125" rx="8" fill="#EDF7ED" stroke="#D6DDE8" stroke-width="2"/><rect x="445" y="180" width="230" height="8" rx="4" fill="#498205"/><text x="560" y="227.5" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="21" font-weight="800" fill="#1F2937"><tspan x="560" dy="0">静的ホスティング</tspan></text><text x="560" y="257.5" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="15" font-weight="650" fill="#667085"><tspan x="560" dy="0">HTML / JS / CSS</tspan></text>
+<rect x="445" y="375" width="230" height="125" rx="8" fill="#E9F7F5" stroke="#D6DDE8" stroke-width="2"/><rect x="445" y="375" width="230" height="8" rx="4" fill="#008575"/><text x="560" y="422.5" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="21" font-weight="800" fill="#1F2937"><tspan x="560" dy="0">API</tspan></text><text x="560" y="452.5" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="15" font-weight="650" fill="#667085"><tspan x="560" dy="0">動的処理</tspan></text>
+<rect x="820" y="375" width="230" height="125" rx="8" fill="#FDF0FB" stroke="#D6DDE8" stroke-width="2"/><rect x="820" y="375" width="230" height="8" rx="4" fill="#C239B3"/><text x="935" y="422.5" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="21" font-weight="800" fill="#1F2937"><tspan x="935" dy="0">DB</tspan></text><text x="935" y="452.5" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="15" font-weight="650" fill="#667085"><tspan x="935" dy="0">データ保存</tspan></text>
+<rect x="835" y="185" width="260" height="56" rx="18" fill="#E8F3FF" stroke="#D6DDE8" stroke-width="2"/><text x="965" y="209" text-anchor="middle" font-family="Segoe UI, Yu Gothic UI, Meiryo, sans-serif" font-size="17" font-weight="750" fill="#005A9E"><tspan x="965" dy="0">第9回で詳しく扱う</tspan></text>
+</svg>

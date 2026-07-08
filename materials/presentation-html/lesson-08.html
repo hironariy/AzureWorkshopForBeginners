@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第8回 Azure のその他サービス紹介 | Azure Workshop for Beginners</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --azure: #0078d4;
+      --azure-dark: #005a9e;
+      --teal: #008575;
+      --green: #498205;
+      --orange: #ca5010;
+      --magenta: #c239b3;
+      --ink: #1f2937;
+      --muted: #5f6b7a;
+      --line: #d6dde8;
+      --soft: #f6f8fb;
+      --soft-blue: #e8f3ff;
+      --soft-green: #edf7ed;
+      --soft-orange: #fff4e5;
+      --soft-magenta: #fdf0fb;
+      --white: #ffffff;
+      --shadow: 0 18px 44px rgba(31, 41, 55, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-snap-type: y mandatory;
+      background: #eef2f7;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Segoe UI", "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      line-height: 1.6;
+      letter-spacing: 0;
+      background: #eef2f7;
+    }
+
+    .deck { width: 100%; }
+
+    .slide {
+      position: relative;
+      min-height: 100vh;
+      scroll-snap-align: start;
+      display: grid;
+      align-items: start;
+      padding: clamp(42px, 5.2vh, 76px) 5vw clamp(56px, 6vh, 88px);
+      background:
+        linear-gradient(90deg, rgba(0, 120, 212, 0.06), rgba(0, 133, 117, 0.03) 42%, rgba(255, 255, 255, 0) 70%),
+        var(--white);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .slide:nth-child(4n + 2) { background: linear-gradient(90deg, rgba(73, 130, 5, 0.07), rgba(255, 255, 255, 0) 62%), var(--white); }
+    .slide:nth-child(4n + 3) { background: linear-gradient(90deg, rgba(202, 80, 16, 0.06), rgba(255, 255, 255, 0) 62%), var(--white); }
+    .slide:nth-child(4n) { background: linear-gradient(90deg, rgba(194, 57, 179, 0.055), rgba(255, 255, 255, 0) 62%), var(--white); }
+
+    .slide::after {
+      content: attr(data-slide);
+      position: absolute;
+      right: 3vw;
+      bottom: 2.4vh;
+      color: #667085;
+      font-size: clamp(0.8rem, 1.2vw, 1rem);
+      font-weight: 600;
+    }
+
+    .content {
+      width: min(1500px, 100%);
+      margin: 0 auto;
+      display: grid;
+      align-content: start;
+      gap: clamp(18px, 2.1vh, 28px);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 18px;
+      font-size: clamp(2.8rem, 6.4vw, 6.2rem);
+      line-height: 1.02;
+      font-weight: 750;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      width: 100%;
+      max-width: none;
+      margin-bottom: 0;
+      padding-bottom: clamp(10px, 1.2vh, 16px);
+      border-bottom: 3px solid rgba(0, 120, 212, 0.28);
+      font-size: clamp(1.82rem, 3.25vw, 3.55rem);
+      line-height: 1.08;
+      font-weight: 740;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: clamp(1.13rem, 1.72vw, 1.5rem);
+      line-height: 1.25;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 1320px;
+      margin-bottom: 0;
+      color: #334155;
+      font-size: clamp(1.04rem, 1.56vw, 1.36rem);
+      line-height: 1.52;
+      font-weight: 500;
+    }
+
+    .title-meta,
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .title-meta {
+      margin-top: 34px;
+      color: #334155;
+      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      font-weight: 650;
+    }
+
+    .pill,
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 4px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.86);
+      color: #344054;
+      font-weight: 700;
+    }
+
+    .layout-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(20px, 3vw, 38px);
+      align-items: stretch;
+    }
+
+    .layout-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .layout-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .content.layout-2,
+    .content.media-stack,
+    .content.media-stack.reverse {
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(18px, 2.2vh, 30px);
+      align-items: start;
+    }
+
+    .content.layout-2 > *,
+    .content.media-stack > *,
+    .content.media-stack.reverse > * { grid-column: 1 / -1; }
+
+    .content.layout-2 > :first-child,
+    .content.media-stack > div,
+    .content.media-stack.reverse > div {
+      display: grid;
+      gap: clamp(14px, 1.8vh, 22px);
+    }
+
+    .content.media-stack > div,
+    .content.media-stack.reverse > div { order: -1; }
+
+    .topic-card,
+    .compare-card,
+    .quiz-card,
+    .step-card,
+    .mini-card {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.08);
+    }
+
+    .topic-card,
+    .compare-card,
+    .quiz-card,
+    .step-card { padding: clamp(18px, 2.1vw, 26px); }
+    .mini-card { padding: 16px; }
+
+    .topic-card .label,
+    .compare-card .label,
+    .mini-card .label,
+    .step-card .label {
+      display: inline-flex;
+      margin-bottom: 10px;
+      color: var(--azure-dark);
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .topic-card p,
+    .compare-card p,
+    .mini-card p,
+    .step-card p,
+    .quiz-card p {
+      margin-bottom: 0;
+      color: #435266;
+      font-size: clamp(0.96rem, 1.34vw, 1.14rem);
+    }
+
+    .accent-green { border-top: 6px solid var(--green); }
+    .accent-orange { border-top: 6px solid var(--orange); }
+    .accent-teal { border-top: 6px solid var(--teal); }
+    .accent-magenta { border-top: 6px solid var(--magenta); }
+    .accent-blue { border-top: 6px solid var(--azure); }
+
+    .bullets {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: clamp(1.02rem, 1.55vw, 1.28rem);
+    }
+
+    .bullets li {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .bullets li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.72em;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--azure);
+    }
+
+    .bullets.compact {
+      gap: 9px;
+      font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    }
+
+    .diagram {
+      margin: 0;
+      padding: clamp(18px, 2.4vw, 30px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .diagram-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .diagram-panel {
+      min-height: 104px;
+      padding: 16px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    .diagram-panel strong {
+      display: block;
+      color: #1e3a5f;
+      font-size: clamp(1rem, 1.42vw, 1.18rem);
+      line-height: 1.3;
+    }
+
+    .diagram-panel span,
+    .diagram-panel small {
+      display: block;
+      margin-top: 6px;
+      color: #526173;
+      font-size: clamp(0.86rem, 1.08vw, 0.96rem);
+      line-height: 1.45;
+      font-weight: 650;
+    }
+
+    .panel-blue { border-color: #9ed0f8; background: var(--soft-blue); }
+    .panel-teal { border-color: #8fd6ca; background: #e9f7f5; }
+    .panel-green { border-color: #b7dc8e; background: var(--soft-green); }
+    .panel-orange { border-color: #f2c185; background: var(--soft-orange); }
+    .panel-magenta { border-color: #e7a7dc; background: var(--soft-magenta); }
+    .panel-muted { border-style: dashed; color: #475467; background: #f8fafc; }
+
+    .hub-map {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
+      gap: 18px;
+      align-items: center;
+    }
+
+    .hub-center {
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+      padding: 22px;
+      border: 3px solid rgba(0, 120, 212, 0.35);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      color: #1e3a5f;
+      text-align: center;
+      font-size: clamp(1.22rem, 1.9vw, 1.62rem);
+      font-weight: 800;
+    }
+
+    .scope-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .scope-level {
+      display: grid;
+      grid-template-columns: minmax(210px, 0.45fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      min-height: 72px;
+      padding: 14px 18px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .scope-level strong {
+      color: var(--azure-dark);
+      font-size: clamp(1.02rem, 1.45vw, 1.25rem);
+    }
+
+    .scope-level span {
+      color: #435266;
+      font-size: clamp(0.94rem, 1.22vw, 1.08rem);
+      font-weight: 650;
+    }
+
+    .flow-row,
+    .layer-row,
+    .timeline-row {
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .timeline-row { flex-wrap: wrap; }
+
+    .node {
+      flex: 1 1 0;
+      min-width: 0;
+      display: grid;
+      place-items: center;
+      min-height: 86px;
+      padding: 14px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+      text-align: center;
+      font-size: clamp(1rem, 1.42vw, 1.18rem);
+      font-weight: 750;
+    }
+
+    .node small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.78em;
+      font-weight: 650;
+    }
+
+    .node.web { border-color: #9ed0f8; background: var(--soft-blue); }
+    .node.ap { border-color: #8fd6ca; background: #e9f7f5; }
+    .node.db { border-color: #f2c185; background: var(--soft-orange); }
+    .node.sec { border-color: #e7a7dc; background: var(--soft-magenta); }
+    .node.ref { border-style: dashed; color: #475467; background: #f8fafc; }
+    .node.active { border-width: 3px; box-shadow: inset 0 0 0 3px rgba(0, 120, 212, 0.16); }
+
+    .arrow {
+      align-self: center;
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: clamp(1.3rem, 2vw, 1.8rem);
+      font-weight: 800;
+    }
+
+    .callout {
+      padding: clamp(18px, 2vw, 24px);
+      border-left: 7px solid var(--azure);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 10px 24px rgba(31, 41, 55, 0.08);
+      font-size: clamp(1rem, 1.42vw, 1.18rem);
+      font-weight: 650;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      font-size: clamp(0.88rem, 1.18vw, 1.02rem);
+    }
+
+    .table th,
+    .table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .table th {
+      color: #1e3a5f;
+      background: var(--soft-blue);
+      font-weight: 800;
+    }
+
+    .table tr:last-child td { border-bottom: 0; }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .quiz-card {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+    }
+
+    .quiz-card .q {
+      color: var(--azure-dark);
+      font-weight: 800;
+    }
+
+    .answer {
+      color: #2f6b00;
+      font-weight: 800;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: clamp(0.92rem, 1.2vw, 1rem);
+    }
+
+    code {
+      padding: 0.1em 0.28em;
+      border-radius: 4px;
+      background: #eef2f7;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    @media (max-width: 980px) {
+      html { scroll-snap-type: none; }
+      .slide { min-height: auto; padding: 48px 22px 66px; }
+      .layout-2,
+      .layout-3,
+      .layout-4,
+      .card-grid,
+      .diagram-grid,
+      .hub-map,
+      .matrix,
+      .quiz-grid { grid-template-columns: 1fr; }
+      .scope-level { grid-template-columns: 1fr; }
+      .flow-row,
+      .layer-row { flex-direction: column; }
+      .arrow { transform: rotate(90deg); }
+    }
+
+    @media print {
+      html { scroll-snap-type: none; }
+      .slide { min-height: 100vh; page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide" data-slide="1 / 35" aria-labelledby="slide-1-title">
+      <div class="content">
+        <h1 id="slide-1-title">Azure のその他サービス紹介</h1>
+        <p class="lead">この回では、アプリを動かすサービス以外に、実運用で必要になる Azure サービスを「どんな課題のときに調べるか」で整理します。</p>
+        <div class="title-meta" aria-label="講座情報">
+          <span class="pill">第8回</span>
+          <span class="pill">オンライン座学</span>
+          <span class="pill">50分レクチャー + 10分 QA</span>
+          <span class="pill">2026年8月20日</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="2 / 35" aria-labelledby="slide-2-title">
+      <div class="content">
+        <h2 id="slide-2-title">今日のゴール</h2>
+        <p class="lead">サービス名を暗記するのではなく、困りごとから調べるべきカテゴリを選べるようになることを目指します。</p>
+        <div class="hub-map diagram" role="img" aria-label="困りごとから Azure の管理系サービスカテゴリを選ぶための地図">
+          <div class="hub-center">Azure を実案件で使うときの周辺設計</div>
+          <div class="diagram-grid">
+            <div class="diagram-panel panel-blue"><strong>ID と権限</strong><span>Microsoft Entra ID / Azure RBAC</span></div>
+            <div class="diagram-panel panel-green"><strong>ガバナンス</strong><span>管理グループ / タグ / Azure Policy</span></div>
+            <div class="diagram-panel panel-magenta"><strong>セキュリティ</strong><span>Defender for Cloud / Key Vault</span></div>
+            <div class="diagram-panel panel-orange"><strong>コスト</strong><span>Cost Management / Advisor</span></div>
+            <div class="diagram-panel panel-teal"><strong>データ保護</strong><span>Storage / Backup / Site Recovery</span></div>
+            <div class="diagram-panel panel-muted"><strong>正常性</strong><span>Azure Status / Service Health / Resource Health</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="3 / 35" aria-labelledby="slide-3-title">
+      <div class="content">
+        <h2 id="slide-3-title">ここまでに扱ったもの</h2>
+        <p class="lead">これまでは、実行基盤、データベース、ネットワークを中心に Azure を見てきました。第8回では、その周辺に必要な管理領域を足します。</p>
+        <div class="timeline-row" aria-label="第3回から第8回までの学習範囲">
+          <div class="node web">第3回<small>VM、Disk、NIC、Public IP、NSG</small></div>
+          <div class="arrow">→</div>
+          <div class="node ap">第4回<small>ACI、ACR、コンテナ実行</small></div>
+          <div class="arrow">→</div>
+          <div class="node db">第5-6回<small>Container Apps、PostgreSQL、GitHub Actions</small></div>
+          <div class="arrow">→</div>
+          <div class="node web">第7回<small>VNet、Private Endpoint、DNS</small></div>
+          <div class="arrow">→</div>
+          <div class="node sec active">第8回<small>ID、権限、セキュリティ、コスト、保護</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="4 / 35" aria-labelledby="slide-4-title">
+      <div class="content">
+        <h2 id="slide-4-title">Landing Zone のどこを扱うか</h2>
+        <p class="lead">本回は Azure Landing Zone の設計領域のうち、主に ID、リソース編成、ガバナンス、セキュリティ、管理の入口を扱います。</p>
+        <div class="layout-3" aria-label="Azure Landing Zone 設計領域と第8回の対象">
+          <article class="topic-card accent-blue"><span class="label">主対象</span><h3>ID 管理とアクセス管理</h3><p>Entra ID、RBAC、Service Principal、Managed Identity を入口として扱います。</p></article>
+          <article class="topic-card accent-teal"><span class="label">主対象</span><h3>リソースの編成</h3><p>管理グループ、サブスクリプション、リソースグループ、タグを整理します。</p></article>
+          <article class="topic-card accent-green"><span class="label">主対象</span><h3>ガバナンスと管理</h3><p>Policy、Cost Management、Advisor、Service Health、Backup、Site Recovery を扱います。</p></article>
+          <article class="topic-card accent-magenta"><span class="label">主対象</span><h3>セキュリティ</h3><p>Defender for Cloud、Key Vault、最小権限の考え方を確認します。</p></article>
+          <article class="topic-card accent-orange"><span class="label">境界</span><h3>ネットワーク</h3><p>VNet、Private Endpoint、DNS は第7回の復習に留めます。</p></article>
+          <article class="topic-card"><span class="label">対象外</span><h3>自動化と実装方式</h3><p>Landing Zone の詳細実装、IaC、Platform automation は本回では扱いません。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="5 / 35" aria-labelledby="slide-5-title">
+      <div class="content">
+        <h2 id="slide-5-title">Azure の管理スコープ</h2>
+        <p class="lead">Azure リソースは、管理グループ、サブスクリプション、リソースグループ、リソースという階層で管理します。</p>
+        <div class="scope-stack diagram" role="img" aria-label="Azure Resource Manager の管理スコープ階層">
+          <div class="scope-level"><strong>管理グループ</strong><span>複数サブスクリプションをまとめ、組織全体の Policy や RBAC の単位にできます。</span></div>
+          <div class="scope-level"><strong>サブスクリプション</strong><span>課金、クォータ、権限、リソース配置の大きな境界です。</span></div>
+          <div class="scope-level"><strong>リソースグループ</strong><span>同じライフサイクルで管理するリソースのまとまりです。</span></div>
+          <div class="scope-level"><strong>リソース</strong><span>VM、Storage account、Key Vault など、実際に作成する Azure サービスです。</span></div>
+        </div>
+        <p class="note">RBAC、Policy、タグ、コスト分析は、どのスコープで効かせるかを意識します。</p>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="6 / 35" aria-labelledby="slide-6-title">
+      <div class="content">
+        <h2 id="slide-6-title">タグはあとから効いてくる</h2>
+        <p class="lead">タグは、コスト、所有者、環境、削除予定を追跡するためのメタデータです。運用で見返す前提で、表記ゆれを抑えて付けます。</p>
+        <table class="table" aria-label="タグ設計の代表例と注意点">
+          <thead><tr><th>タグ例</th><th>用途</th><th>注意点</th></tr></thead>
+          <tbody>
+            <tr><td><code>Environment</code></td><td>本番、検証、開発を区別する</td><td>値の表記ゆれを防ぐ</td></tr>
+            <tr><td><code>Owner</code></td><td>管理責任者やチームを示す</td><td>公開教材では個人情報を避ける</td></tr>
+            <tr><td><code>CostCenter</code></td><td>コスト配賦に使う</td><td>組織側のコード体系と合わせる</td></tr>
+            <tr><td><code>DeleteAfter</code></td><td>削除予定日を示す</td><td>自動削除ではないため運用と組み合わせる</td></tr>
+            <tr><td><code>Course</code> / <code>Lesson</code></td><td>講座用リソースを識別する</td><td>ハンズオン回の一時リソースで有効</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="7 / 35" aria-labelledby="slide-7-title">
+      <div class="content">
+        <h2 id="slide-7-title">Microsoft Entra ID</h2>
+        <p class="lead">Entra ID は、Azure を使う人、アプリ、ワークロードの ID を扱う基盤です。Azure リソースの前に「誰がサインインするか」を管理します。</p>
+        <div class="diagram" role="img" aria-label="Microsoft Entra テナントと Azure サブスクリプションの関係">
+          <div class="layout-2">
+            <div class="diagram-panel panel-blue"><strong>Microsoft Entra テナント</strong><span>ユーザー、グループ、アプリ登録、Service Principal を管理</span></div>
+            <div class="diagram-panel panel-green"><strong>Azure サブスクリプション</strong><span>テナントを信頼し、リソースグループとリソースを持つ</span></div>
+          </div>
+          <div class="flow-row" style="margin-top: 14px;">
+            <div class="node web">ユーザー / グループ<small>人のサインイン</small></div>
+            <div class="arrow">→</div>
+            <div class="node ap">アプリ登録 / Service Principal<small>アプリや自動化の ID</small></div>
+            <div class="arrow">→</div>
+            <div class="node db">Azure リソース<small>RBAC で操作権限を判定</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="8 / 35" aria-labelledby="slide-8-title">
+      <div class="content">
+        <h2 id="slide-8-title">Azure RBAC</h2>
+        <p class="lead">Azure RBAC は、Azure リソースに対して誰が何をどこまで操作できるかを決めます。Entra ID が認証、RBAC が認可の入口です。</p>
+        <div class="diagram" role="img" aria-label="Azure RBAC の認証と認可の流れ">
+          <div class="flow-row">
+            <div class="node web">サインイン<small>Entra ID で本人やアプリを確認</small></div>
+            <div class="arrow">→</div>
+            <div class="node ap">要求<small>Azure Resource Manager に操作を依頼</small></div>
+            <div class="arrow">→</div>
+            <div class="node db">RBAC 判定<small>ロール割り当てとスコープを見る</small></div>
+            <div class="arrow">→</div>
+            <div class="node sec">許可 / 拒否<small>操作できる範囲だけ実行</small></div>
+          </div>
+        </div>
+        <div class="callout">認証は「あなたは誰か」、認可は「その操作をしてよいか」を確認する考え方です。</div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="9 / 35" aria-labelledby="slide-9-title">
+      <div class="content">
+        <h2 id="slide-9-title">ロール割り当ての3要素</h2>
+        <p class="lead">RBAC は、誰に、どのロールを、どのスコープで割り当てるかで決まります。この3つがそろって初めて権限になります。</p>
+        <table class="table" aria-label="Azure RBAC の3要素">
+          <thead><tr><th>要素</th><th>意味</th><th>例</th></tr></thead>
+          <tbody>
+            <tr><td>セキュリティプリンシパル</td><td>権限を受け取る主体</td><td>ユーザー、グループ、Service Principal、Managed Identity</td></tr>
+            <tr><td>ロール定義</td><td>許可される操作のまとまり</td><td>Reader、Contributor、Owner</td></tr>
+            <tr><td>スコープ</td><td>権限が効く範囲</td><td>管理グループ、サブスクリプション、リソースグループ、リソース</td></tr>
+          </tbody>
+        </table>
+        <div class="flow-row" aria-label="RBAC の割り当て式">
+          <div class="node web">誰に</div><div class="arrow">+</div><div class="node ap">何を</div><div class="arrow">+</div><div class="node db">どこで</div><div class="arrow">=</div><div class="node sec active">ロール割り当て</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="10 / 35" aria-labelledby="slide-10-title">
+      <div class="content">
+        <h2 id="slide-10-title">よく使う組み込みロール</h2>
+        <p class="lead">初心者はまず、Owner、Contributor、Reader、User Access Administrator の違いを押さえます。特に権限付与できるかどうかは大きな差です。</p>
+        <table class="table" aria-label="初心者が押さえる Azure 組み込みロール">
+          <thead><tr><th>ロール</th><th>できること</th><th>注意点</th></tr></thead>
+          <tbody>
+            <tr><td>Reader</td><td>リソースを閲覧できる</td><td>変更はできない</td></tr>
+            <tr><td>Contributor</td><td>多くのリソースを作成、更新、削除できる</td><td>原則として権限付与はできない</td></tr>
+            <tr><td>Owner</td><td>Contributor に加えて権限付与もできる</td><td>強力なため本番では付与対象を絞る</td></tr>
+            <tr><td>User Access Administrator</td><td>アクセス権管理ができる</td><td>リソース操作権限とは別に考える</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="11 / 35" aria-labelledby="slide-11-title">
+      <div class="content">
+        <h2 id="slide-11-title">人以外の ID</h2>
+        <p class="lead">GitHub Actions やアプリケーションも、人の代わりに Azure を操作する ID を使います。人間のアカウントを使い回さないことが基本です。</p>
+        <div class="layout-2" aria-label="人の ID とワークロード ID の違い">
+          <article class="compare-card accent-blue"><span class="label">Human</span><h3>人の ID</h3><p>受講者、講師、管理者がブラウザーや CLI でサインインして Azure を操作します。</p></article>
+          <article class="compare-card accent-teal"><span class="label">Workload</span><h3>ワークロード ID</h3><p>GitHub Actions、Container Apps、アプリケーションが Service Principal や Managed Identity で Azure を操作します。</p></article>
+        </div>
+        <div class="diagram" role="img" aria-label="人とワークロードのどちらも RBAC で権限を制御する">
+          <div class="flow-row"><div class="node web">ユーザー</div><div class="arrow">→</div><div class="node ap">RBAC</div><div class="arrow">←</div><div class="node db">Managed Identity / Service Principal</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="12 / 35" aria-labelledby="slide-12-title">
+      <div class="content">
+        <h2 id="slide-12-title">ハンズオン権限と本番権限</h2>
+        <p class="lead">講座では Contributor を使いましたが、本番では必要な範囲に絞ったロール割り当てを考えます。学習効率のための前提を、そのまま本番設計に持ち込まないようにします。</p>
+        <div class="layout-2">
+          <article class="compare-card accent-orange"><span class="label">Workshop</span><h3>学習用の広い権限</h3><p>短時間で作成、確認、削除を体験するため、サブスクリプションスコープ Contributor を使う前提にしました。</p></article>
+          <article class="compare-card accent-green"><span class="label">Production</span><h3>本番の最小権限</h3><p>チーム、環境、リソースグループ、ワークロードごとに必要な操作だけを許可します。</p></article>
+        </div>
+        <div class="callout">広い権限は例外扱いにし、なぜ必要か、いつ外すか、誰が承認するかを管理します。</div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="13 / 35" aria-labelledby="slide-13-title">
+      <div class="content">
+        <h2 id="slide-13-title">Azure Policy</h2>
+        <p class="lead">Policy は、リソースが組織のルールに沿っているかを評価し、必要に応じて拒否や監査を行います。</p>
+        <div class="diagram" role="img" aria-label="Azure Policy の評価と効果">
+          <div class="flow-row">
+            <div class="node web">ポリシー定義<small>許可リージョン、必須タグ、許可 SKU</small></div>
+            <div class="arrow">→</div>
+            <div class="node ap">割り当てスコープ<small>管理グループ、サブスクリプション、RG</small></div>
+            <div class="arrow">→</div>
+            <div class="node db">作成 / 更新を評価<small>リソースの状態を見る</small></div>
+            <div class="arrow">→</div>
+            <div class="node sec active">Audit / Deny / Modify<small>監査、拒否、修正、追加展開</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="14 / 35" aria-labelledby="slide-14-title">
+      <div class="content">
+        <h2 id="slide-14-title">RBAC と Policy の違い</h2>
+        <p class="lead">RBAC は誰が操作できるか、Policy は作られた状態がルールに合うかを見ます。両方を組み合わせることで、権限と準拠性を分けて管理できます。</p>
+        <table class="table" aria-label="Azure RBAC と Azure Policy の違い">
+          <thead><tr><th>観点</th><th>Azure RBAC</th><th>Azure Policy</th></tr></thead>
+          <tbody>
+            <tr><td>主な問い</td><td>誰が操作できるか</td><td>作られた状態がルールに合っているか</td></tr>
+            <tr><td>対象</td><td>ユーザー、グループ、アプリ、ワークロード ID</td><td>Azure リソースの構成やプロパティ</td></tr>
+            <tr><td>例</td><td>受講者がリソースグループを作成できる</td><td>Japan East 以外を拒否する、タグ必須にする</td></tr>
+            <tr><td>関係</td><td>操作権限を与える</td><td>権限があってもルール違反なら拒否または監査できる</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="15 / 35" aria-labelledby="slide-15-title">
+      <div class="content">
+        <h2 id="slide-15-title">Defender for Cloud</h2>
+        <p class="lead">Defender for Cloud は、クラウド環境のセキュリティ体制とワークロード保護を確認する入口です。単なるウイルス対策としてではなく、推奨事項の地図として見ます。</p>
+        <div class="hub-map diagram" role="img" aria-label="Defender for Cloud の CSPM と CWPP の整理">
+          <div class="hub-center">Microsoft Defender for Cloud</div>
+          <div class="diagram-grid">
+            <div class="diagram-panel panel-blue"><strong>CSPM</strong><span>セキュリティ体制、推奨事項、セキュリティスコア</span></div>
+            <div class="diagram-panel panel-teal"><strong>CWPP</strong><span>サーバー、コンテナ、ストレージ、データベースの保護</span></div>
+            <div class="diagram-panel panel-green"><strong>規制コンプライアンス</strong><span>標準やベンチマークへの対応状況</span></div>
+            <div class="diagram-panel panel-orange"><strong>推奨事項</strong><span>重大度、対象リソース、対応状態を確認</span></div>
+            <div class="diagram-panel panel-magenta"><strong>有料プラン</strong><span>有効化前に対象と費用を確認</span></div>
+            <div class="diagram-panel panel-muted"><strong>DevSecOps</strong><span>存在紹介に留め、詳細は扱わない</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="16 / 35" aria-labelledby="slide-16-title">
+      <div class="content">
+        <h2 id="slide-16-title">セキュリティ推奨事項</h2>
+        <p class="lead">推奨事項は、今すぐ直すべき構成の弱点を見つけるための出発点です。正解の自動適用ではなく、影響と費用を見て判断します。</p>
+        <table class="table" aria-label="Defender for Cloud の推奨事項を見る観点">
+          <thead><tr><th>観点</th><th>確認すること</th><th>初心者向けの言い換え</th></tr></thead>
+          <tbody>
+            <tr><td>対象</td><td>どのリソースに対する推奨か</td><td>何が危ないと言われているか</td></tr>
+            <tr><td>重大度</td><td>High、Medium、Low など</td><td>どれから対応すべきか</td></tr>
+            <tr><td>影響</td><td>変更するとアプリに影響するか</td><td>すぐ直してよいか、検証が必要か</td></tr>
+            <tr><td>費用</td><td>有料プランが必要か</td><td>有効化前にコストを見る</td></tr>
+            <tr><td>所有者</td><td>誰が対応するか</td><td>セキュリティだけでなくアプリ担当も関係する</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="17 / 35" aria-labelledby="slide-17-title">
+      <div class="content">
+        <h2 id="slide-17-title">Key Vault</h2>
+        <p class="lead">Key Vault は、シークレット、キー、証明書をアプリケーションや手順書から分離して管理します。置き場所だけでなく、アクセスする ID と権限が重要です。</p>
+        <div class="diagram" role="img" aria-label="Key Vault とアプリケーションのシークレット参照">
+          <div class="flow-row">
+            <div class="node web">アプリケーション<small>接続文字列を直書きしない</small></div>
+            <div class="arrow">→</div>
+            <div class="node ap">Managed Identity / Service Principal<small>Entra ID で認証</small></div>
+            <div class="arrow">→</div>
+            <div class="node db active">Key Vault<small>Secret、Key、Certificate</small></div>
+          </div>
+        </div>
+        <ul class="bullets compact">
+          <li>コード、手順書、スクリーンショットに秘密情報を残さない。</li>
+          <li>参照できるワークロードを RBAC またはアクセスポリシーで絞る。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="18 / 35" aria-labelledby="slide-18-title">
+      <div class="content">
+        <h2 id="slide-18-title">Secret をどこに置くか</h2>
+        <p class="lead">GitHub Secret、アプリ設定、Key Vault は用途が違います。デプロイ時の秘密情報と、実行時にアプリが参照する秘密情報を分けて考えます。</p>
+        <table class="table" aria-label="GitHub Secret、アプリ設定、Key Vault の違い">
+          <thead><tr><th>保管場所</th><th>主な用途</th><th>注意点</th></tr></thead>
+          <tbody>
+            <tr><td>GitHub Secret</td><td>GitHub Actions がデプロイ時に使う秘密情報</td><td>リポジトリごとの管理。Azure 内の実行時秘密情報とは分ける</td></tr>
+            <tr><td>アプリ設定</td><td>実行時の設定値をアプリに渡す</td><td>シークレットを置く場合はアクセス管理と表示範囲に注意する</td></tr>
+            <tr><td>Key Vault</td><td>シークレット、キー、証明書を集中管理する</td><td>アプリから参照するには ID と権限設計が必要</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="19 / 35" aria-labelledby="slide-19-title">
+      <div class="content">
+        <h2 id="slide-19-title">Cost Management + Billing</h2>
+        <p class="lead">Cost Management はコストの分析と最適化、Billing は請求や契約の管理に関係します。見る人の役割によって、必要な権限と画面が変わります。</p>
+        <div class="diagram" role="img" aria-label="Cost Management と Billing の関係">
+          <div class="flow-row">
+            <div class="node web">Azure 利用量<small>リソース利用、データ転送、保持</small></div>
+            <div class="arrow">→</div>
+            <div class="node ap">Cost Management<small>Cost Analysis、予算、アラート、エクスポート</small></div>
+            <div class="arrow">→</div>
+            <div class="node db">Billing<small>請求書、支払い、契約、課金アカウント</small></div>
+          </div>
+        </div>
+        <p class="note">公開教材や録画では、金額、契約情報、サブスクリプション名、タグ値を必ず隠します。</p>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="20 / 35" aria-labelledby="slide-20-title">
+      <div class="content">
+        <h2 id="slide-20-title">コストを追える形にする</h2>
+        <p class="lead">コスト管理は後から見るだけでなく、タグ、リソースグループ、サブスクリプション設計とセットで考えます。</p>
+        <div class="diagram" role="img" aria-label="タグとコスト配賦の関係">
+          <div class="diagram-grid">
+            <div class="diagram-panel panel-blue"><strong>リソース設計</strong><span>RG、サブスクリプション、環境ごとの分け方</span></div>
+            <div class="diagram-panel panel-green"><strong>タグ設計</strong><span><code>Owner</code>、<code>CostCenter</code>、<code>Environment</code></span></div>
+            <div class="diagram-panel panel-orange"><strong>Cost Analysis</strong><span>タグ別、RG別、サービス別に集計</span></div>
+            <div class="diagram-panel panel-teal"><strong>予算とアラート</strong><span>増加に気づける状態を作る</span></div>
+            <div class="diagram-panel panel-magenta"><strong>Advisor</strong><span>サイズや未使用リソースの改善候補</span></div>
+            <div class="diagram-panel panel-muted"><strong>注意</strong><span>タグに秘密情報や個人情報を入れない</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="21 / 35" aria-labelledby="slide-21-title">
+      <div class="content">
+        <h2 id="slide-21-title">Advisor</h2>
+        <p class="lead">Advisor は、信頼性、セキュリティ、パフォーマンス、コスト、運用の推奨事項を確認する入口です。推奨事項は判断材料として扱います。</p>
+        <div class="diagram-grid diagram" role="img" aria-label="Azure Advisor の5カテゴリ">
+          <div class="diagram-panel panel-blue"><strong>信頼性</strong><span>止まりにくくする構成の提案</span></div>
+          <div class="diagram-panel panel-magenta"><strong>セキュリティ</strong><span>Defender for Cloud と接続して確認</span></div>
+          <div class="diagram-panel panel-teal"><strong>パフォーマンス</strong><span>応答性や構成改善の候補</span></div>
+          <div class="diagram-panel panel-orange"><strong>コスト</strong><span>未使用、過剰サイズ、予約などの見直し</span></div>
+          <div class="diagram-panel panel-green"><strong>オペレーショナル エクセレンス</strong><span>運用しやすさの改善候補</span></div>
+          <div class="diagram-panel panel-muted"><strong>適用判断</strong><span>影響、費用、運用方針を確認して進める</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="22 / 35" aria-labelledby="slide-22-title">
+      <div class="content">
+        <h2 id="slide-22-title">Azure Storage</h2>
+        <p class="lead">Storage は、オブジェクト、ファイル、キュー、テーブル、ディスクなど、幅広いデータ保存の土台です。単一の「ファイル置き場」ではありません。</p>
+        <div class="hub-map diagram" role="img" aria-label="Azure Storage データサービスの整理">
+          <div class="hub-center">Storage account</div>
+          <div class="diagram-grid">
+            <div class="diagram-panel panel-blue"><strong>Blob Storage</strong><span>画像、PDF、ログ、バックアップファイル</span></div>
+            <div class="diagram-panel panel-teal"><strong>Azure Files</strong><span>SMB/NFS のファイル共有</span></div>
+            <div class="diagram-panel panel-green"><strong>Queue Storage</strong><span>非同期処理の小さなメッセージ</span></div>
+            <div class="diagram-panel panel-orange"><strong>Table Storage</strong><span>シンプルなキー/属性型データ</span></div>
+            <div class="diagram-panel panel-magenta"><strong>Managed Disk</strong><span>VM の OS ディスク、データディスク</span></div>
+            <div class="diagram-panel panel-muted"><strong>Data Lake</strong><span>Blob を拡張した分析向けの入口</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="23 / 35" aria-labelledby="slide-23-title">
+      <div class="content">
+        <h2 id="slide-23-title">Storage の代表的な使い分け</h2>
+        <p class="lead">保存したいデータの形とアクセス方法によって、Storage 内でも選ぶサービスが変わります。Database とは目的を分けて考えます。</p>
+        <table class="table" aria-label="Azure Storage の代表的な使い分け">
+          <thead><tr><th>サービス</th><th>向いているデータ</th><th>例</th></tr></thead>
+          <tbody>
+            <tr><td>Blob Storage</td><td>非構造化データ、ファイル、画像、ログ</td><td>画像、PDF、バックアップファイル、データレイク</td></tr>
+            <tr><td>Azure Files</td><td>SMB/NFS で共有するファイル</td><td>共有フォルダ、既存アプリのファイル共有</td></tr>
+            <tr><td>Queue Storage</td><td>小さなメッセージの非同期処理</td><td>画像処理依頼、バックグラウンド処理のキュー</td></tr>
+            <tr><td>Table Storage</td><td>シンプルなキー/属性データ</td><td>メタデータ、軽量な NoSQL データ</td></tr>
+            <tr><td>Managed Disk</td><td>VM に接続するディスク</td><td>OS ディスク、データディスク</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="24 / 35" aria-labelledby="slide-24-title">
+      <div class="content">
+        <h2 id="slide-24-title">Storage はセキュリティと冗長性も考える</h2>
+        <p class="lead">ストレージは容量だけでなく、アクセス制御、暗号化、冗長性、コストを合わせて設計します。データを置いた後の守り方が重要です。</p>
+        <div class="matrix" aria-label="Storage の設計観点">
+          <article class="topic-card accent-blue"><span class="label">Access</span><h3>アクセス制御</h3><p>Entra ID、RBAC、SAS、ネットワーク制限を組み合わせます。</p></article>
+          <article class="topic-card accent-magenta"><span class="label">Protect</span><h3>保護</h3><p>暗号化、Key Vault 連携、削除保護、アクセス監査を確認します。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Availability</span><h3>冗長性</h3><p>LRS、ZRS、GRS など、データをどこまで複製するかを考えます。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Cost</span><h3>コスト</h3><p>アクセス頻度、保持期間、転送量、アクセス層が効いてきます。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="25 / 35" aria-labelledby="slide-25-title">
+      <div class="content">
+        <h2 id="slide-25-title">Azure Backup</h2>
+        <p class="lead">Backup は、過去の時点に戻せる復旧ポイントを保持するためのサービスです。バックアップがあることと、戻せることは分けて確認します。</p>
+        <div class="diagram" role="img" aria-label="Azure Backup と復旧ポイントの関係">
+          <div class="flow-row">
+            <div class="node web">対象リソース<small>VM、Files、Blob、対応 DB など</small></div>
+            <div class="arrow">→</div>
+            <div class="node ap">Backup policy<small>頻度、保持期間</small></div>
+            <div class="arrow">→</div>
+            <div class="node db active">Backup vault / Recovery Services vault<small>復旧ポイントを保持</small></div>
+            <div class="arrow">→</div>
+            <div class="node sec">復元<small>必要な粒度と時間を確認</small></div>
+          </div>
+        </div>
+        <p class="note">保持、論理削除、復旧訓練、ランサムウェア対策は「戻せるか」を確認するための観点です。</p>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="26 / 35" aria-labelledby="slide-26-title">
+      <div class="content">
+        <h2 id="slide-26-title">Azure Site Recovery</h2>
+        <p class="lead">Site Recovery は、障害時に別の場所でワークロードを起動して業務継続するための DR サービスです。バックアップではなく、レプリケーションとフェールオーバーを扱います。</p>
+        <div class="diagram" role="img" aria-label="Azure Site Recovery のレプリケーションとフェールオーバー">
+          <div class="flow-row">
+            <div class="node web">プライマリ環境<small>Azure VM / オンプレミス VM</small></div>
+            <div class="arrow">→</div>
+            <div class="node ap active">継続的なレプリケーション<small>Recovery Services vault で管理</small></div>
+            <div class="arrow">→</div>
+            <div class="node db">セカンダリ環境<small>別リージョンや Azure 環境</small></div>
+            <div class="arrow">→</div>
+            <div class="node sec">フェールオーバー<small>計画、計画外、テスト</small></div>
+          </div>
+        </div>
+        <p class="note">フェールオーバーは既定で完全自動とは考えず、運用判断、復旧計画、訓練を含めて設計します。</p>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="27 / 35" aria-labelledby="slide-27-title">
+      <div class="content">
+        <h2 id="slide-27-title">Backup と DR は目的が違う</h2>
+        <p class="lead">Backup は戻るため、DR は続けるための設計です。必要な要件も確認する指標も異なります。</p>
+        <table class="table" aria-label="Backup と DR の利用シナリオ比較">
+          <thead><tr><th>観点</th><th>Backup</th><th>DR / Site Recovery</th></tr></thead>
+          <tbody>
+            <tr><td>主な目的</td><td>過去の復旧ポイントから戻す</td><td>障害時に別の場所で起動し、業務を継続する</td></tr>
+            <tr><td>主な障害シナリオ</td><td>誤削除、データ破損、ランサムウェア</td><td>リージョン障害、サイト停止、大規模な基盤障害</td></tr>
+            <tr><td>重視する指標</td><td>どの時点まで戻せるか、保持期間、復元粒度</td><td>RTO、RPO、切り替え手順、ネットワーク、復旧訓練</td></tr>
+            <tr><td>注意点</td><td>バックアップがあっても復元に時間がかかる場合がある</td><td>レプリケーションは論理破損も複製する場合がある</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="28 / 35" aria-labelledby="slide-28-title">
+      <div class="content">
+        <h2 id="slide-28-title">何を保護するか</h2>
+        <p class="lead">VM、ファイル、データベース、Blob、オンプレミス VM など、対象によって Backup と Site Recovery の使い分けが変わります。</p>
+        <table class="table" aria-label="Backup と Site Recovery の代表的な対象">
+          <thead><tr><th>サービス</th><th>代表的な対象</th><th>注意点</th></tr></thead>
+          <tbody>
+            <tr><td>Azure Backup</td><td>Azure VM、Managed Disk、Azure Files、Blob Storage、対応するデータベースなど</td><td>対象サービスごとに方式、保持、復元粒度が異なる</td></tr>
+            <tr><td>Azure Site Recovery</td><td>Azure VM のリージョン間 DR、オンプレミス VMware/Hyper-V VM、物理サーバーから Azure への DR など</td><td>対象、リージョン、ネットワーク、フェールバック可否を事前確認する</td></tr>
+            <tr><td>サービス固有のバックアップ</td><td>PostgreSQL、SQL Database、Storage などの組み込みバックアップ機能</td><td>Azure Backup だけでなく、サービス標準機能も確認する</td></tr>
+            <tr><td>アプリケーション側の保護</td><td>DB レプリケーション、エクスポート、アプリ固有の復旧機能</td><td>Azure サービスだけで完結しない場合がある</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="29 / 35" aria-labelledby="slide-29-title">
+      <div class="content">
+        <h2 id="slide-29-title">Service Health</h2>
+        <p class="lead">Service Health は、Azure 側の障害、計画メンテナンス、リソース正常性を確認する入口です。アプリの問題か、Azure 側の問題かを切り分ける助けになります。</p>
+        <div class="diagram-grid diagram" role="img" aria-label="Azure Status、Service Health、Resource Health の関係">
+          <div class="diagram-panel panel-blue"><strong>Azure Status</strong><span>グローバルな公開状態。Azure 全体で何が起きているかを見る。</span></div>
+          <div class="diagram-panel panel-green"><strong>Service Health</strong><span>自分の利用サービスとリージョンに関係する通知を見る。</span></div>
+          <div class="diagram-panel panel-orange"><strong>Resource Health</strong><span>個別リソースの正常性や履歴を見る。</span></div>
+          <div class="diagram-panel panel-teal"><strong>通知</strong><span>計画メンテナンスや障害通知の連絡先を設計する。</span></div>
+          <div class="diagram-panel panel-magenta"><strong>切り分け</strong><span>アプリ、ネットワーク、Azure 基盤のどこを見るかを決める。</span></div>
+          <div class="diagram-panel panel-muted"><strong>第11回へ</strong><span>メトリック、ログ、アラートは監視回で詳しく扱う。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="30 / 35" aria-labelledby="slide-30-title">
+      <div class="content">
+        <h2 id="slide-30-title">後続回に回すサービス</h2>
+        <p class="lead">Static Web Apps、Functions、AI、監視は重要ですが、それぞれ専用回でアーキテクチャとして扱います。第8回では境界だけ確認します。</p>
+        <div class="timeline-row" aria-label="第8回から第11回までのサービス境界">
+          <div class="node sec active">第8回<small>ID、RBAC、Policy、Defender、Cost、Key Vault、Storage、Backup、DR</small></div>
+          <div class="arrow">→</div>
+          <div class="node web">第9回<small>Static Web Apps、Functions、DB、イベント系</small></div>
+          <div class="arrow">→</div>
+          <div class="node ap">第10回<small>Microsoft Foundry、Azure OpenAI、AI エージェント</small></div>
+          <div class="arrow">→</div>
+          <div class="node db">第11回<small>Azure Monitor、Log Analytics、Application Insights、診断設定</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="31 / 35" aria-labelledby="slide-31-title">
+      <div class="content">
+        <h2 id="slide-31-title">シナリオ1: 新しい社内アプリ</h2>
+        <p class="lead">新しいアプリを作るときは、実行基盤だけでなく、ID、権限、シークレット、コスト、バックアップ、DR を確認します。</p>
+        <table class="table" aria-label="新しい社内アプリで確認するカテゴリ">
+          <thead><tr><th>確認するカテゴリ</th><th>関連サービス</th><th>見る理由</th></tr></thead>
+          <tbody>
+            <tr><td>ID と権限</td><td>Entra ID、Azure RBAC</td><td>利用者と運用者が何をできるかを決める</td></tr>
+            <tr><td>シークレット</td><td>Key Vault、Managed Identity</td><td>接続文字列やキーをコードから分離する</td></tr>
+            <tr><td>データ保護</td><td>Azure Backup、サービス固有バックアップ</td><td>誤削除や破損から戻せるようにする</td></tr>
+            <tr><td>業務継続</td><td>Azure Site Recovery、復旧計画</td><td>大きな障害時にどこで続けるかを決める</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="32 / 35" aria-labelledby="slide-32-title">
+      <div class="content">
+        <h2 id="slide-32-title">シナリオ2: 共有サブスクリプション</h2>
+        <p class="lead">複数チームで同じ Azure 環境を使う場合は、スコープ、タグ、Policy、Cost Management が効いてきます。</p>
+        <div class="layout-4" aria-label="共有サブスクリプションで考える管理領域">
+          <article class="topic-card accent-blue"><span class="label">Scope</span><h3>スコープ</h3><p>管理グループ、サブスクリプション、リソースグループをどう分けるか。</p></article>
+          <article class="topic-card accent-teal"><span class="label">Tag</span><h3>タグ</h3><p>Owner、CostCenter、Environment で責任とコストを追う。</p></article>
+          <article class="topic-card accent-green"><span class="label">Policy</span><h3>ルール</h3><p>リージョン、SKU、必須タグなどを拒否または監査する。</p></article>
+          <article class="topic-card accent-orange"><span class="label">Cost</span><h3>予算</h3><p>Cost Analysis と予算で使いすぎに気づける状態にする。</p></article>
+        </div>
+        <div class="callout">共有環境では「誰のリソースか」「いつ消すか」「どの費用か」が曖昧になりやすいです。</div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="33 / 35" aria-labelledby="slide-33-title">
+      <div class="content">
+        <h2 id="slide-33-title">シナリオ3: 事故を減らす</h2>
+        <p class="lead">秘密情報の露出、不要なリソースの放置、リージョン誤り、バックアップ不足、DR 未検討は、管理系サービスで予防できます。</p>
+        <table class="table" aria-label="事故を減らすためのサービス選択">
+          <thead><tr><th>困りごと</th><th>まず確認するカテゴリ</th><th>関連サービス</th></tr></thead>
+          <tbody>
+            <tr><td>秘密情報をコードに入れたくない</td><td>シークレット管理、ワークロード ID</td><td>Key Vault、Managed Identity、RBAC</td></tr>
+            <tr><td>コストが増えている</td><td>分析、予算、推奨事項</td><td>Cost Management、タグ、Advisor</td></tr>
+            <tr><td>セキュリティの弱点を把握したい</td><td>セキュリティ体制、推奨事項</td><td>Defender for Cloud、Policy、Advisor</td></tr>
+            <tr><td>誤削除やランサムウェアから戻したい</td><td>バックアップ、保持、復元</td><td>Azure Backup、サービス固有バックアップ、論理削除</td></tr>
+            <tr><td>Azure 側の障害か確認したい</td><td>サービス正常性</td><td>Azure Status、Service Health、Resource Health</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="34 / 35" aria-labelledby="slide-34-title">
+      <div class="content">
+        <h2 id="slide-34-title">今日のまとめ</h2>
+        <p class="lead">Azure はリソースを作るだけでなく、誰が、どのルールで、いくらで、どう守り続けるかを設計して使います。</p>
+        <div class="diagram-grid diagram" role="img" aria-label="第8回のまとめとなる4つの判断軸">
+          <div class="diagram-panel panel-blue"><strong>誰が使うか</strong><span>Entra ID、Azure RBAC、Service Principal、Managed Identity</span></div>
+          <div class="diagram-panel panel-green"><strong>どのルールで使うか</strong><span>Policy、Defender for Cloud、最小権限</span></div>
+          <div class="diagram-panel panel-orange"><strong>いくらで使うか</strong><span>Cost Management、Advisor、タグ、予算</span></div>
+          <div class="diagram-panel panel-teal"><strong>どう守り戻すか</strong><span>Key Vault、Storage、Backup、Site Recovery</span></div>
+          <div class="diagram-panel panel-magenta"><strong>どう気づくか</strong><span>Service Health、Resource Health、推奨事項</span></div>
+          <div class="diagram-panel panel-muted"><strong>次回へ</strong><span>Static Web Apps、Functions、データストア、イベント系サービス</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="35 / 35" aria-labelledby="slide-35-title">
+      <div class="content">
+        <h2 id="slide-35-title">確認クイズ</h2>
+        <p class="lead">サービス名ではなく、課題からカテゴリを選べるかを確認します。迷ったら「誰が、何を、どこで、どの状態で」を分解します。</p>
+        <div class="quiz-grid" aria-label="確認クイズと正解">
+          <article class="quiz-card"><p class="q">Q1 Entra ID と RBAC の違いは?</p><p><span class="answer">A:</span> ID とサインイン、Azure リソース操作権限。</p></article>
+          <article class="quiz-card"><p class="q">Q2 RBAC の3要素は?</p><p><span class="answer">A:</span> プリンシパル、ロール定義、スコープ。</p></article>
+          <article class="quiz-card"><p class="q">Q3 Policy の例は?</p><p><span class="answer">A:</span> Japan East 以外を拒否、タグ必須。</p></article>
+          <article class="quiz-card"><p class="q">Q4 Key Vault の用途は?</p><p><span class="answer">A:</span> Secret、Key、Certificate の管理。</p></article>
+          <article class="quiz-card"><p class="q">Q5 Backup と DR の違いは?</p><p><span class="answer">A:</span> 戻すため、続けるため。</p></article>
+          <article class="quiz-card"><p class="q">Q6 コストを追う準備は?</p><p><span class="answer">A:</span> タグと RG/サブスクリプション設計。</p></article>
+          <article class="quiz-card"><p class="q">Q7 Site Recovery の用途は?</p><p><span class="answer">A:</span> レプリケーションとフェールオーバー。</p></article>
+          <article class="quiz-card"><p class="q">Q8 第8回の主対象は?</p><p><span class="answer">A:</span> ID、編成、ガバナンス、セキュリティ、管理。</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
